@@ -311,11 +311,12 @@
   - Spotify：<https://open.spotify.com/episode/70QP4rIc35PxHJNXiWAC8Y>
   - 小红书拆解原帖（@Ylva 的商业笔记）：TBD
 
-### 📎 相关书签 — Stanford 三件套 + 实战课
+### 📎 相关书签 — Stanford 三件套 + LLM 综合课
 
 - 🎓 **Stanford CS224N — NLP with Deep Learning** — Manning 主讲，NLP 经典课：<https://web.stanford.edu/class/cs224n/>
 - 🎓 **Stanford CS229 — Machine Learning** — Andrew Ng 的 ML 经典课：<https://cs229.stanford.edu/>
 - 🎓 **Stanford CS231N — CNN for Visual Recognition** — CV 经典课：<https://cs231n.github.io/>
+- 🎓 **Stanford CME 295 — Large Language Models** — LLM 全栈综合课（Fall 2025，9 讲）：Transformer 基础 → 量化 / PEFT → pretraining / SFT / RL → 偏好对齐与推理 → RAG / Agentic Systems → 评测 / 行业趋势。每讲含视频 + slides：<https://cme295.stanford.edu/syllabus/>
 
 ---
 

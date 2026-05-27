@@ -1,10 +1,10 @@
 # AI Resources
 
-我零零散散收集的 AI / ML 相关资源截图。按"模型生命周期 + 系统栈"组织——从 Transformer 基础到 Agent 应用，最后是工具链和工程实践。
+我零零散散收集的 AI / ML 相关资源——截图 + Chrome 书签链接，按"模型生命周期 + 系统栈"组织。从 Transformer 基础到 Agent 应用，最后是工具链、工程实践、实验室门户。
 
-每条都附原图缩略图 + 一手链接（搜得到的尽量给到源头；搜不到的标 `TBD`，列在末尾待补）。
+带 🖼️ 的有图（图存在 `images/`）；纯 📎 的是链接型书签。每条都尽量附一手来源；搜不到的标 `TBD`，列在末尾待补。
 
-> 索引建于 2026-05-27，共 24 张图。
+> 索引建于 2026-05-27（最近更新：合并 Chrome 书签）。24 张图 + ~30 条书签链接。
 
 ---
 
@@ -18,7 +18,8 @@
 6. [LLM Infra — Inference & Quantization](#6-llm-infra--inference--quantization)
 7. [工具链 — Tooling](#7-工具链--tooling)
 8. [AI 工程实践与表达](#8-ai-工程实践与表达)
-9. [杂项 / Meme](#9-杂项--meme)
+9. [实验室与研究门户](#9-实验室与研究门户)
+10. [杂项 / Meme](#10-杂项--meme)
 
 ---
 
@@ -54,6 +55,12 @@
 - 10 panel：把 attention 拆成"找谁 / 拿什么"、为什么不能只用一组表示、Q / K / V 各是什么、为什么要拆成三套
 - 链接：TBD（小红书 ID 残角：3603020...）
 
+### 📎 相关书签
+
+- 📺 **3Blue1Brown** — Grant Sanderson 的可视化数学频道，神经网络章节是看动画理解 attention/backprop 最快的一套：<https://www.3blue1brown.com/>
+- 📄 **Deep Learning** (Hinton, LeCun, Bengio · Nature 综述) — 经典 high-level 综述：<https://www.cs.toronto.edu/~hinton/absps/NatureDeepReview.pdf>
+- 📄 **How Do Transformers Learn to Associate Tokens** (arXiv 2601.19208) — mechanistic interpretability，从 gradient leading terms 看 Transformer 怎么学 token 关联：<https://arxiv.org/pdf/2601.19208>
+
 ---
 
 ## 2. Pre-training — 模型架构与发布
@@ -80,6 +87,12 @@
 - **形式**：8 × 30 min 高压面（一面问简历、二面纯压力）
 - **链接**：TBD（小红书原帖；rednote ID 4139436216）
 
+### 📎 相关书签
+
+- 📚 **Elements of Statistical Learning** (Hastie / Tibshirani / Friedman, 2nd ed.) — 统计学习的 canonical 教材，理解 bias-variance / regularization / boosting：<https://web.stanford.edu/~hastie/ElemStatLearn/>
+- 📚 **神经网络与深度学习** — 邱锡鹏（复旦）的中文 DL 教材：<https://nndl.github.io/>
+- 🎓 **Stanford CS336 — Language Modeling from Scratch** — 从零搭一个 LM 的课，覆盖架构选择、训练、infra、scaling：<https://cs336.stanford.edu/>
+
 ---
 
 ## 3. Post-training — Fine-tuning
@@ -99,6 +112,11 @@
   - OpenClaw + Gemma 4 部署指南：<https://lushbinary.com/blog/openclaw-gemma-4-local-ai-agent-ollama-setup-guide-2026/>
   - 实测：<https://medium.com/@tentenco/i-tried-gemma-4-on-claude-code-and-found-googles-free-coding-beast-e1618fc808c3>
 
+### 📎 相关书签
+
+- 📰 **A Primer on LLM Post-Training** (PyTorch blog, 2026-02) — 把 SFT / DPO / PPO / RLHF / RLAIF / GRPO 的关系讲清楚的一篇 primer：<https://pytorch.org/blog/a-primer-on-llm-post-training/>
+- 🎓 **IE598-ODL — Optimization Theory for Deep Learning** (UIUC) — 偏理论：DL 优化的 landscape / convergence：<https://wiki.illinois.edu/wiki/spaces/viewspace.action?key=IE598ODLSP19>
+
 ---
 
 ## 4. RL / Agentic-RL
@@ -113,6 +131,11 @@
 | **Search-R1** | Agentic-RL 开山，提升 LLM 调用搜索引擎能力 | verl | <https://github.com/PeterGriffinJin/Search-R1> |
 | **ReTool** | 字符级 RL 引导 LLM 用外部计算工具完成推理 | verl + 代码沙箱 | <https://github.com/ReTool-RL/ReTool> |
 | **RLVER** | 腾讯多轮场景用户模拟器 + 奖励裁判（empathetic agent） | Ray + verl | <https://github.com/Tencent/digitalhuman/tree/main/RLVER> · [论文](https://arxiv.org/abs/2507.03112) |
+
+### 📎 相关书签
+
+- 🧪 **ReAct: Synergizing Reasoning and Acting in Language Models** (Yao et al., ICLR 2023) — 工具调用 + 推理 agent 的奠基论文+代码：<https://github.com/ysymyth/ReAct>
+- 🏋️ **OpenAI Gym** — 经典 RL 环境库（虽然现在维护转到 Gymnasium 了，原 repo 仍是入门资料）：<https://gym.openai.com/>
 
 ---
 
@@ -164,6 +187,13 @@
 - 10 个 Claude Skills 使用清单：Rube MCP Connector、Superpowers、Document Suite、Theme Factory、Algorithmic Art、Slack GIF Creator、Webapp Testing、MCP Builder、Brand Guidelines、Systematic Debugging
 - **链接**：TBD（小红书 @羊拱机树）
 
+### 📎 相关书签
+
+- 📄 **Memory in the Age of AI Agents** (arXiv 2512.13564) — 跟 §5.5 那张手稿主题完全对应：semantic / episodic / procedural memory 在 LLM agent 里怎么分层、怎么落地：<https://arxiv.org/pdf/2512.13564>
+- 🏠 **OpenClaw — Personal AI Assistant** — 跟 §3.1 那个本地 Gemma 4 + Claude Code 融合方案配套的 personal AI orchestration 框架：<https://openclaw.ai/>
+- 🧠 **gbrain — Garry Tan 的 OpenClaw/Hermes Agent Brain** — 别人公开的 agent 配置 / prompts / memory schema 参考实现：<https://github.com/garrytan/gbrain>
+- 🔧 **chrome-devtools-mcp** — 给 coding agent 接 Chrome DevTools 的 MCP，让 agent 能开浏览器调试自己写的前端：<https://github.com/ChromeDevTools/chrome-devtools-mcp>
+
 ---
 
 ## 6. LLM Infra — Inference & Quantization
@@ -200,6 +230,11 @@
   - Amazon：<https://www.amazon.com/Systems-Performance-Engineering-Optimizing-Inference/dp/B0F47689K8>
   - 配套代码：<https://github.com/cfregly/ai-performance-engineering>
   - Google Books：<https://books.google.com/books?id=RemWEQAAQBAJ>
+
+### 📎 相关书签
+
+- 📖 **How To Scale Your Model** (jax-ml scaling book) — Google DeepMind 出的免费在线书，把 scaling laws / parallelism / collectives 讲透：<https://jax-ml.github.io/scaling-book/>
+- 🎓 **Stanford CS329S — Machine Learning Systems Design** — Chip Huyen 主讲，把 ML 系统设计（data flywheel / deployment / monitoring）讲成系统课：<https://stanford-cs329s.github.io/>
 
 ---
 
@@ -238,6 +273,12 @@
 - **用途**：本地 Claude Code / Codex / Gemini CLI 多账号自动切换网关
 - **链接**：图里 URL 模糊（疑似 `coder-for-me/CCProxyAPI` 或 `OUProxyAPI`），TBD —— **需要你确认仓库名**
 
+### 📎 相关书签
+
+- 🛠️ **Google Workspace CLI** — 一个 CLI 操作 Drive / Gmail / Calendar / Sheets / Docs / Chat / Admin，**自带 AI agent skills**，给 agent 接 Google 全家桶用的好：<https://github.com/googleworkspace/cli>
+- 🐍 **scikit-learn** — 经典 ML 库，传统模型 baseline + 数据预处理常备：<https://scikit-learn.org/stable/>
+- 🔢 **TensorFlow** — 历史框架，留作备查：<https://www.tensorflow.org/>
+
 ---
 
 ## 8. AI 工程实践与表达
@@ -268,11 +309,29 @@
   - Spotify：<https://open.spotify.com/episode/70QP4rIc35PxHJNXiWAC8Y>
   - 小红书拆解原帖（@Ylva 的商业笔记）：TBD
 
+### 📎 相关书签 — Stanford 三件套 + 实战课
+
+- 🎓 **Stanford CS224N — NLP with Deep Learning** — Manning 主讲，NLP 经典课：<https://web.stanford.edu/class/cs224n/>
+- 🎓 **Stanford CS229 — Machine Learning** — Andrew Ng 的 ML 经典课：<https://cs229.stanford.edu/>
+- 🎓 **Stanford CS231N — CNN for Visual Recognition** — CV 经典课：<https://cs231n.github.io/>
+
 ---
 
-## 9. 杂项 / Meme
+## 9. 实验室与研究门户
 
-### 9.1 "Generate an image of how I treated you"
+主流 AI 实验室的 research / models 入口。找新模型、新论文、API 文档时直接进。
+
+- 🏢 **Anthropic** — 主页：<https://www.anthropic.com/> · Research：<https://www.anthropic.com/research>
+- 🏢 **OpenAI Research** — <https://openai.com/research/index/>
+- 🏢 **Google DeepMind** — <https://deepmind.google/>
+- 🔬 **Google AI Studio** — Gemini API playground + usage dashboard：<https://aistudio.google.com/>
+- 📘 **Google / Vertex AI Gemini Models** — Vertex 上 Gemini 系列模型文档（含 3.1 Flash Lite 等）：<https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/3-1-flash-lite>
+
+---
+
+## 10. 杂项 / Meme
+
+### 10.1 "Generate an image of how I treated you"
 
 <img src="images/meme-chatgpt-how-i-treated-you.jpg" width="420">
 
@@ -292,4 +351,4 @@
 5. §6.2 AI Infra 思维导图的小红书原帖
 6. §7.4 CC / Codex 网关——**仓库实际名是什么？**
 7. §8.2 Ylva 商业笔记拆解 Anthropic 写作那条小红书的链接（视频访谈本身已找到）
-8. §9.1 ChatGPT meme 的来源帖
+8. §10.1 ChatGPT meme 的来源帖

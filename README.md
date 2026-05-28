@@ -117,7 +117,6 @@
 ### 📎 相关书签
 
 - 📰 **A Primer on LLM Post-Training** (PyTorch blog, 2026-02) — 把 SFT / DPO / PPO / RLHF / RLAIF / GRPO 的关系讲清楚的一篇 primer：<https://pytorch.org/blog/a-primer-on-llm-post-training/>
-- 🎓 **IE598-ODL — Optimization Theory for Deep Learning** (UIUC) — 偏理论：DL 优化的 landscape / convergence：<https://wiki.illinois.edu/wiki/spaces/viewspace.action?key=IE598ODLSP19>
 
 ---
 

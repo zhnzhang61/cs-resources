@@ -7,8 +7,6 @@
 > 索引建于 2026-05-27（最近更新：合并 Chrome 书签）。24 张图 + ~30 条书签链接。
 >
 > 📑 **Sibling 文件**：[`cs-bookmarks.md`](cs-bookmarks.md) — 109 条 CS 通用书签（LeetCode 算法/系统设计、OS/网络/语言基础、UIUC/Stanford 课程归档、Legacy ML 等），保持 AI 主题轴干净。
->
-> 🧾 **前身仓库**：[`zhnzhang61/Reading-List-LLM`](https://github.com/zhnzhang61/Reading-List-LLM) — 两个月前写的扁平 LLM reading list，所有条目已合并到本 catalog。建议归档。
 
 ---
 

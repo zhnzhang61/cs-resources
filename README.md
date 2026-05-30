@@ -7,6 +7,8 @@
 > 索引建于 2026-05-27（最近更新：合并 Chrome 书签）。24 张图 + ~30 条书签链接。
 >
 > 📑 **Sibling 文件**：[`cs-bookmarks.md`](cs-bookmarks.md) — 109 条 CS 通用书签（LeetCode 算法/系统设计、OS/网络/语言基础、UIUC/Stanford 课程归档、Legacy ML 等），保持 AI 主题轴干净。
+>
+> 🧾 **前身仓库**：[`zhnzhang61/Reading-List-LLM`](https://github.com/zhnzhang61/Reading-List-LLM) — 两个月前写的扁平 LLM reading list，所有条目已合并到本 catalog。建议归档。
 
 ---
 
@@ -194,6 +196,10 @@
 - 🏠 **OpenClaw — Personal AI Assistant** — 跟 §3.1 那个本地 Gemma 4 + Claude Code 融合方案配套的 personal AI orchestration 框架：<https://openclaw.ai/>
 - 🧠 **gbrain — Garry Tan 的 OpenClaw/Hermes Agent Brain** — 别人公开的 agent 配置 / prompts / memory schema 参考实现：<https://github.com/garrytan/gbrain>
 - 🔧 **chrome-devtools-mcp** — 给 coding agent 接 Chrome DevTools 的 MCP，让 agent 能开浏览器调试自己写的前端：<https://github.com/ChromeDevTools/chrome-devtools-mcp>
+- 🦜 **LangChain** — 最广为人知的 LLM 应用框架本体仓库，跟 §5.2 那张对比表配套：<https://github.com/langchain-ai/langchain>
+- 📑 **Agent-Memory-Paper-List** — Shichun Liu 维护的 agent memory 论文清单，跟上面 arXiv 2512.13564 是天然延伸：<https://github.com/Shichun-Liu/Agent-Memory-Paper-List>
+- 📄 **Chain of Thought Prompting** (Wei et al., NeurIPS 2022) — 让 LLM "think step by step" 的奠基论文，ReAct / 推理模型的共同起点：<https://arxiv.org/abs/2201.11903>
+- 📄 **Ferret-UI Lite** (arXiv 2509.26539) — 在端侧设备上做小型 GUI agent 的工程经验：<https://arxiv.org/abs/2509.26539>
 
 ---
 
@@ -277,6 +283,7 @@
 ### 📎 相关书签
 
 - 🛠️ **Google Workspace CLI** — 一个 CLI 操作 Drive / Gmail / Calendar / Sheets / Docs / Chat / Admin，**自带 AI agent skills**，给 agent 接 Google 全家桶用的好：<https://github.com/googleworkspace/cli>
+- 🍎 **oMLX** — Mac 原生 LLM 推理服务器，基于 Apple MLX，两层 KV cache（RAM 热 + SSD 冷）把 agent TTFT 从 30–90 s 压到 < 5 s。OpenAI 和 Anthropic 双协议兼容，可直接做 Claude Code / OpenClaw / Cursor 的后端。官网 <https://omlx.ai/> · 源码 <https://github.com/jundot/omlx>
 - 🐍 **scikit-learn** — 经典 ML 库，传统模型 baseline + 数据预处理常备：<https://scikit-learn.org/stable/>
 - 🔢 **TensorFlow** — 历史框架，留作备查：<https://www.tensorflow.org/>
 
@@ -323,11 +330,17 @@
 
 主流 AI 实验室的 research / models 入口。找新模型、新论文、API 文档时直接进。
 
+**英美**
 - 🏢 **Anthropic** — 主页：<https://www.anthropic.com/> · Research：<https://www.anthropic.com/research>
 - 🏢 **OpenAI Research** — <https://openai.com/research/index/>
 - 🏢 **Google DeepMind** — <https://deepmind.google/>
 - 🔬 **Google AI Studio** — Gemini API playground + usage dashboard：<https://aistudio.google.com/>
 - 📘 **Google / Vertex AI Gemini Models** — Vertex 上 Gemini 系列模型文档（含 3.1 Flash Lite 等）：<https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/3-1-flash-lite>
+
+**中国**
+- 🐳 **DeepSeek** — DeepSeek 主页 / API / R1·V3 模型入口：<https://www.deepseek.com/>
+- 🪶 **Qwen (通义千问)** — 阿里 Qwen 系列主页（跟 §2.1 那条 Qwen 3.6 发布配套）：<https://qwen.ai/home>
+- 🌙 **Moonshot AI (Kimi)** — 月之暗面 platform，含 Kimi 模型 API：<https://platform.moonshot.ai/>
 
 ---
 

@@ -27,6 +27,7 @@
 
 ### 1.1 主索引 / Topic List
 
+- [《代码随想录》— youngyangyang04/leetcode-master](https://github.com/youngyangyang04/leetcode-master) — 200 道 LeetCode 经典题刷题顺序，60w 字图解 + 50+ 思维导图 + 视频，C++ / Java / Python / Go / JS 多语言；61.5k stars，中文 LC 圈最经典的一份
 - [Top K Frequent Elements — LeetCode](https://leetcode.com/problems/top-k-frequent-elements/)
 - [A summary: how to use bit manipulation to solve problems easily and efficiently — LeetCode Discuss](https://leetcode.com/problems/sum-of-two-integers/discuss/84278/A-summary%3A-how-to-use-bit-manipulation-to-solve-problems-easily-and-efficiently)
 - [Most consistent ways of dealing with the series of stock problems — LeetCode Discuss](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/discuss/75924/Most-consistent-ways-of-dealing-with-the-series-of-stock-problems)
@@ -248,7 +249,7 @@
 
 ## 统计
 
-- §1 LeetCode 算法：22 条（5 主索引 + 17 graph）
+- §1 LeetCode 算法：23 条（6 主索引 + 17 graph）
 - §2 System Design：31 条（30 题 + 1 primer）
 - §3 CS Fundamentals：6 条
 - §4 Languages & References：10 条
@@ -259,7 +260,7 @@
 - §9 跨项目 / Garmin：3 条
 - §10 Unclassified：4 条
 
-**Total: 109 条**
+**Total: 110 条**
 
 ---
 

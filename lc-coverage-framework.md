@@ -4,9 +4,6 @@
 
 > **目标函数**：在面试白板前，能在 30 秒内把陌生题归到一个 bucket，对应到一个写代码模板。
 >
-> **不是**："覆盖最大化"或"经典题清单"——那是 [代码随想录](https://github.com/youngyangyang04/leetcode-master)、NeetCode 150 这些列表干的事。这套是 **复习索引 + 面试决策树**。
-
-> 整理于 2026-05-27，跟 [`README.md`](README.md) 和 [`cs-bookmarks.md`](cs-bookmarks.md) 并列。
 
 ---
 
@@ -280,17 +277,6 @@ Implement Trie (208) · The Skyline Problem (218) · Range Module (715) · Short
 
 **10 题里 8 道 #1**——印证 LC 题量分布严重偏 #1，"先按 #1 试" 是高 ROI 策略。
 
----
 
-## 跟其他 LC 资源的关系
 
-| 资源 | 优化目标 | 跟本框架的关系 |
-|---|---|---|
-| [代码随想录](https://github.com/youngyangyang04/leetcode-master) | 学习路径（200 题平滑难度曲线） | **互补**：先用本框架建认知地图，再用它系统训练 |
-| NeetCode 150 | 面试高频题 + 教学视频 | **互补**：本框架解决"在哪"，它解决"怎么写" |
-| LC Tag 系统 | LC 官方分类 | **替代**：LC tag 噪音多，按本框架重新归类 |
-| Blind 75 | 速成 75 题 | **替代**：覆盖密度不如本 25 题（这 25 道按子类全覆盖） |
 
----
-
-**Status**: 终版，停更。如果未来发现新题暴露框架盲区，按 "[Bucket].[新子项]" 命名新子类追加。

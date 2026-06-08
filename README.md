@@ -6,7 +6,9 @@
 
 > 索引建于 2026-05-27（最近更新：合并 Chrome 书签）。24 张图 + ~30 条书签链接。
 >
-> 📑 **Sibling 文件**：[`cs-bookmarks.md`](cs-bookmarks.md) — 109 条 CS 通用书签（LeetCode 算法/系统设计、OS/网络/语言基础、UIUC/Stanford 课程归档、Legacy ML 等），保持 AI 主题轴干净。
+> 📑 **Sibling 文件**：
+> - [`cs-bookmarks.md`](cs-bookmarks.md) — 109 条 CS 通用书签（LeetCode 算法/系统设计、OS/网络/语言基础、UIUC/Stanford 课程归档、Legacy ML 等）
+> - [`lc-coverage-framework.md`](lc-coverage-framework.md) — LC 7-bucket 分类框架 + 25 道代表性母题，面试复习索引
 
 ---
 

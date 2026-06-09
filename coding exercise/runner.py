@@ -31,10 +31,10 @@ def run_cpp(filepath):
     output_bin = os.path.join(file_dir if file_dir else ".", f"{base_name}.out")
     
     print(f"{BLUE}[Runner] Compiling C++ file: {file_name}...{RESET}")
-    # Compile with clang++ std=c++17
+    # Compile with clang++ std=c++20
     compile_cmd = [
         "clang++",
-        "-std=c++17",
+        "-std=c++20",
         "-stdlib=libc++",
         "-g",
         filepath,

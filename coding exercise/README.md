@@ -1,6 +1,6 @@
 # 🚀 LeetCode Coding Exercise Environment
 
-Welcome to your local LeetCode playground! This environment is pre-configured for **Python 3** and **C++ (C++17)** development.
+Welcome to your local LeetCode playground! This environment is pre-configured for **Python 3** and **C++ (C++20)** development.
 
 ---
 
@@ -28,7 +28,7 @@ python3 runner.py template.py
 ```
 
 ### 🦀 Running C++ Solutions
-The runner automatically invokes `clang++` with standard debugging symbols and C++17 library support, creates a binary `filename.out` (which is git-ignored), executes it, and displays execution status.
+The runner automatically invokes `clang++` with standard debugging symbols and C++20 library support, creates a binary `filename.out` (which is git-ignored), executes it, and displays execution status.
 ```bash
 ./runner.py template.cpp
 # or

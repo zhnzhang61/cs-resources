@@ -143,28 +143,45 @@ class Solution:
 # ================= Local Runner =================
 
 if __name__ == '__main__':
+    import sys
+    
     sol = Solution()
     
-    print("--- Test Case 1 ---")
-    nums = [2, 7, 11, 15]
-    target = 9
-    expected = [0, 1]
-    result = sol.twoSum(nums, target)
-    print(f"Input: nums = {nums}, target = {target}")
-    print(f"Result: {result}")
-    print(f"Expected: {expected}")
-    assert result == expected, "Test Case 1 Failed!"
-    print("Test Case 1 Passed!\n")
-    
-    print("--- Test Case 2 (Binary Tree Example) ---")
-    # Tree: [1, None, 2, 3]
-    tree_list = [1, None, 2, 3]
-    root = list_to_binary_tree(tree_list)
-    print("Deserialized Tree Visualization:")
-    print_tree(root)
-    serialized = binary_tree_to_list(root)
-    print(f"Serialized back to list: {serialized}")
-    assert serialized == tree_list, "Tree serialization/deserialization mismatch!"
-    print("Tree test passed!\n")
-    
+    # Automatically find the public solver method on Solution (ignoring helper/private methods)
+    methods = [m for m in dir(sol) if not m.startswith('_') and callable(getattr(sol, m))]
+    if not methods:
+        print("Error: No public solver method found in Solution class!")
+        sys.exit(1)
+        
+    method_name = methods[0]
+    solve = getattr(sol, method_name)
+    print(f"Running tests for: Solution.{method_name}()\n")
+
+    # Define your test cases: [ (inputs, expected_output), ... ]
+    # - If your method takes a single argument, pass it directly or wrap in a tuple: (arg,)
+    # - If your method takes multiple arguments, pass them as a tuple: (arg1, arg2, ...)
+    test_cases = [
+        # Test Case 1: nums = [2, 7, 11, 15], target = 9 -> expected = [0, 1]
+        ( ([2, 7, 11, 15], 9), [0, 1] ),
+    ]
+
+    for i, (args, expected) in enumerate(test_cases, 1):
+        print(f"--- Test Case {i} ---")
+        # Ensure args is a tuple for dynamic unpacking
+        if not isinstance(args, tuple):
+            args = (args,)
+            
+        # Try to print input arguments nicely
+        readable_input = args[0] if len(args) == 1 else args
+        print(f"Input:    {readable_input}")
+        
+        result = solve(*args)
+        
+        print(f"Result:   {result}")
+        print(f"Expected: {expected}")
+        
+        assert result == expected, f"Test Case {i} Failed!"
+        print(f"Test Case {i} Passed!\n")
+        
     print("All tests run successfully!")
+

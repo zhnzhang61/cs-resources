@@ -192,39 +192,34 @@ public:
 int main() {
     Solution sol;
     
-    std::cout << "--- Test Case 1 ---" << std::endl;
-    std::vector<int> nums = {2, 7, 11, 15};
-    int target = 9;
-    std::vector<int> expected = {0, 1};
-    std::vector<int> result = sol.twoSum(nums, target);
+    // Test Case 1
+    {
+        std::cout << "--- Test Case 1 ---" << std::endl;
+        std::vector<int> nums = {2, 7, 11, 15};
+        int target = 9;
+        std::vector<int> expected = {0, 1};
+        
+        std::vector<int> result = sol.twoSum(nums, target);
+        
+        assert(result == expected && "Test Case 1 Failed!");
+        std::cout << "Test Case 1 Passed!\n" << std::endl;
+    }
     
-    std::cout << "Input: nums = ";
-    printVector(nums);
-    std::cout << "Target: " << target << std::endl;
-    std::cout << "Result: ";
-    printVector(result);
-    std::cout << "Expected: ";
-    printVector(expected);
+    // Test Case 2 (Template placeholder)
+    /*
+    {
+        std::cout << "--- Test Case 2 ---" << std::endl;
+        std::vector<int> nums = {3, 2, 4};
+        int target = 6;
+        std::vector<int> expected = {1, 2};
+        
+        std::vector<int> result = sol.twoSum(nums, target);
+        
+        assert(result == expected && "Test Case 2 Failed!");
+        std::cout << "Test Case 2 Passed!\n" << std::endl;
+    }
+    */
     
-    assert(result == expected && "Test Case 1 Failed!");
-    std::cout << "Test Case 1 Passed!\n" << std::endl;
-    
-    std::cout << "--- Test Case 2 (Binary Tree Example) ---" << std::endl;
-    // Tree: [1, null, 2, 3]
-    std::vector<std::string> tree_list = {"1", "null", "2", "3"};
-    TreeNode* root = listToBinaryTree(tree_list);
-    
-    std::cout << "Deserialized Tree Visualization:" << std::endl;
-    printTree(root);
-    
-    std::vector<std::string> serialized = binaryTreeToList(root);
-    std::cout << "Serialized back to list: ";
-    printVector(serialized);
-    
-    assert(serialized == tree_list && "Tree serialization/deserialization mismatch!");
-    std::cout << "Tree test passed!\n" << std::endl;
-    
-    freeBinaryTree(root);
     std::cout << "All tests run successfully!" << std::endl;
     return 0;
 }

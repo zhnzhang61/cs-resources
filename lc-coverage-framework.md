@@ -227,7 +227,7 @@ framework 不是终点，是**起点**。从 Stage 3（懂框架）→ Stage 4�
 
 | 子项 | 扩展题 |
 |---|---|
-| 1A 纯模拟 | Rotate Image (48) · Game of Life (289) · Set Matrix Zeroes (73) |
+| 1A 纯模拟 | Spiral Matrix II (59) · Rotate Image (48) · Game of Life (289) · Set Matrix Zeroes (73) |
 | 1B 状态机 | String to Integer atoi (8) · Basic Calculator (224) · Decode String (394) · Simplify Path (71) |
 | 1C Running 标量 | Maximum Subarray (53) · Maximum Value of an Ordered Triplet II (2874) · Largest 1-Bordered Square (1139) |
 | 1D Frontier | Jump Game (55) · Min Taps (1326) · Video Stitching (1024) |

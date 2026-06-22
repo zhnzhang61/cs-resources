@@ -277,6 +277,67 @@ Implement Trie (208) · The Skyline Problem (218) · Range Module (715) · Short
 
 **10 题里 8 道 #1**——印证 LC 题量分布严重偏 #1，"先按 #1 试" 是高 ROI 策略。
 
+---
+
+## 附录 C：worked example — Spiral Matrix I/II × Number of Islands（2026-06-22）
+
+三道网格题，横跨 **Bucket 1.A 模拟** 和 **Bucket 2 遍历**，正好演示"循环骨架什么时候能借、什么时候必须自己驱动 cursor"。
+
+- **Spiral Matrix I (54)** — Bucket 1.A：单 cursor，方向是可变变量，撞墙转向
+- **Spiral Matrix II (59)** — 同骨架，"读"换成"写"
+- **Number of Islands (200)** — Bucket 2：外层扫描找种子 + 内层 BFS flood
+
+> 约定：统一用 `(r, c)`（行、列），让 tuple 顺序和 `grid[r][c]` 同序、不翻——这是踩了 `(x,y)` vs `grid[y][x]` 交叉接线的坑后总结的习惯。
+
+### Pseudo code
+
+```
+# ---- Spiral Matrix I (54)：读出螺旋序 ----
+# 1.A 模拟：单 cursor，frontier 恒为 1 个，方向是可变数据
+DIRS = [(0,1),(1,0),(0,-1),(-1,0)]      # 右 下 左 上，顺时针
+r = c = d = 0
+for _ in range(m * n):                  # 固定循环 m*n 次
+    res.append(matrix[r][c]); seen[r][c] = True
+    nr, nc = r + DIRS[d][0], c + DIRS[d][1]
+    if 越界 or seen[nr][nc]:             # 撞墙 → 转向（方向作为数据被改写）
+        d = (d + 1) % 4
+        nr, nc = r + DIRS[d][0], c + DIRS[d][1]
+    r, c = nr, nc                       # 前进：覆盖单 cursor
+
+# ---- Spiral Matrix II (59)：同骨架，"读"换成"写" ----
+# 唯一改动：res.append(matrix[r][c])  →  matrix[r][c] = i  （i 从 1 递增）
+# 且 res 自身可当 visited（值 ≥ 1 即已访问），省掉 seen 矩阵
+
+# ---- Number of Islands (200)：外层扫描找种子 + 内层 BFS flood ----
+# Bucket 2 遍历：frontier 是队列（size 可 > 1），四个邻居全展开
+res = 0
+for r in range(m):                      # 嵌套扫描，顺序无关 → 最干净
+    for c in range(n):
+        if grid[r][c] == '1':           # 一块没被淹的陆地 = 一座新岛
+            res += 1
+            q = deque([(r, c)]); grid[r][c] = '0'
+            while q:                     # BFS：把整片连通的 1 淹掉
+                cr, cc = q.popleft()
+                for dr, dc in DIRS:
+                    nr, nc = cr + dr, cc + dc
+                    if 在界内 and grid[nr][nc] == '1':
+                        grid[nr][nc] = '0'; q.append((nr, nc))
+```
+
+### 三点总结：循环骨架的适用边界
+
+1. **`for r: for c:` 嵌套双循环是二维数组的默认惯用写法，能用就用**——直接拿到 `(r,c)`，可读、不用解码。
+
+2. **Number of Islands 用 `for _ in range(m*n)` 或嵌套循环都行，因为它与遍历顺序无关**（只要碰到每个格子找种子即可）。但 flat loop 还要 `divmod` 解码坐标，不够优雅 → **顺序无关的题首选嵌套**。
+
+3. **Spiral Matrix 用嵌套循环很别扭**：嵌套循环把"方向"**焊死在代码结构里**（内层永远沿 c 走、外层沿 r 进，静态、均匀）。而 Spiral 要的是**可变方向**（`d` 变量 + 转向）。代码结构不能在运行时改，所以方向**必须外化成变量**，用 `while`/固定循环 + 显式 cursor `(r, c, d)` 驱动——**不能 loop 时定义一次、loop 里再改一次**。
+
+### 两条贯穿的原理
+
+- **单 cursor = size-1 的 frontier**：Spiral 和 Islands 是一条连续谱——同一个"扫描 + 前进"骨架，内层 frontier 从 size-1（单 cursor，`r,c = nr,nc`）涨到 size-N（队列，push 所有分支 + pop 下一个）。**BFS 就是"单 cursor 前进"在遇到分叉时的自然推广**：分叉时没走的分支得有地方存，那地方就是队列。
+
+- **嵌套循环 = 冻结的遍历**（顺序 + 方向焊死在结构里）：问题**不挑顺序** → 借它最干净（Islands）；问题要**动态/特定遍历** → 把遍历状态（位置 + 方向 + frontier）**外化成可变 cursor + `while`**（Spiral）。能不能借现成循环骨架，取决于**遍历是焊死在结构里，还是活在变量里**。
+
 
 
 

@@ -279,7 +279,7 @@ Implement Trie (208) · The Skyline Problem (218) · Range Module (715) · Short
 
 ---
 
-## 附录 C：worked example — Spiral Matrix I/II × Number of Islands（2026-06-22）
+## 刷题笔记 · 2026-06-22：Spiral Matrix I / II × Number of Islands
 
 三道网格题，横跨 **Bucket 1.A 模拟** 和 **Bucket 2 遍历**，正好演示"循环骨架什么时候能借、什么时候必须自己驱动 cursor"。
 

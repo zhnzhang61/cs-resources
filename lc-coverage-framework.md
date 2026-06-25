@@ -338,6 +338,79 @@ for r in range(m):                      # 嵌套扫描，顺序无关 → 最干
 
 - **嵌套循环 = 冻结的遍历**（顺序 + 方向焊死在结构里）：问题**不挑顺序** → 借它最干净（Islands）；问题要**动态/特定遍历** → 把遍历状态（位置 + 方向 + frontier）**外化成可变 cursor + `while`**（Spiral）。能不能借现成循环骨架，取决于**遍历是焊死在结构里，还是活在变量里**。
 
+---
+
+## 刷题笔记 · 2026-06-22：Best-Time 全家桶（121 / 122 / 123 / 188，cost/profit 解法）
+
+**一句话：四道题同一套骨架，区别只在「买入成本能不能被已赚利润补贴」。**
+
+这套 `cost/profit` 解法是从单笔交易的 `min_price / max_profit` 直觉推广来的——比标准的 `hold/cash` 状态机更顺，因为它把"持有"读成一个**要 minimize 的买入成本**（而不是一个负的现金余额）。
+
+### 四个解法
+
+```python
+# ---- 121 一次交易 ----
+def maxProfit(self, prices):
+    cost, profit = float('inf'), 0
+    for p in prices:
+        cost   = min(cost, p)             # 净成本 = 裸价（没有利润可补贴）
+        profit = max(profit, p - cost)    # 卖出 = 当前价 − 最低成本
+    return profit
+
+# ---- 122 无限次 ----（只把上面 cost 那行加个 − profit；数组塌成标量）
+def maxProfit(self, prices):
+    cost, profit = float('inf'), 0
+    for p in prices:
+        cost   = min(cost, p - profit)    # 净成本 = 当前价 − 已赚利润
+        profit = max(profit, p - cost)
+    return profit
+# 等价于贪心：sum(max(0, prices[i] - prices[i-1]) for i in range(1, n))
+
+# ---- 123 两次交易 ----（展开成两块：第一块就是 121，第二块用 profit1 补贴）
+def maxProfit(self, prices):
+    cost1 = cost2 = float('inf')
+    profit1 = profit2 = 0
+    for p in prices:
+        cost1   = min(cost1,   p)            # 第 1 笔买入：裸价
+        profit1 = max(profit1, p - cost1)    # 第 1 笔卖出
+        cost2   = min(cost2,   p - profit1)  # 第 2 笔买入：用第 1 笔利润补贴
+        profit2 = max(profit2, p - cost2)    # 第 2 笔卖出
+    return profit2
+
+# ---- 188 k 次 ----（把 123 的两块叠成 k 层）
+def maxProfit(self, k, prices):
+    cost   = [float('inf')] * (k + 1)
+    profit = [0] * (k + 1)
+    for p in prices:
+        for t in range(1, k + 1):
+            cost[t]   = min(cost[t],   p - profit[t-1])  # 第 t 笔买入：前 t−1 笔利润补贴
+            profit[t] = max(profit[t], p - cost[t])      # 第 t 笔卖出
+    return profit[k]
+```
+
+退化链：**123 的 `cost1/profit1` 块逐字就是 121，`cost2` 用 `profit1` 补贴；188 不过是把这两块叠成 k 层。** 四道题是同一个递推，参数化 `K`：121 (K=1) → 122 (K=∞，塌标量) → 123 (K=2) → 188 (K=k)。
+
+### 核心要点（按讨论顺序）
+
+1. **`cost/profit` = 单笔 `min_price/max_profit` 的推广**：`cost` 取 min（最低净买入成本），`profit` 取 max（卖出后最大现金）。
+2. **唯一的分界线**：1 次 `cost = min(cost, p)` → 多次 `cost = min(cost, p − profit)`。那个 **`− profit` = 把已赚利润滚进下一次买入做补贴**。1 次交易是"`profit` 恒为 0"的特例。
+3. **`t` 是预算不是计数**：从第一天起并行维护所有 k 条预算车道；历史不够时高预算车道只是低预算车道的影子，够了才分岔。
+4. **买入永远免费，车道差距 = 结转利润**：`cost` 能为负（利润补贴买入）；第二条车道领先第一条的量 = 第一笔赚的钱，而不是"赚了钱才买得起"。
+5. **低预算是高预算的地基**：`cost[t]` 依赖 `profit[t−1]`，所以内层 `t` 必须升序、`profit[0]=0` 当边界（零笔交易的地基）。
+6. **无限次 = 预算维度蒸发**：没有预算可记 → 数组塌成标量；等价于贪心"累加所有正的日间涨幅"。
+7. **`cost = −hold`**：这套 cost/profit 就是标准 `hold/cash` 翻了个符号，让"持有"读成"要压低的买入成本"，对上单笔交易的 `min_price` 直觉。
+
+### trace `[1, 2, 0, 5]`（k=2，答案 6）
+
+```
+p=1:  cost2=1            profit2=0
+p=2:  cost2=1            profit2=1
+p=0:  cost2=0−1=−1 ←!    profit2=1      # 净成本变负 = 第一笔利润补贴了第二次买入
+p=5:  cost2=−1           profit2=5−(−1)=6
+```
+
+`cost2` 在 `p=0` 变负，正是"已赚的 1 块钱补贴了这次买入"的字面体现——这就是单笔 `min_price` 精神在多笔里的样子：还是压低买入成本，只不过成本被前面的利润压到了负数。
+
 
 
 

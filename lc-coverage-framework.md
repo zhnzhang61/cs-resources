@@ -69,10 +69,10 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 | Connected components / islands / provinces | graph / 2D array | flood (BFS/DFS) or union-find | **200** Number of Islands | 547, 721 |
 | Merge / overlapping intervals | intervals | sort + sweep line | **56** Merge Intervals | 435, 252 |
 
-### H · Matching / nesting
+### H · Matching / nesting / parsing
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| Valid / correctly nested parentheses | stack | stack | **20** Valid Parentheses | 32, 394 |
+| Parse / validate a nested or paired structure | stack | stack | **394** Decode String | 20, 224, 32 |
 
 ### I · Traverse by a rule / output order
 | Task | Data structure | Algorithm | Do this | Others |
@@ -130,8 +130,8 @@ flowchart LR
     t16["Count connected components / islands · #200"]
     t17["Merge overlapping intervals · #56"]
   end
-  subgraph H["H · 匹配 match"]
-    t18["Validate nested parentheses · #20"]
+  subgraph H["H · 匹配/解析 match·parse"]
+    t18["Parse a nested / paired structure · #394"]
   end
   subgraph I["I · 遍历产出 traverse"]
     t19["Output a 2D array in spiral order · #54"]
@@ -193,9 +193,20 @@ block ≈ 题干意图，而**大部分意图 block 跟算法近 1:1**（B→双
 
 > 合起来：**全表最需要"读数据结构"的地方就是 block A**，那也是枢纽算法扎堆处；其余 block 看到题干基本就落。
 
+### 旁注 — 叶子技法的横切家族（技法轴，跟 block 正交）
+
+block 按**题干**分；底下的**技法**还能横切成几个家族，这解释了为什么有些 block 感觉相似：
+
+- **栈家族（H 普通栈 ↔ F 单调栈）**：都是"左→右扫，把*待解决*的项压栈，等未来某元素来*解决*"。括号靠**精确配对**解决，next greater 靠**比较**解决——骨架同，只是 pop 条件不同。
+- **哈希记忆家族（K 前缀和+哈希 ↔ Two Sum）**：存过去见过的状态，查当前的补集在不在。
+- **游标家族（B 双指针/快慢 ↔ A 滑窗）**：序列上移动一两个游标（单 cursor = size-1 frontier）。
+- **维护极值家族（E 堆 ↔ 单调栈/队列）**：随时拿到极值。
+
+这是**技法轴**，跟 block 的**题干轴正交**——是补充视角，不替代分类。意图上也能聚簇：**A+D 算数值 · B+E 定位 · F+G+I 关系遍历 · H+J+K 序列专项**。
+
 ### do-list（每个组合一道，21+ 道）
 
-`3 · 875 · 1091 · 64 · `**`121`**` · 322 · 704 · 167 · 287 · 78 · 79 · 62 · 215 · 295 · 739 · 207 · `**`200`**` · 56 · 20 · `**`54`**` · 102 · 208 · 5 · 560`
+`3 · 875 · 1091 · 64 · `**`121`**` · 322 · 704 · 167 · 287 · 78 · 79 · 62 · 215 · 295 · 739 · 207 · `**`200`**` · 56 · 394 · `**`54`**` · 102 · 208 · 5 · 560`
 
 > 加粗的 **54 螺旋矩阵**（block I）、**200 岛屿数量**（block G）、**121 买卖股票**（block A）是已经做过的，已归位。浏览 LeetCode 时新题往对应 block 的「其他例」列加；单格 block（D/E/H/I/J/K）会慢慢长起来。
 

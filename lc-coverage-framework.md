@@ -93,9 +93,10 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 
 ### 连线图（题干×DS → 算法）
 
-左边每个「题干 · 代表题」连到右边算法。**蓝色 = 枢纽**（多条线汇入），其余是叶子（1:1）。一眼能看出 DP / BFS·DFS / 二分 / 回溯 收了大量线。
+左边按 A–K 意图 block 分框，框内是「题干 · 代表题」，连到右边算法。**蓝色 = 枢纽**（多条线汇入），其余是叶子（1:1）。一眼能看出 DP / BFS·DFS / 二分 / 回溯 收了大量线。
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 8, 'rankSpacing': 60, 'wrappingWidth': 420}, 'themeVariables': {'fontSize': '11px'}}}%%
 flowchart LR
   subgraph A["A · 求最优 optimize"]
     t1["Longest substring meeting a condition · #3"]

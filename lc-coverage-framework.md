@@ -138,11 +138,11 @@ block 按**题干**分；底下的**技法**还能横切成几个家族，这解
 
 ## 刷题笔记 · 2026-06-22：Spiral Matrix I / II × Number of Islands
 
-三道网格题，横跨 **Bucket 1.A 模拟** 和 **Bucket 2 遍历**，正好演示"循环骨架什么时候能借、什么时候必须自己驱动 cursor"。
+三道网格题，横跨 **block I（模拟）** 和 **block H（flood / BFS·DFS）**，正好演示"循环骨架什么时候能借、什么时候必须自己驱动 cursor"。
 
-- **Spiral Matrix I (54)** — Bucket 1.A：单 cursor，方向是可变变量，撞墙转向
+- **Spiral Matrix I (54)** — block I（模拟，方向 cursor）：单 cursor，方向是可变变量，撞墙转向
 - **Spiral Matrix II (59)** — 同骨架，"读"换成"写"
-- **Number of Islands (200)** — Bucket 2：外层扫描找种子 + 内层 BFS flood
+- **Number of Islands (200)** — block H（分组/连通，flood）：外层扫描找种子 + 内层 BFS flood
 
 > 约定：统一用 `(r, c)`（行、列），让 tuple 顺序和 `grid[r][c]` 同序、不翻——这是踩了 `(x,y)` vs `grid[y][x]` 交叉接线的坑后总结的习惯。
 
@@ -150,7 +150,7 @@ block 按**题干**分；底下的**技法**还能横切成几个家族，这解
 
 ```
 # ---- Spiral Matrix I (54)：读出螺旋序 ----
-# 1.A 模拟：单 cursor，frontier 恒为 1 个，方向是可变数据
+# block I 模拟：单 cursor，frontier 恒为 1 个，方向是可变数据
 DIRS = [(0,1),(1,0),(0,-1),(-1,0)]      # 右 下 左 上，顺时针
 r = c = d = 0
 for _ in range(m * n):                  # 固定循环 m*n 次
@@ -166,7 +166,7 @@ for _ in range(m * n):                  # 固定循环 m*n 次
 # 且 res 自身可当 visited（值 ≥ 1 即已访问），省掉 seen 矩阵
 
 # ---- Number of Islands (200)：外层扫描找种子 + 内层 BFS flood ----
-# Bucket 2 遍历：frontier 是队列（size 可 > 1），四个邻居全展开
+# block H flood：frontier 是队列（size 可 > 1），四个邻居全展开
 res = 0
 for r in range(m):                      # 嵌套扫描，顺序无关 → 最干净
     for c in range(n):

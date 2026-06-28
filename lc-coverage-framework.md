@@ -1,154 +1,196 @@
 # LC Coverage Framework
 
-按"**人类直觉**"分类的 LeetCode 7 大 bucket framework，配 25 道代表性母题。
+LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，配代表题 + 连线图。
 
-> **目标函数**：在面试白板前，能在 30 秒内把陌生题归到一个 bucket，对应到一个写代码模板。
+> **目标函数**：在面试白板前，30 秒内把陌生题从题干归到方法，对应一道代表题。
 >
 
 ---
 
-## 1. 七大 Bucket：按"大脑动作"命名
+## 1. 从题干推断方法：题干 → 数据结构 → 算法
 
-每个 bucket 对应**一个动词**——面试时按 1→7 心里默念，第几个动作对应得上就用第几个。
+面试真实流程：先看到**题干**，再看到**数据结构**，最后**推断算法**——没人上来就告诉你该用什么算法。这套框架按这个顺序组织：题干在最顶层（归入意图 block A–K），中间看数据结构，右边落到算法。
 
-**从最贴直觉到最反直觉排列**：
+**怎么用**：
 
-| # | 大脑动作 | Bucket 名 | 一句话识别 |
-|---|---|---|---|
-| 1 | "**看到啥就做**" | 模拟 & 贪心 | 题给规则，按规则走 |
-| 2 | "**沿结构跑一遍**" | 遍历（Tree + Graph + Grid） | 题给树/图/网格，顺着探索 |
-| 3 | "**试-失败-退回-再试**" | 回溯 | 题问"所有可能"或"构造满足条件的" |
-| 4 | "**框一段 / 缩范围**" | 双指针 / 滑窗 / 二分 | 1D 序列上窗口或答案空间收敛 |
-| 5 | "**维护当前最值**" | 堆 / 单调栈 / 单调队列 | 流式或扫描中要随时拿极值 |
-| 6 | "**拆成子问题**" | DP | 当前选择依赖之前选择 + 重叠 |
-| 7 | "**上专用工具**" | 特化 DS (LRU / Trie / UF / BIT / KMP) | 朴素工具撑不住，要为此设计的结构 |
+1. 读题干 → 归入一个意图 block（A–K）
+2. 看数据结构那一列
+3. 连到算法
 
-**直觉密度断层**：1-5 是直觉能引导的，**6-7 必须靠训练**。
-
-**LC 题量分布**（粗估）：
-
-```
-Bucket 1: ~30-40%    ← 最大兜底池
-Bucket 6: ~15-20%
-Bucket 2: ~15%
-Bucket 4: ~10-15%
-Bucket 5: ~5-10%
-Bucket 3: ~5-10%
-Bucket 7: ~5%
-```
-
-**面试操作启发**：看到题，**先按 #1 试**。"先模拟/贪心试一遍跑不通才升级"是单一最高 ROI 的面试 heuristic。
+**只有 block A（求最优）需要靠数据结构在内部岔开**；其余 block 基本「一个 block ≈ 一个算法」，看到题干就能落（见 §3 规律）。
 
 ---
 
-## 2. Bucket 1 的两层结构
+## 2. 主表（按意图 block 分组，每格一道代表题）
 
-Bucket 1 占 LC 30-40%，不细分会沦为"#1 = 题"。压成 **3 个大类 × 2-3 个子项**：
+### A · 求最优（最大 / 最小 / 最长 / 最短）— 唯一一个内部按 DS 散射的 block
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| 连续子段最长/最短满足条件 | 数组/字符串 | 滑窗 | **3** 无重复最长子串 | 76, 424 |
+| 最大化最小 / 最小化最大 / 最小可行值 | 答案空间 | 二分答案 | **875** Koko | 410, 1011, 1552 |
+| 无权图/网格最短路 | 图/网格 | BFS | **1091** 二进制矩阵最短路 | 127 |
+| 网格最小/最大路径 | 网格 | 网格 DP | **64** 最小路径和 | 62, 931 |
+| 一路扫最大收益 / 最大子段和 | 数组 | 扫描/DP(累积) | **121** 买卖股票 | 53, 122/123/188 |
+| 序列最优 + 子问题重叠 | 数组/字符串 | DP | **322** 零钱 | 72, 300 |
 
+### B · 找一个 / 定位
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| 有序数组里找 target | 有序数组 | 二分 | **704** 二分查找 | 33, 35 |
+| 有序里找一对求和 | 有序数组 | 对撞双指针 | **167** 两数之和 II | 15 |
+| 找环 / 找重复数 | 链表 / 数组当链表 | 快慢指针 | **287** 寻找重复数 | 141, 142 |
+
+### C · 枚举所有
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| 所有 组合/排列/子集/分割 | 决策树(数组/树) | 回溯 | **78** 子集 | 46, 39, 131, 17 |
+| 网格里搜所有匹配路径 | 网格 | 回溯(+Trie) | **79** 单词搜索 | 212 |
+
+### D · 计数
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| 多少种走法 / 方案数 | 数组/网格/字符串 | DP 计数 | **62** 不同路径 | 518, 91 |
+
+### E · 第 k
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| 第 k 大/小（静态） | 数组 | 堆 / 快速选择 | **215** 第 k 大 | 347 |
+| 第 k / 中位数（流） | 流 | 堆 / 双堆 | **295** 数据流中位数 | 703 |
+
+### F · 前后关系 / 依赖
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| next greater / smaller | 数组序列 | 单调栈 | **739** 每日温度 | 496, 84, 503 |
+| 先修 / 依赖 / build order | 图(DAG) | 拓扑排序 | **207** 课程表 | 210, 269 |
+
+### G · 分组 / 连通
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| 连通块 / 岛屿 / 省份 | 图/网格 | flood(BFS/DFS) 或 并查集 | **200** 岛屿数量 | 547, 721 |
+| 区间合并 / 重叠 | 区间 | 排序 + 扫描线 | **56** 合并区间 | 435, 252 |
+
+### H · 匹配 / 嵌套
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| 括号匹配 / 嵌套合法 | 栈 | stack | **20** 有效括号 | 32, 394 |
+
+### I · 按规则遍历 / 产出顺序
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| 螺旋 / 蛇形按序输出 | 网格 | 模拟(方向 cursor) | **54** 螺旋矩阵 | 59, 885 |
+| 层序 / 前中后序 | 树 | BFS / DFS 遍历 | **102** 层序遍历 | 94, 144 |
+
+### J · 字符串
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| 前缀 / 字典查找 | 字符串集合 | Trie | **208** 实现 Trie | 212, 648 |
+| 最长回文 | 字符串 | 中心扩展 / DP | **5** 最长回文子串 | 647 |
+
+### K · 子数组和 / 前缀
+| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+|---|---|---|---|---|
+| subarray 和 = k | 数组 | 前缀和 + 哈希 | **560** 和为 k 的子数组 | 523 |
+
+### 连线图（题干×DS → 算法）
+
+左边每个「题干 · 代表题」连到右边算法。**蓝色 = 枢纽**（多条线汇入），其余是叶子（1:1）。一眼能看出 DP / BFS·DFS / 二分 / 回溯 收了大量线。
+
+```mermaid
+flowchart LR
+  subgraph A["A · 求最优 optimize"]
+    t1["Longest substring meeting a condition · #3"]
+    t2["Minimize the max / smallest feasible value · #875"]
+    t3["Fewest steps, unweighted graph or grid · #1091"]
+    t4["Cheapest path through a grid · #64"]
+    t5["Best buy-sell profit over one sweep · #121"]
+    t6["Best over a sequence, overlapping subproblems · #322"]
+  end
+  subgraph B["B · 找/定位 locate"]
+    t7["Find target in a sorted array · #704"]
+    t8["Find a pair summing to target · #167"]
+    t9["Detect a cycle / find the duplicate · #287"]
+  end
+  subgraph C["C · 枚举 enumerate"]
+    t10["List all subsets / permutations · #78"]
+    t11["Search all matching paths in a grid · #79"]
+  end
+  subgraph D["D · 计数 count"]
+    t12["Count how many ways / paths · #62"]
+  end
+  subgraph E["E · 第k k-th"]
+    t13["K-th largest, or median of a stream · #215"]
+  end
+  subgraph F["F · 顺序/依赖 order"]
+    t14["Next greater / smaller element · #739"]
+    t15["Prerequisite / build order · #207"]
+  end
+  subgraph G["G · 分组/连通 group"]
+    t16["Count connected components / islands · #200"]
+    t17["Merge overlapping intervals · #56"]
+  end
+  subgraph H["H · 匹配 match"]
+    t18["Validate nested parentheses · #20"]
+  end
+  subgraph I["I · 遍历产出 traverse"]
+    t19["Output a grid in spiral order · #54"]
+  end
+  subgraph J["J · 字符串 string"]
+    t20["Prefix / dictionary lookup · #208"]
+  end
+  subgraph K["K · 子数组和 prefix-sum"]
+    t21["Subarray sum equals k · #560"]
+  end
+  t1 --> aSW["Sliding window"]
+  t2 --> aBS["Binary search ★"]
+  t3 --> aBFS["BFS / DFS ★"]
+  t4 --> aDP["DP ★"]
+  t5 --> aDP
+  t6 --> aDP
+  t7 --> aBS
+  t8 --> a2P["Two pointers"]
+  t9 --> aFS["Fast-slow pointers"]
+  t10 --> aBT["Backtracking ★"]
+  t11 --> aBT
+  t12 --> aDP
+  t13 --> aHeap["Heap"]
+  t14 --> aMS["Monotonic stack"]
+  t15 --> aTopo["Topological sort"]
+  t16 --> aBFS
+  t17 --> aSweep["Sort + sweep"]
+  t18 --> aStack["Stack"]
+  t19 --> aSim["Simulation"]
+  t20 --> aTrie["Trie"]
+  t21 --> aPre["Prefix + hash"]
+  classDef hub fill:#E6F1FB,stroke:#185FA5,color:#0C447C;
+  class aBS,aBFS,aDP,aBT hub;
 ```
-Bucket 1：模拟 & 贪心
-│
-├── 1.A 照着做 (Execute)               ← "题给规则我执行"
-│   ├── 1A 纯物理模拟
-│   └── 1B 状态机 / 解析
-│
-├── 1.B 扫一遍 + 维护 (Scan + Maintain) ← "盯着某个指标推进"
-│   ├── 1C Running 标量扫描
-│   ├── 1D Frontier 贪心
-│   └── 1E 区间贪心
-│
-└── 1.C 想清楚再写 (Analyze + Construct) ← "先证明/计数，再构造"
-    ├── 1F 频次驱动构造
-    └── 1G 不变量贪心
-```
-
-**3 大类对应 3 种时间分配**：
-
-| 大类 | 你在做什么 | 难点在 | 时间感 |
-|---|---|---|---|
-| **1.A 照着做** | 题面 1:1 翻译成代码 | careful coding + 边界 case | 实现长，思考短 |
-| **1.B 扫一遍 + 维护** | 想清楚"维护什么"，然后线性扫 | 选对"维护什么" | 思考中等，实现中等 |
-| **1.C 想清楚再写** | 数学/逻辑推导，再 5 行写完 | 找关键观察 | 思考长，实现极短 |
-
-判到第一层就知道**该花时间在脑还是手上**。
-
-### 子项的 trigger 短语
-
-| 子项 | Trigger 短语（看到题面有这些关键词） | 维护什么 / 怎么做 |
-|---|---|---|
-| 1A 纯物理模拟 | "按规则旋转/移动/翻转"、给清晰执行步骤 | 翻译题面 + 边界控制 |
-| 1B 状态机 / 解析 | 解析字符串、validate 格式、按字符更新内部状态 | flag/counter，按 transition 规则更新 |
-| 1C Running 标量扫描 | "find max/min of (a op b) with i<j" 之类顺序约束 | 2-4 个 running max/min 标量 |
-| 1D Frontier 贪心 | "min count to cover" / "max reach" / 跳跃 | 当前能到的最远 + 下一前沿 |
-| 1E 区间贪心 | 给一堆区间，问 max 不重叠 / min 覆盖 / 合并 | 按 start 或 end 排序，扫一遍 |
-| 1F 频次驱动构造 | "给频次构造合法序列" / "按字母位置反推" | count[] + 公式 or count + heap |
-| 1G 不变量贪心 | 题给操作但**直接模拟会爆炸**，必须分析操作的本质 | 证明可达/不可达 → O(n) 构造 |
 
 ---
 
-## 3. 25 道代表性母题
+## 3. 两条规律 + do-list
 
-每个 bucket 选 1-7 题作"主题课题"，覆盖该 bucket 主流子模式。**Bucket 1 给了 7 题（每子项 1 道）**，因为它最大。
+### 规律 1 — 枢纽 vs 叶子（把题干×DS 连到算法，看入度）
 
-### Bucket 1 — 模拟 & 贪心（7 题，每子项 1 道）
-
-| # | 子项 | 题 | 难度 | 教什么 |
+| | 入度 | 算法 | 读 DS 吗 | 怎么处理 |
 |---|---|---|---|---|
-| 1 | 1A 纯模拟 | [Spiral Matrix (54)](https://leetcode.com/problems/spiral-matrix/) | Medium | 矩阵模拟 + 边界控制 |
-| 2 | 1B 状态机 | [Valid Number (65)](https://leetcode.com/problems/valid-number/) | Hard | 字符串 DFA |
-| 3 | 1C Running 标量 | [Best Time to Buy/Sell Stock (121)](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) | Easy | 维护 minPrice + maxProfit 两个标量 |
-| 4 | 1D Frontier | [Jump Game II (45)](https://leetcode.com/problems/jump-game-ii/) | Medium | BFS-style 前沿扩展，跨层 count++ |
-| 5 | 1E 区间 | [Non-overlapping Intervals (435)](https://leetcode.com/problems/non-overlapping-intervals/) | Medium | 按右端点排序 + 贪心保留 |
-| 6 | 1F 频次驱动 | [Reorganize String (767)](https://leetcode.com/problems/reorganize-string/) | Medium | max-heap + 不能连放同字符 |
-| 7 | 1G 不变量 | [Gas Station (134)](https://leetcode.com/problems/gas-station/) | Medium | "前缀和最低点的下一个出发"的不变量证明 |
+| **枢纽** | ≥ 2 | DP（←4）· BFS/DFS（←2）· 二分（←2）· 回溯（←2） | **必须读** | 题干 → 看 DS → 才能定算法 |
+| **叶子** | = 1 | 单调栈 · 拓扑 · Trie · 栈 · 滑窗 · 双指针 · 快慢 · 堆 · 排序+扫描 · 模拟 · 前缀和 | 不用读 | 扳机词 → 直接落 |
 
-### Bucket 2 — 遍历（Tree + Graph + Grid）（3 题）
+- **叶子有扳机词**：next greater→单调栈、prereq→拓扑、括号→栈、prefix→Trie，看到就落，数据结构那列都不用看。
+- **枢纽要消歧**：题干流向 DP/BFS·DFS/二分/回溯 时，必须读数据结构来决定走哪条线。
+- **认知预算**：80% 投在 4 个枢纽算法 × 数据结构的组合上；叶子是查表。
 
-| # | 子项 | 题 | 难度 | 教什么 |
-|---|---|---|---|---|
-| 8 | Grid | [Number of Islands (200)](https://leetcode.com/problems/number-of-islands/) | Medium | DFS / BFS / 并查集 三解对照 |
-| 9 | Graph | [Course Schedule II (210)](https://leetcode.com/problems/course-schedule-ii/) | Medium | 拓扑排序（Kahn 算法） |
-| 10 | Tree | [Binary Tree Maximum Path Sum (124)](https://leetcode.com/problems/binary-tree-maximum-path-sum/) | Hard | Tree DP 入门，孩子 return value 合并 |
+### 规律 2 — A 是唯一的「散射 block」
 
-### Bucket 3 — 回溯（2 题）
+block ≈ 题干意图，而**大部分意图 block 跟算法近 1:1**（B→双指针/二分、F→单调栈/拓扑、H→栈…，看到就落）。唯独 **block A（求最优）一个 block 内部就散到 滑窗 / 二分 / BFS / DP 四个算法**，靠数据结构区分。
 
-| # | 题 | 难度 | 教什么 |
-|---|---|---|---|
-| 11 | [N-Queens (51)](https://leetcode.com/problems/n-queens/) | Hard | 回溯 + 三集合剪枝 |
-| 12 | [Word Search II (212)](https://leetcode.com/problems/word-search-ii/) | Hard | 回溯 + Trie 同时搜多词 |
+> 合起来：**全表最需要"读数据结构"的地方就是 block A**，那也是枢纽算法扎堆处；其余 block 看到题干基本就落。
 
-### Bucket 4 — 双指针 / 滑窗 / 二分（3 题）
+### do-list（每个组合一道，21+ 道）
 
-| # | 题 | 难度 | 教什么 |
-|---|---|---|---|
-| 13 | [Trapping Rain Water (42)](https://leetcode.com/problems/trapping-rain-water/) | Hard | 双指针 / 单调栈 / DP 三解 |
-| 14 | [Minimum Window Substring (76)](https://leetcode.com/problems/minimum-window-substring/) | Hard | 滑窗 + hash 模板 |
-| 15 | [Split Array Largest Sum (410)](https://leetcode.com/problems/split-array-largest-sum/) | Hard | **二分答案**（非自然的思维跳） |
+`3 · 875 · 1091 · 64 · `**`121`**` · 322 · 704 · 167 · 287 · 78 · 79 · 62 · 215 · 295 · 739 · 207 · `**`200`**` · 56 · 20 · `**`54`**` · 102 · 208 · 5 · 560`
 
-### Bucket 5 — 维护最值（3 题）
-
-| # | 子项 | 题 | 难度 | 教什么 |
-|---|---|---|---|---|
-| 16 | 堆 | [Merge K Sorted Lists (23)](https://leetcode.com/problems/merge-k-sorted-lists/) | Hard | k 路归并 / 分治两解 |
-| 17 | 单调栈 | [Largest Rectangle in Histogram (84)](https://leetcode.com/problems/largest-rectangle-in-histogram/) | Hard | 单调栈找左右第一个更小 |
-| 18 | 单调队列 | [Sliding Window Maximum (239)](https://leetcode.com/problems/sliding-window-maximum/) | Hard | 单调队列 |
-
-### Bucket 6 — 动态规划（5 题，覆盖五大 DP 子类）
-
-| # | 子类 | 题 | 难度 | 教什么 |
-|---|---|---|---|---|
-| 19 | 1D 线性 / 完全背包 | [Coin Change (322)](https://leetcode.com/problems/coin-change/) | Medium | DP 入门，dp[v] = 凑 v 的最少硬币 |
-| 20 | 2D 字符串 DP | [Edit Distance (72)](https://leetcode.com/problems/edit-distance/) | Medium | dp[i][j] = 前 i / 前 j 的编辑距离 |
-| 21 | 区间 DP | [Burst Balloons (312)](https://leetcode.com/problems/burst-balloons/) | Hard | **反向思考**：最后戳哪个 |
-| 22 | 状态 DP | [Best Time to Buy/Sell IV (188)](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/) | Hard | dp[i][j][holding] 三维状态 |
-| 23 | 位掩码 DP | [Shortest Path Visiting All Nodes (847)](https://leetcode.com/problems/shortest-path-visiting-all-nodes/) | Hard | 位掩码编码访问集 + BFS |
-
-### Bucket 7 — 特化 DS（2 题）
-
-| # | 题 | 难度 | 教什么 |
-|---|---|---|---|
-| 24 | [LRU Cache (146)](https://leetcode.com/problems/lru-cache/) | Medium | hash + 双向链表复合设计 |
-| 25 | [Range Sum Query 2D - Mutable (308)](https://leetcode.com/problems/range-sum-query-2d-mutable/) | Hard | 2D BIT / 二维线段树 |
+> 加粗的 **54 螺旋矩阵**（block I）、**200 岛屿数量**（block G）、**121 买卖股票**（block A）是已经做过的，已归位。浏览 LeetCode 时新题往对应 block 的「其他例」列加；单格 block（D/E/H/I/J/K）会慢慢长起来。
 
 ---
 

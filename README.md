@@ -8,7 +8,7 @@
 >
 > 📑 **Sibling 文件**：
 > - [`cs-bookmarks.md`](cs-bookmarks.md) — 109 条 CS 通用书签（LeetCode 算法/系统设计、OS/网络/语言基础、UIUC/Stanford 课程归档、Legacy ML 等）
-> - [`lc-coverage-framework.md`](lc-coverage-framework.md) — LC 7-bucket 分类框架 + 25 道代表性母题，面试复习索引
+> - [`lc-coverage-framework.md`](lc-coverage-framework.md) — LeetCode 解题框架：题干 → 数据结构 → 算法（A–K 意图 block + 代表题 + 连线图 + 反陷阱）+ 刷题笔记
 
 ---
 

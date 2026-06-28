@@ -93,7 +93,7 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 
 ### 连线图（题干×DS → 算法）
 
-左边按 A–K 意图 block 分框，框内是「题干 · 代表题」，连到右边算法。**蓝色 = 枢纽**（多条线汇入），其余是叶子（1:1）。一眼能看出 DP / BFS·DFS / 二分 / 回溯 收了大量线。
+左边按 A–K 意图 block 竖排（竖条标 block 字母 + 名），每行一个「题干 · 代表题」，连到右边算法。**蓝框 = 枢纽**（多条线汇入），灰框 = 叶子（1:1）；E·F·G 三条蓝竖条 = 栈/堆同族。一眼能看出 DP / BFS·DFS / 二分 / 回溯 收了大量线。
 
 ![LC method map — 题干 → 数据结构 → 算法](images/method-map.svg)
 
@@ -106,7 +106,7 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 | | 入度 | 算法 | 读 DS 吗 | 怎么处理 |
 |---|---|---|---|---|
 | **枢纽** | ≥ 2 | DP（←4）· BFS/DFS（←3）· 二分（←2）· 回溯（←2） | **必须读** | 题干 → 看 DS → 才能定算法 |
-| **叶子** | = 1 | 单调栈 · 拓扑 · Trie · 栈 · 滑窗 · 双指针 · 快慢 · 堆 · 排序+扫描 · 模拟 · 前缀和 | 不用读 | 扳机词 → 直接落 |
+| **叶子** | = 1 | 单调栈 · 拓扑 · Trie · 栈 · 滑窗 · 双指针 · 快慢 · 堆 · 排序+扫描 · 模拟 · 中心扩展 · 前缀和 | 不用读 | 扳机词 → 直接落 |
 
 - **叶子有扳机词**：next greater→单调栈、prereq→拓扑、括号→栈、prefix→Trie，看到就落，数据结构那列都不用看。
 - **枢纽要消歧**：题干流向 DP/BFS·DFS/二分/回溯 时，必须读数据结构来决定走哪条线。
@@ -130,136 +130,9 @@ block 按**题干**分；底下的**技法**还能横切成几个家族，这解
 
 ### do-list（每个组合一道，21+ 道）
 
-`3 · 875 · 1091 · 64 · `**`121`**` · 322 · 704 · 167 · 287 · 78 · 79 · 62 · 215 · 295 · 739 · 207 · `**`200`**` · 56 · 394 · `**`54`**` · 102 · 208 · 5 · 560`
+`3 · 875 · 1091 · 64 · `**`121`**` · 322 · 704 · 167 · 287 · 78 · 79 · 62 · 215 · 295 · 739 · 207 · 394 · `**`200`**` · 56 · `**`54`**` · 102 · 208 · 5 · 560`
 
 > 加粗的 **54 螺旋矩阵**（block I）、**200 岛屿数量**（block G）、**121 买卖股票**（block A）是已经做过的，已归位。浏览 LeetCode 时新题往对应 block 的「其他例」列加；单格 block（D/E/H/I/J/K）会慢慢长起来。
-
----
-
-## 4. 面试时怎么用：三级漏斗
-
-```
-Step 1: 默念 7 个 bucket 动词
-        "看到啥就做？沿结构跑？试-失败？框/缩？维护最值？拆子问题？上专用工具？"
-        ↓ 缩到一个 bucket
-
-Step 2: 如果落在 #1，再默念 3 个大类
-        "照着做？扫一遍维护？想清楚再写？"
-        ↓ 缩到一个大类
-
-Step 3: 在大类内部定到 2-3 个子项
-        ↓ 拿出模板写代码
-```
-
-工作记忆全程**只需要 3-7 个标签**，符合大脑短期记忆容量（Miller's 7±2）。
-
-### 跨 bucket 推荐做题顺序
-
-不是按编号 1→7 做，按**直觉容易度 + 依赖关系**：
-
-```
-1 模拟贪心 (1.A 子集 → 1.B → 1.C 顺序)
-  ↓
-2 遍历 (Grid → Graph → Tree 顺序)
-  ↓
-3 回溯
-  ↓
-4 框/缩
-  ↓
-5 维护最值 (堆 → 单调栈 → 单调队列)
-  ↓
-6 DP (1D → 2D → 区间 → 状态 → 位掩码)
-  ↓
-7 特化 DS
-```
-
-DP 倒数第二做——它是子问题感最难培养的，需要前面所有训练做铺垫。特化 DS 最后——前面积累的 DS 直觉让你能理解为什么需要专用工具。
-
----
-
-## 5. 反陷阱规则
-
-LC 上最危险的不是不会做，是**把 #1 题升级处理成 #5/#6/#7**。记住这几条反陷阱规则：
-
-| 题面 framing | 错误本能 | 正确 bucket | 反陷阱规则 |
-|---|---|---|---|
-| "construct a string with constraint" | backtracking (#3) | #1 1F 频次驱动 | 局部约束 + 频次可数 → 先试贪心 |
-| "min count to cover [0, n]" | graph 最短路 (#2) | #1 1D Frontier | "覆盖"+"最少"→ 先试区间贪心 |
-| "find max/min over triplets/tuples" | DP (#6) | #1 1C Running 标量 | 几个变量就能维护 → #1 |
-| "扫一遍字符串" | 遍历 (#2) | #1 1B 状态机 | 1D 线性扫不是 #2，#2 是 follow 结构边 |
-| "操作字符串 / 数组" | 模拟 (#1 1A) | #1 1G 不变量 | 直接模拟会爆炸 → 先找操作的不变量 |
-| LC tag 是 "Dynamic Programming" | 真 DP (#6) | 可能是 #1 + 简单递推 | LC tag 噪音多，看认知主干 |
-
----
-
-## 6. 怎么从"知道框架"到"秒选对工具"
-
-framework 不是终点，是**起点**。从 Stage 3（懂框架）→ Stage 4（10 秒识别）靠这 4 个习惯：
-
-1. **Active retrieval**：每题做完关掉解答，48 小时后强迫回忆 trigger → pattern。**Testing effect 决定一切**。
-2. **Trigger → pattern 字典**：每题写一行"看到 X 就用 Y"。攒 50-80 条。
-3. **5 秒约束过滤**：先看 `n` 的范围，砍掉 70% 候选 paradigm（n ≤ 20 → bitmask，n ≤ 10⁵ → O(n log n) max）。
-4. **错题 → 反陷阱规则**：每次踩坑写一条"这种 framing 不要再选错 bucket"。攒 30-50 条。
-
-**100 道有意识做的题 > 500 道无意识刷的题**。
-
----
-
-## 附录 A：扩展题（每 bucket 4-5 道，做完主 25 接着刷）
-
-### Bucket 1 各子项扩展
-
-| 子项 | 扩展题 |
-|---|---|
-| 1A 纯模拟 | Spiral Matrix II (59) · Rotate Image (48) · Game of Life (289) · Set Matrix Zeroes (73) |
-| 1B 状态机 | String to Integer atoi (8) · Basic Calculator (224) · Decode String (394) · Simplify Path (71) |
-| 1C Running 标量 | Maximum Subarray (53) · Maximum Value of an Ordered Triplet II (2874) · Largest 1-Bordered Square (1139) |
-| 1D Frontier | Jump Game (55) · Min Taps (1326) · Video Stitching (1024) |
-| 1E 区间 | Merge Intervals (56) · Insert Interval (57) · Meeting Rooms II (253) |
-| 1F 频次驱动 | Task Scheduler (621) · String Without AAA or BBB (984) · Reconstruct Original Digits (423) |
-| 1G 不变量 | Candy (135) · Container With Most Water (11) · Maximum Binary String After Change (1702) |
-
-### Bucket 2 遍历扩展
-
-- Grid：Word Search (79)、Pacific Atlantic Water Flow (417)
-- Graph：Network Delay Time (743, Dijkstra)、Connecting Cities Min Cost (1135, MST)、Critical Connections (1192, Tarjan)
-- Tree：Validate BST (98)、Binary Tree Cameras (968)、Lowest Common Ancestor (236)
-
-### Bucket 3 扩展
-Sudoku Solver (37) · Word Break II (140) · Word Squares (425) · Prefix and Suffix Search (745)
-
-### Bucket 4 扩展
-Median of Two Sorted Arrays (4) · Find Median from Data Stream (295) · Subarrays with K Different Integers (992) · Capacity to Ship Packages (1011)
-
-### Bucket 5 扩展
-Daily Temperatures (739) · Next Greater Element II (503) · Sum of Subarray Minimums (907) · Top K Frequent Elements (347)
-
-### Bucket 6 DP 扩展
-Partition Equal Subset Sum (416, 背包) · Binary Tree Cameras (968, 树形 DP) · Number of Digit One (233, 数位 DP) · Regular Expression Matching (10) · Jump Game VI (1696, 单调队列优化 DP)
-
-### Bucket 7 扩展
-Implement Trie (208) · The Skyline Problem (218) · Range Module (715) · Shortest Palindrome (214, KMP)
-
----
-
-## 附录 B：框架在 10 道随机题上的验证
-
-整理这套 framework 时实际测试过的 10 道题，全部能精确归类到 bucket + 子项：
-
-| 题 | Bucket | Bucket 1 子项 | 第一直觉陷阱 |
-|---|---|---|---|
-| [Reconstruct Original Digits (423)](https://leetcode.com/problems/reconstruct-original-digits-from-english/) | #1 | 1F 频次驱动 | ad-hoc |
-| [Next Greater Element II (503)](https://leetcode.com/problems/next-greater-element-ii/) | #5 | — | 教科书 |
-| [Valid Number (65)](https://leetcode.com/problems/valid-number/) | #1 | 1B 状态机 | 状态机直觉 ✓ |
-| [K Highest Ranked Items (2146)](https://leetcode.com/problems/k-highest-ranked-items-within-a-price-range/) | #2 | — | grid BFS + 排序 tail |
-| [String Without AAA or BBB (984)](https://leetcode.com/problems/string-without-aaa-or-bbb/) | #1 | 1F 频次驱动 | "看着像 search" |
-| [Min Taps (1326)](https://leetcode.com/problems/minimum-number-of-taps-to-open-to-water-a-garden/) | #1 | 1D Frontier | "看着像 graph" |
-| [Min Frogs Croaking (1419)](https://leetcode.com/problems/minimum-number-of-frogs-croaking/) | #1 | 1B 状态机 | "看着像遍历" |
-| [Triplet II (2874)](https://leetcode.com/problems/maximum-value-of-an-ordered-triplet-ii/) | #1 | 1C Running 标量 | "看着像 #5 / #6" |
-| [Largest 1-Bordered Square (1139)](https://leetcode.com/problems/largest-1-bordered-square/) | #1 | 1C' 2D Running | "LC 官方 tag = DP" |
-| [Maximum Binary String (1702)](https://leetcode.com/problems/maximum-binary-string-after-change/) | #1 | 1G 不变量 | "看着像 search" |
-
-**10 题里 8 道 #1**——印证 LC 题量分布严重偏 #1，"先按 #1 试" 是高 ROI 策略。
 
 ---
 

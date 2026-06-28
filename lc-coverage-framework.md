@@ -28,8 +28,8 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 |---|---|---|---|---|
 | Longest/shortest contiguous subarray meeting a condition | array / string | sliding window | **3** Longest Substring Without Repeating | 76, 424 |
 | Minimize the max / maximize the min / smallest feasible value | answer space | binary search on answer | **875** Koko Eating Bananas | 410, 1011, 1552 |
-| Shortest path in an unweighted graph/grid | graph / grid | BFS | **1091** Shortest Path in Binary Matrix | 127 |
-| Min/max path through a grid | grid | grid DP | **64** Minimum Path Sum | 62, 931 |
+| Shortest path in an unweighted graph / 2D array | graph / 2D array | BFS | **1091** Shortest Path in Binary Matrix | 127 |
+| Min/max path through a 2D array | 2D array | 2D DP | **64** Minimum Path Sum | 62, 931 |
 | Best running profit / max subarray (one sweep) | array | scan / rolling DP | **121** Best Time to Buy and Sell Stock | 53, 122/123/188 |
 | Optimum over a sequence + overlapping subproblems | array / string | DP | **322** Coin Change | 72, 300 |
 
@@ -44,12 +44,12 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
 | All combinations / permutations / subsets / partitions | decision tree (array/tree) | backtracking | **78** Subsets | 46, 39, 131, 17 |
-| Search all matching paths in a grid | grid | backtracking (+Trie) | **79** Word Search | 212 |
+| Search all matching paths in a 2D array | 2D array | backtracking (+Trie) | **79** Word Search | 212 |
 
 ### D · Count
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| How many ways / number of paths | array / grid / string | counting DP | **62** Unique Paths | 518, 91 |
+| How many ways / number of paths | array / 2D array / string | counting DP | **62** Unique Paths | 518, 91 |
 
 ### E · K-th
 | Task | Data structure | Algorithm | Do this | Others |
@@ -66,7 +66,7 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 ### G · Group / connectivity
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| Connected components / islands / provinces | graph / grid | flood (BFS/DFS) or union-find | **200** Number of Islands | 547, 721 |
+| Connected components / islands / provinces | graph / 2D array | flood (BFS/DFS) or union-find | **200** Number of Islands | 547, 721 |
 | Merge / overlapping intervals | intervals | sort + sweep line | **56** Merge Intervals | 435, 252 |
 
 ### H · Matching / nesting
@@ -77,7 +77,7 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 ### I · Traverse by a rule / output order
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| Spiral / zigzag output | grid | simulation (direction cursor) | **54** Spiral Matrix | 59, 885 |
+| Spiral / zigzag output | 2D array | simulation (direction cursor) | **54** Spiral Matrix | 59, 885 |
 | Level order / pre-in-post order | tree | BFS / DFS traversal | **102** Binary Tree Level Order | 94, 144 |
 
 ### J · String
@@ -101,8 +101,8 @@ flowchart LR
   subgraph A["A · 求最优 optimize"]
     t1["Longest substring meeting a condition · #3"]
     t2["Minimize the max / smallest feasible value · #875"]
-    t3["Fewest steps, unweighted graph or grid · #1091"]
-    t4["Cheapest path through a grid · #64"]
+    t3["Fewest steps, unweighted graph or 2D array · #1091"]
+    t4["Cheapest path through a 2D array · #64"]
     t5["Best buy-sell profit over one sweep · #121"]
     t6["Best over a sequence, overlapping subproblems · #322"]
   end
@@ -113,7 +113,7 @@ flowchart LR
   end
   subgraph C["C · 枚举 enumerate"]
     t10["List all subsets / permutations · #78"]
-    t11["Search all matching paths in a grid · #79"]
+    t11["Search all matching paths in a 2D array · #79"]
   end
   subgraph D["D · 计数 count"]
     t12["Count how many ways / paths · #62"]
@@ -133,7 +133,7 @@ flowchart LR
     t18["Validate nested parentheses · #20"]
   end
   subgraph I["I · 遍历产出 traverse"]
-    t19["Output a grid in spiral order · #54"]
+    t19["Output a 2D array in spiral order · #54"]
   end
   subgraph J["J · 字符串 string"]
     t20["Prefix / dictionary lookup · #208"]

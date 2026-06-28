@@ -119,7 +119,8 @@ flowchart LR
     t12["Count how many ways / paths · #62"]
   end
   subgraph E["E · 第k k-th"]
-    t13["K-th largest, or median of a stream · #215"]
+    t13["K-th largest / smallest, static · #215"]
+    t22["K-th / median in a stream · #295"]
   end
   subgraph F["F · 顺序/依赖 order"]
     t14["Next greater / smaller element · #739"]
@@ -134,9 +135,11 @@ flowchart LR
   end
   subgraph I["I · 遍历产出 traverse"]
     t19["Output a 2D array in spiral order · #54"]
+    t23["Binary tree level / pre / in / post order · #102"]
   end
   subgraph J["J · 字符串 string"]
     t20["Prefix / dictionary lookup · #208"]
+    t24["Longest palindrome · #5"]
   end
   subgraph K["K · 子数组和 prefix-sum"]
     t21["Subarray sum equals k · #560"]
@@ -162,6 +165,9 @@ flowchart LR
   t19 --> aSim["Simulation"]
   t20 --> aTrie["Trie"]
   t21 --> aPre["Prefix + hash"]
+  t22 --> aHeap
+  t23 --> aBFS
+  t24 --> aExpand["Expand-center / DP"]
   classDef hub fill:#E6F1FB,stroke:#185FA5,color:#0C447C;
   class aBS,aBFS,aDP,aBT hub;
 ```
@@ -174,7 +180,7 @@ flowchart LR
 
 | | 入度 | 算法 | 读 DS 吗 | 怎么处理 |
 |---|---|---|---|---|
-| **枢纽** | ≥ 2 | DP（←4）· BFS/DFS（←2）· 二分（←2）· 回溯（←2） | **必须读** | 题干 → 看 DS → 才能定算法 |
+| **枢纽** | ≥ 2 | DP（←4）· BFS/DFS（←3）· 二分（←2）· 回溯（←2） | **必须读** | 题干 → 看 DS → 才能定算法 |
 | **叶子** | = 1 | 单调栈 · 拓扑 · Trie · 栈 · 滑窗 · 双指针 · 快慢 · 堆 · 排序+扫描 · 模拟 · 前缀和 | 不用读 | 扳机词 → 直接落 |
 
 - **叶子有扳机词**：next greater→单调栈、prereq→拓扑、括号→栈、prefix→Trie，看到就落，数据结构那列都不用看。

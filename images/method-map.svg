@@ -2,7 +2,7 @@
 <rect x="0" y="0" width="760" height="706" fill="#ffffff"/>
 <path d="M 372 37.5 C 429.0 37.5 429.0 32.0 486 32.0" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 64.5 C 429.0 64.5 429.0 74.1 486 74.1" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 91.5 C 429.0 91.5 429.0 326.9 486 326.9" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 91.5 C 429.0 91.5 429.0 284.8 486 284.8" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
 <path d="M 372 118.5 C 429.0 118.5 429.0 116.3 486 116.3" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
 <path d="M 372 145.5 C 429.0 145.5 429.0 116.3 486 116.3" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
 <path d="M 372 172.5 C 429.0 172.5 429.0 116.3 486 116.3" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
@@ -12,15 +12,15 @@
 <path d="M 372 280.5 C 429.0 280.5 429.0 242.7 486 242.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
 <path d="M 372 307.5 C 429.0 307.5 429.0 242.7 486 242.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
 <path d="M 372 334.5 C 429.0 334.5 429.0 116.3 486 116.3" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 361.5 C 429.0 361.5 429.0 284.8 486 284.8" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 388.5 C 429.0 388.5 429.0 284.8 486 284.8" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 361.5 C 429.0 361.5 429.0 326.9 486 326.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 388.5 C 429.0 388.5 429.0 326.9 486 326.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 415.5 C 429.0 415.5 429.0 369.1 486 369.1" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 442.5 C 429.0 442.5 429.0 411.2 486 411.2" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 469.5 C 429.0 469.5 429.0 453.3 486 453.3" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 496.5 C 429.0 496.5 429.0 326.9 486 326.9" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 496.5 C 429.0 496.5 429.0 284.8 486 284.8" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
 <path d="M 372 523.5 C 429.0 523.5 429.0 495.5 486 495.5" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 550.5 C 429.0 550.5 429.0 537.6 486 537.6" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 577.5 C 429.0 577.5 429.0 326.9 486 326.9" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 577.5 C 429.0 577.5 429.0 284.8 486 284.8" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
 <path d="M 372 604.5 C 429.0 604.5 429.0 579.7 486 579.7" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 631.5 C 429.0 631.5 429.0 621.9 486 621.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 658.5 C 429.0 658.5 429.0 664.0 486 664.0" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
@@ -130,10 +130,10 @@
 <text x="496" y="201.5" font-size="11" font-weight="400" fill="#444441">Fast-slow pointers</text>
 <rect x="486" y="230.7" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
 <text x="496" y="243.7" font-size="11" font-weight="600" fill="#0C447C">Backtracking ★</text>
-<rect x="486" y="272.8" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="285.8" font-size="11" font-weight="400" fill="#444441">Heap</text>
-<rect x="486" y="314.9" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
-<text x="496" y="327.9" font-size="11" font-weight="600" fill="#0C447C">BFS / DFS ★</text>
+<rect x="486" y="272.8" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
+<text x="496" y="285.8" font-size="11" font-weight="600" fill="#0C447C">BFS / DFS ★</text>
+<rect x="486" y="314.9" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="327.9" font-size="11" font-weight="400" fill="#444441">Heap</text>
 <rect x="486" y="357.1" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="370.1" font-size="11" font-weight="400" fill="#444441">Monotonic stack</text>
 <rect x="486" y="399.2" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>

@@ -72,6 +72,10 @@ def row_cy(i): return TOP+i*RH+RH/2
 src={k:[] for k in algos}
 for i,(b,lab,ds,num,a) in enumerate(tasks): src[a].append(i)
 order=sorted(algos.keys(), key=lambda k: sum(src[k])/len(src[k]) if src[k] else 0)
+# manual position tweaks (override the auto anchor-order)
+def _swap(a,b):
+    i,j=order.index(a),order.index(b); order[i],order[j]=order[j],order[i]
+_swap("Heap","BFS")
 ay0=TOP+8; ay1=bottom-8
 ays={}
 for j,k in enumerate(order):

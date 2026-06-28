@@ -63,16 +63,16 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 | Next greater / smaller | array (sequence) | monotonic stack | **739** Daily Temperatures | 496, 84, 503 |
 | Prerequisite / build order | graph (DAG) | topological sort | **207** Course Schedule | 210, 269 |
 
-### G · Group / connectivity
+### G · Matching / nesting / parsing
+| Task | Data structure | Algorithm | Do this | Others |
+|---|---|---|---|---|
+| Parse / validate a nested or paired structure | stack | stack | **394** Decode String | 20, 224, 32 |
+
+### H · Group / connectivity
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
 | Connected components / islands / provinces | graph / 2D array | flood (BFS/DFS) or union-find | **200** Number of Islands | 547, 721 |
 | Merge / overlapping intervals | intervals | sort + sweep line | **56** Merge Intervals | 435, 252 |
-
-### H · Matching / nesting / parsing
-| Task | Data structure | Algorithm | Do this | Others |
-|---|---|---|---|---|
-| Parse / validate a nested or paired structure | stack | stack | **394** Decode String | 20, 224, 32 |
 
 ### I · Traverse by a rule / output order
 | Task | Data structure | Algorithm | Do this | Others |
@@ -126,12 +126,12 @@ flowchart LR
     t14["Next greater / smaller element · #739"]
     t15["Prerequisite / build order · #207"]
   end
-  subgraph G["G · 分组/连通 group"]
+  subgraph G["G · 匹配/解析 match·parse"]
+    t18["Parse a nested / paired structure · #394"]
+  end
+  subgraph H["H · 分组/连通 group"]
     t16["Count connected components / islands · #200"]
     t17["Merge overlapping intervals · #56"]
-  end
-  subgraph H["H · 匹配/解析 match·parse"]
-    t18["Parse a nested / paired structure · #394"]
   end
   subgraph I["I · 遍历产出 traverse"]
     t19["Output a 2D array in spiral order · #54"]
@@ -189,7 +189,7 @@ flowchart LR
 
 ### 规律 2 — A 是唯一的「散射 block」
 
-block ≈ 题干意图，而**大部分意图 block 跟算法近 1:1**（B→双指针/二分、F→单调栈/拓扑、H→栈…，看到就落）。唯独 **block A（求最优）一个 block 内部就散到 滑窗 / 二分 / BFS / DP 四个算法**，靠数据结构区分。
+block ≈ 题干意图，而**大部分意图 block 跟算法近 1:1**（B→双指针/二分、F→单调栈/拓扑、G→栈…，看到就落）。唯独 **block A（求最优）一个 block 内部就散到 滑窗 / 二分 / BFS / DP 四个算法**，靠数据结构区分。
 
 > 合起来：**全表最需要"读数据结构"的地方就是 block A**，那也是枢纽算法扎堆处；其余 block 看到题干基本就落。
 
@@ -197,12 +197,11 @@ block ≈ 题干意图，而**大部分意图 block 跟算法近 1:1**（B→双
 
 block 按**题干**分；底下的**技法**还能横切成几个家族，这解释了为什么有些 block 感觉相似：
 
-- **栈家族（H 普通栈 ↔ F 单调栈）**：都是"左→右扫，把*待解决*的项压栈，等未来某元素来*解决*"。括号靠**精确配对**解决，next greater 靠**比较**解决——骨架同，只是 pop 条件不同。
+- **栈/极值家族（E 堆 ↔ F 单调栈 ↔ G 普通栈）**：都是"维护一个栈/堆,把*待解决*的项压住,等未来某元素来*解决*或随时拿极值"。括号靠**精确配对**解决,next greater 靠**比较**解决——骨架同,只是 pop 条件不同。**block 已按这条把 E·F·G 排在一起。**
 - **哈希记忆家族（K 前缀和+哈希 ↔ Two Sum）**：存过去见过的状态，查当前的补集在不在。
 - **游标家族（B 双指针/快慢 ↔ A 滑窗）**：序列上移动一两个游标（单 cursor = size-1 frontier）。
-- **维护极值家族（E 堆 ↔ 单调栈/队列）**：随时拿到极值。
 
-这是**技法轴**，跟 block 的**题干轴正交**——是补充视角，不替代分类。意图上也能聚簇：**A+D 算数值 · B+E 定位 · F+G+I 关系遍历 · H+J+K 序列专项**。
+这是**技法轴**，跟 block 的**题干轴正交**——两个轴的相邻要求会打架（如 G 栈在意图上属"序列专项",在技法上属"栈家族")，线性顺序只能照顾一个。这里把 E·F·G 按**技法**排到了一起。
 
 ### do-list（每个组合一道，21+ 道）
 

@@ -57,11 +57,11 @@ algos = {
 
 # ---- layout ----
 RH=27; TOP=24
-gx0,gx1=3,29          # gutter (block bars)
-cx0=33; cw=292; cx1=cx0+cw   # left cells -> right edge 325
-ax0=472; aw=280; ax1=ax0+aw  # right algos
+gx0,gx1=3,95          # gutter (block letter + title); widened, stealing from the roomy algo column
+cx0=100; cw=272; cx1=cx0+cw  # left cells -> right edge 372
+ax0=486; aw=268; ax1=ax0+aw  # right algos -> right edge 754
 lx0=cx1; lx1=ax0             # line span
-W=762
+W=760
 n=len(tasks)
 bottom=TOP+n*RH
 H=bottom+34
@@ -109,7 +109,7 @@ for (letter,cn,en,fam) in blocks:
     fill=BARF if fam else BARD
     svg.append(f'<rect x="{gx0}" y="{yt}" width="{gx1-gx0}" height="{hh}" rx="4" fill="{fill}" stroke="{BARB}" stroke-width="0.8"/>')
     cy=yt+hh/2
-    svg.append(f'<text x="{(gx0+gx1)/2:.0f}" y="{cy-3:.0f}" text-anchor="middle" font-size="12" font-weight="600" fill="{BART}">{letter}</text>')
+    svg.append(f'<text x="{(gx0+gx1)/2:.1f}" y="{cy:.1f}" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="{BART}"><tspan font-weight="700" font-size="12">{letter}</tspan> {esc(cn)}</text>')
 
 # left cells
 for i,(b,lab,ds,num,a) in enumerate(tasks):

@@ -25,27 +25,27 @@
 <path d="M 372 631.5 C 429.0 631.5 429.0 621.9 486 621.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 658.5 C 429.0 658.5 429.0 664.0 486 664.0" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <rect x="3" y="26" width="92" height="158" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="105.0" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">A</tspan> 求最优</text>
+<text x="49.0" y="105.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">A</tspan> optimize</text>
 <rect x="3" y="188" width="92" height="77" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="226.5" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">B</tspan> 找/定位</text>
+<text x="49.0" y="226.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">B</tspan> locate</text>
 <rect x="3" y="269" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="294.0" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">C</tspan> 枚举</text>
+<text x="49.0" y="294.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">C</tspan> enumerate</text>
 <rect x="3" y="323" width="92" height="23" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="334.5" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">D</tspan> 计数</text>
+<text x="49.0" y="334.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">D</tspan> count</text>
 <rect x="3" y="350" width="92" height="50" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="375.0" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">E</tspan> 第k</text>
+<text x="49.0" y="375.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">E</tspan> k-th</text>
 <rect x="3" y="404" width="92" height="50" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="429.0" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">F</tspan> 顺序/依赖</text>
+<text x="49.0" y="429.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">F</tspan> order</text>
 <rect x="3" y="458" width="92" height="23" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="469.5" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">G</tspan> 匹配/解析</text>
+<text x="49.0" y="469.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">G</tspan> match·parse</text>
 <rect x="3" y="485" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="510.0" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">H</tspan> 分组/连通</text>
+<text x="49.0" y="510.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">H</tspan> group</text>
 <rect x="3" y="539" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="564.0" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">I</tspan> 遍历产出</text>
+<text x="49.0" y="564.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">I</tspan> traverse</text>
 <rect x="3" y="593" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="618.0" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">J</tspan> 字符串</text>
+<text x="49.0" y="618.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">J</tspan> string</text>
 <rect x="3" y="647" width="92" height="23" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="658.5" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="#5F5E5A"><tspan font-weight="700" font-size="12">K</tspan> 子数组和</text>
+<text x="49.0" y="658.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">K</tspan> prefix-sum</text>
 <rect x="100" y="26" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
 <text x="107" y="38" font-size="10.5" fill="#2C2C2A">Longest substring w/ a condition<tspan fill="#8A8980" font-size="9.5"> · arr/str</tspan></text>
 <text x="365" y="38" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#3</text>

@@ -109,7 +109,7 @@ for (letter,cn,en,fam) in blocks:
     fill=BARF if fam else BARD
     svg.append(f'<rect x="{gx0}" y="{yt}" width="{gx1-gx0}" height="{hh}" rx="4" fill="{fill}" stroke="{BARB}" stroke-width="0.8"/>')
     cy=yt+hh/2
-    svg.append(f'<text x="{(gx0+gx1)/2:.1f}" y="{cy:.1f}" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="{BART}"><tspan font-weight="700" font-size="12">{letter}</tspan> {esc(cn)}</text>')
+    svg.append(f'<text x="{(gx0+gx1)/2:.1f}" y="{cy:.1f}" text-anchor="middle" dominant-baseline="central" font-size="10" fill="{BART}"><tspan font-weight="700" font-size="12">{letter}</tspan> {esc(en)}</text>')
 
 # left cells
 for i,(b,lab,ds,num,a) in enumerate(tasks):

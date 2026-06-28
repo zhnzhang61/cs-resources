@@ -23,73 +23,73 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 
 ## 2. 主表（按意图 block 分组，每格一道代表题）
 
-### A · 求最优（最大 / 最小 / 最长 / 最短）— 唯一一个内部按 DS 散射的 block
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### A · Optimization (max / min / longest / shortest) — the only block that fans out by data structure
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| 连续子段最长/最短满足条件 | 数组/字符串 | 滑窗 | **3** 无重复最长子串 | 76, 424 |
-| 最大化最小 / 最小化最大 / 最小可行值 | 答案空间 | 二分答案 | **875** Koko | 410, 1011, 1552 |
-| 无权图/网格最短路 | 图/网格 | BFS | **1091** 二进制矩阵最短路 | 127 |
-| 网格最小/最大路径 | 网格 | 网格 DP | **64** 最小路径和 | 62, 931 |
-| 一路扫最大收益 / 最大子段和 | 数组 | 扫描/DP(累积) | **121** 买卖股票 | 53, 122/123/188 |
-| 序列最优 + 子问题重叠 | 数组/字符串 | DP | **322** 零钱 | 72, 300 |
+| Longest/shortest contiguous subarray meeting a condition | array / string | sliding window | **3** Longest Substring Without Repeating | 76, 424 |
+| Minimize the max / maximize the min / smallest feasible value | answer space | binary search on answer | **875** Koko Eating Bananas | 410, 1011, 1552 |
+| Shortest path in an unweighted graph/grid | graph / grid | BFS | **1091** Shortest Path in Binary Matrix | 127 |
+| Min/max path through a grid | grid | grid DP | **64** Minimum Path Sum | 62, 931 |
+| Best running profit / max subarray (one sweep) | array | scan / rolling DP | **121** Best Time to Buy and Sell Stock | 53, 122/123/188 |
+| Optimum over a sequence + overlapping subproblems | array / string | DP | **322** Coin Change | 72, 300 |
 
-### B · 找一个 / 定位
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### B · Find one / locate
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| 有序数组里找 target | 有序数组 | 二分 | **704** 二分查找 | 33, 35 |
-| 有序里找一对求和 | 有序数组 | 对撞双指针 | **167** 两数之和 II | 15 |
-| 找环 / 找重复数 | 链表 / 数组当链表 | 快慢指针 | **287** 寻找重复数 | 141, 142 |
+| Find a target in a sorted array | sorted array | binary search | **704** Binary Search | 33, 35 |
+| Find a pair summing to a target (sorted) | sorted array | converging two pointers | **167** Two Sum II | 15 |
+| Detect a cycle / find the duplicate | linked list / array-as-list | fast-slow pointers | **287** Find the Duplicate Number | 141, 142 |
 
-### C · 枚举所有
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### C · Enumerate all
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| 所有 组合/排列/子集/分割 | 决策树(数组/树) | 回溯 | **78** 子集 | 46, 39, 131, 17 |
-| 网格里搜所有匹配路径 | 网格 | 回溯(+Trie) | **79** 单词搜索 | 212 |
+| All combinations / permutations / subsets / partitions | decision tree (array/tree) | backtracking | **78** Subsets | 46, 39, 131, 17 |
+| Search all matching paths in a grid | grid | backtracking (+Trie) | **79** Word Search | 212 |
 
-### D · 计数
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### D · Count
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| 多少种走法 / 方案数 | 数组/网格/字符串 | DP 计数 | **62** 不同路径 | 518, 91 |
+| How many ways / number of paths | array / grid / string | counting DP | **62** Unique Paths | 518, 91 |
 
-### E · 第 k
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### E · K-th
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| 第 k 大/小（静态） | 数组 | 堆 / 快速选择 | **215** 第 k 大 | 347 |
-| 第 k / 中位数（流） | 流 | 堆 / 双堆 | **295** 数据流中位数 | 703 |
+| K-th largest/smallest (static) | array | heap / quickselect | **215** Kth Largest Element | 347 |
+| K-th / median in a stream | stream | heap / two heaps | **295** Find Median from Data Stream | 703 |
 
-### F · 前后关系 / 依赖
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### F · Order / dependency
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| next greater / smaller | 数组序列 | 单调栈 | **739** 每日温度 | 496, 84, 503 |
-| 先修 / 依赖 / build order | 图(DAG) | 拓扑排序 | **207** 课程表 | 210, 269 |
+| Next greater / smaller | array (sequence) | monotonic stack | **739** Daily Temperatures | 496, 84, 503 |
+| Prerequisite / build order | graph (DAG) | topological sort | **207** Course Schedule | 210, 269 |
 
-### G · 分组 / 连通
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### G · Group / connectivity
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| 连通块 / 岛屿 / 省份 | 图/网格 | flood(BFS/DFS) 或 并查集 | **200** 岛屿数量 | 547, 721 |
-| 区间合并 / 重叠 | 区间 | 排序 + 扫描线 | **56** 合并区间 | 435, 252 |
+| Connected components / islands / provinces | graph / grid | flood (BFS/DFS) or union-find | **200** Number of Islands | 547, 721 |
+| Merge / overlapping intervals | intervals | sort + sweep line | **56** Merge Intervals | 435, 252 |
 
-### H · 匹配 / 嵌套
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### H · Matching / nesting
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| 括号匹配 / 嵌套合法 | 栈 | stack | **20** 有效括号 | 32, 394 |
+| Valid / correctly nested parentheses | stack | stack | **20** Valid Parentheses | 32, 394 |
 
-### I · 按规则遍历 / 产出顺序
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### I · Traverse by a rule / output order
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| 螺旋 / 蛇形按序输出 | 网格 | 模拟(方向 cursor) | **54** 螺旋矩阵 | 59, 885 |
-| 层序 / 前中后序 | 树 | BFS / DFS 遍历 | **102** 层序遍历 | 94, 144 |
+| Spiral / zigzag output | grid | simulation (direction cursor) | **54** Spiral Matrix | 59, 885 |
+| Level order / pre-in-post order | tree | BFS / DFS traversal | **102** Binary Tree Level Order | 94, 144 |
 
-### J · 字符串
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### J · String
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| 前缀 / 字典查找 | 字符串集合 | Trie | **208** 实现 Trie | 212, 648 |
-| 最长回文 | 字符串 | 中心扩展 / DP | **5** 最长回文子串 | 647 |
+| Prefix / dictionary lookup | set of strings | Trie | **208** Implement Trie | 212, 648 |
+| Longest palindrome | string | expand-around-center / DP | **5** Longest Palindromic Substring | 647 |
 
-### K · 子数组和 / 前缀
-| 题干 | 数据结构 | 算法 | 代表题（做） | 其他例 |
+### K · Subarray sum / prefix
+| Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| subarray 和 = k | 数组 | 前缀和 + 哈希 | **560** 和为 k 的子数组 | 523 |
+| Subarray sum equals k | array | prefix sum + hashmap | **560** Subarray Sum Equals K | 523 |
 
 ### 连线图（题干×DS → 算法）
 

@@ -55,7 +55,7 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
 | K-th largest/smallest (static) | array | heap / quickselect | **215** Kth Largest Element | 347 |
-| K-th / median in a stream | stream | heap / two heaps | **295** Find Median from Data Stream | 703, 346, 239, 480, 352 |
+| K-th / median in a stream | stream | heap / two heaps | **295** Find Median from Data Stream | 703 Kth in Stream (min-heap) · 346 Moving Average (queue) · 239 Window Max (mono deque) · 480 Window Median (2 heaps) · 352 Stream Intervals (TreeMap) |
 
 ### F · Order / dependency
 | Task | Data structure | Algorithm | Do this | Others |

@@ -60,7 +60,7 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 ### F · Order / dependency
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| Next greater / smaller | array (sequence) | monotonic stack | **739** Daily Temperatures | 496, 84, 503 |
+| Next greater / smaller | array (sequence) | monotonic stack | **739** Daily Temperatures | 496, 84, 503, 42 |
 | Prerequisite / build order | graph (DAG) | topological sort | **207** Course Schedule | 210, 269 |
 
 ### G · Matching / nesting / parsing

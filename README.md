@@ -137,6 +137,7 @@
 
 ### 📎 相关书签
 
+- 📖 **Reinforcement Learning: An Introduction** (Sutton & Barto, 2nd ed., 2020) — RL 的奠基教材：MDP → 动态规划 / 蒙特卡洛 / TD → 策略梯度，理解 RLHF·PPO·GRPO 之前的底层理论。作者官网免费 PDF：<http://incompleteideas.net/book/RLbook2020.pdf>
 - 🧪 **ReAct: Synergizing Reasoning and Acting in Language Models** (Yao et al., ICLR 2023) — 工具调用 + 推理 agent 的奠基论文+代码：<https://github.com/ysymyth/ReAct>
 - 🏋️ **OpenAI Gym** — 经典 RL 环境库（虽然现在维护转到 Gymnasium 了，原 repo 仍是入门资料）：<https://gym.openai.com/>
 

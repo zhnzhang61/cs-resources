@@ -1,51 +1,51 @@
-<svg viewBox="0 0 760 706" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
-<rect x="0" y="0" width="760" height="706" fill="#ffffff"/>
+<svg viewBox="0 0 760 760" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+<rect x="0" y="0" width="760" height="760" fill="#ffffff"/>
 <path d="M 372 37.5 C 429.0 37.5 429.0 32.0 486 32.0" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 64.5 C 429.0 64.5 429.0 74.1 486 74.1" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 91.5 C 429.0 91.5 429.0 284.8 486 284.8" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 118.5 C 429.0 118.5 429.0 116.3 486 116.3" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 145.5 C 429.0 145.5 429.0 116.3 486 116.3" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 172.5 C 429.0 172.5 429.0 116.3 486 116.3" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 199.5 C 429.0 199.5 429.0 74.1 486 74.1" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 226.5 C 429.0 226.5 429.0 158.4 486 158.4" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 253.5 C 429.0 253.5 429.0 200.5 486 200.5" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 280.5 C 429.0 280.5 429.0 242.7 486 242.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 307.5 C 429.0 307.5 429.0 242.7 486 242.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 334.5 C 429.0 334.5 429.0 116.3 486 116.3" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 361.5 C 429.0 361.5 429.0 326.9 486 326.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 388.5 C 429.0 388.5 429.0 326.9 486 326.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 415.5 C 429.0 415.5 429.0 369.1 486 369.1" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 442.5 C 429.0 442.5 429.0 411.2 486 411.2" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 469.5 C 429.0 469.5 429.0 453.3 486 453.3" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 496.5 C 429.0 496.5 429.0 284.8 486 284.8" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 523.5 C 429.0 523.5 429.0 495.5 486 495.5" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 550.5 C 429.0 550.5 429.0 537.6 486 537.6" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 577.5 C 429.0 577.5 429.0 284.8 486 284.8" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 604.5 C 429.0 604.5 429.0 579.7 486 579.7" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 631.5 C 429.0 631.5 429.0 621.9 486 621.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 658.5 C 429.0 658.5 429.0 664.0 486 664.0" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<rect x="3" y="26" width="92" height="158" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="105.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">A</tspan> optimize</text>
-<rect x="3" y="188" width="92" height="77" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="226.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">B</tspan> locate</text>
-<rect x="3" y="269" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="294.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">C</tspan> enumerate</text>
-<rect x="3" y="323" width="92" height="23" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="334.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">D</tspan> count</text>
-<rect x="3" y="350" width="92" height="50" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="375.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">E</tspan> k-th</text>
+<path d="M 372 64.5 C 429.0 64.5 429.0 72.4 486 72.4" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 91.5 C 429.0 91.5 429.0 395.2 486 395.2" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 118.5 C 429.0 118.5 429.0 112.7 486 112.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 145.5 C 429.0 145.5 429.0 112.7 486 112.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 172.5 C 429.0 172.5 429.0 112.7 486 112.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 199.5 C 429.0 199.5 429.0 153.1 486 153.1" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 226.5 C 429.0 226.5 429.0 72.4 486 72.4" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 253.5 C 429.0 253.5 429.0 193.4 486 193.4" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 280.5 C 429.0 280.5 429.0 233.8 486 233.8" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 307.5 C 429.0 307.5 429.0 274.1 486 274.1" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 334.5 C 429.0 334.5 429.0 274.1 486 274.1" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 361.5 C 429.0 361.5 429.0 112.7 486 112.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 388.5 C 429.0 388.5 429.0 314.5 486 314.5" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 415.5 C 429.0 415.5 429.0 354.8 486 354.8" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 442.5 C 429.0 442.5 429.0 354.8 486 354.8" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 469.5 C 429.0 469.5 429.0 435.5 486 435.5" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 496.5 C 429.0 496.5 429.0 475.9 486 475.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 523.5 C 429.0 523.5 429.0 516.2 486 516.2" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 550.5 C 429.0 550.5 429.0 395.2 486 395.2" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 577.5 C 429.0 577.5 429.0 556.6 486 556.6" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 604.5 C 429.0 604.5 429.0 596.9 486 596.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 631.5 C 429.0 631.5 429.0 395.2 486 395.2" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 658.5 C 429.0 658.5 429.0 637.3 486 637.3" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 685.5 C 429.0 685.5 429.0 677.6 486 677.6" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<path d="M 372 712.5 C 429.0 712.5 429.0 718.0 486 718.0" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
+<rect x="3" y="26" width="92" height="185" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
+<text x="49.0" y="118.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">A</tspan> optimize</text>
+<rect x="3" y="215" width="92" height="77" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
+<text x="49.0" y="253.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">B</tspan> locate</text>
+<rect x="3" y="296" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
+<text x="49.0" y="321.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">C</tspan> enumerate</text>
+<rect x="3" y="350" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
+<text x="49.0" y="375.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">D</tspan> count</text>
 <rect x="3" y="404" width="92" height="50" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="429.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">F</tspan> order</text>
-<rect x="3" y="458" width="92" height="23" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="469.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">G</tspan> match·parse</text>
-<rect x="3" y="485" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="510.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">H</tspan> group</text>
+<text x="49.0" y="429.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">E</tspan> k-th</text>
+<rect x="3" y="458" width="92" height="50" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
+<text x="49.0" y="483.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">F</tspan> order</text>
+<rect x="3" y="512" width="92" height="23" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
+<text x="49.0" y="523.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">G</tspan> match·parse</text>
 <rect x="3" y="539" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="564.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">I</tspan> traverse</text>
+<text x="49.0" y="564.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">H</tspan> group</text>
 <rect x="3" y="593" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="618.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">J</tspan> string</text>
-<rect x="3" y="647" width="92" height="23" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
-<text x="49.0" y="658.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">K</tspan> prefix-sum</text>
+<text x="49.0" y="618.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">I</tspan> traverse</text>
+<rect x="3" y="647" width="92" height="77" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
+<text x="49.0" y="685.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">J</tspan> spec DS</text>
 <rect x="100" y="26" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
 <text x="107" y="38" font-size="10.5" fill="#2C2C2A">Longest substring w/ a condition<tspan fill="#8A8980" font-size="9.5"> · arr/str</tspan></text>
 <text x="365" y="38" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#3</text>
@@ -65,90 +65,100 @@
 <text x="107" y="174" font-size="10.5" fill="#2C2C2A">Best over a sequence, overlap subs<tspan fill="#8A8980" font-size="9.5"> · arr/str</tspan></text>
 <text x="365" y="174" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#322</text>
 <rect x="100" y="188" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="200" font-size="10.5" fill="#2C2C2A">Find target in a sorted array<tspan fill="#8A8980" font-size="9.5"> · sorted</tspan></text>
-<text x="365" y="200" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#704</text>
+<text x="107" y="200" font-size="10.5" fill="#2C2C2A">Longest palindromic substring<tspan fill="#8A8980" font-size="9.5"> · string</tspan></text>
+<text x="365" y="200" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#5</text>
 <rect x="100" y="215" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="228" font-size="10.5" fill="#2C2C2A">Find a pair summing to target<tspan fill="#8A8980" font-size="9.5"> · sorted</tspan></text>
-<text x="365" y="228" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#167</text>
+<text x="107" y="228" font-size="10.5" fill="#2C2C2A">Find target in a sorted array<tspan fill="#8A8980" font-size="9.5"> · sorted</tspan></text>
+<text x="365" y="228" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#704</text>
 <rect x="100" y="242" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="254" font-size="10.5" fill="#2C2C2A">Detect a cycle / find duplicate<tspan fill="#8A8980" font-size="9.5"> · list/array</tspan></text>
-<text x="365" y="254" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#287</text>
+<text x="107" y="254" font-size="10.5" fill="#2C2C2A">Find a pair summing to target<tspan fill="#8A8980" font-size="9.5"> · sorted</tspan></text>
+<text x="365" y="254" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#167</text>
 <rect x="100" y="269" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="282" font-size="10.5" fill="#2C2C2A">List all subsets / permutations<tspan fill="#8A8980" font-size="9.5"> · decision tree</tspan></text>
-<text x="365" y="282" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#78</text>
+<text x="107" y="282" font-size="10.5" fill="#2C2C2A">Detect a cycle / find duplicate<tspan fill="#8A8980" font-size="9.5"> · list/array</tspan></text>
+<text x="365" y="282" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#287</text>
 <rect x="100" y="296" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="308" font-size="10.5" fill="#2C2C2A">Search all paths in a 2D array<tspan fill="#8A8980" font-size="9.5"> · 2D array</tspan></text>
-<text x="365" y="308" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#79</text>
+<text x="107" y="308" font-size="10.5" fill="#2C2C2A">List all subsets / permutations<tspan fill="#8A8980" font-size="9.5"> · decision tree</tspan></text>
+<text x="365" y="308" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#78</text>
 <rect x="100" y="323" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="336" font-size="10.5" fill="#2C2C2A">Count how many ways / paths<tspan fill="#8A8980" font-size="9.5"> · arr/2D/str</tspan></text>
-<text x="365" y="336" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#62</text>
+<text x="107" y="336" font-size="10.5" fill="#2C2C2A">Search all paths in a 2D array<tspan fill="#8A8980" font-size="9.5"> · 2D array</tspan></text>
+<text x="365" y="336" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#79</text>
 <rect x="100" y="350" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="362" font-size="10.5" fill="#2C2C2A">K-th largest / smallest (static)<tspan fill="#8A8980" font-size="9.5"> · array</tspan></text>
-<text x="365" y="362" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#215</text>
+<text x="107" y="362" font-size="10.5" fill="#2C2C2A">Count how many ways / paths<tspan fill="#8A8980" font-size="9.5"> · arr/2D/str</tspan></text>
+<text x="365" y="362" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#62</text>
 <rect x="100" y="377" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="390" font-size="10.5" fill="#2C2C2A">K-th / median in a stream<tspan fill="#8A8980" font-size="9.5"> · stream</tspan></text>
-<text x="365" y="390" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#295</text>
+<text x="107" y="390" font-size="10.5" fill="#2C2C2A">Count subarrays w/ a sum property<tspan fill="#8A8980" font-size="9.5"> · array</tspan></text>
+<text x="365" y="390" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#560</text>
 <rect x="100" y="404" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="416" font-size="10.5" fill="#2C2C2A">Next greater / smaller element<tspan fill="#8A8980" font-size="9.5"> · array</tspan></text>
-<text x="365" y="416" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#739</text>
+<text x="107" y="416" font-size="10.5" fill="#2C2C2A">K-th largest / smallest (static)<tspan fill="#8A8980" font-size="9.5"> · array</tspan></text>
+<text x="365" y="416" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#215</text>
 <rect x="100" y="431" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="444" font-size="10.5" fill="#2C2C2A">Prerequisite / build order<tspan fill="#8A8980" font-size="9.5"> · graph DAG</tspan></text>
-<text x="365" y="444" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#207</text>
+<text x="107" y="444" font-size="10.5" fill="#2C2C2A">K-th / median in a stream<tspan fill="#8A8980" font-size="9.5"> · stream</tspan></text>
+<text x="365" y="444" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#295</text>
 <rect x="100" y="458" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="470" font-size="10.5" fill="#2C2C2A">Parse / validate a nested structure<tspan fill="#8A8980" font-size="9.5"> · stack</tspan></text>
-<text x="365" y="470" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#394</text>
+<text x="107" y="470" font-size="10.5" fill="#2C2C2A">Next greater / smaller element<tspan fill="#8A8980" font-size="9.5"> · array</tspan></text>
+<text x="365" y="470" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#739</text>
 <rect x="100" y="485" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="498" font-size="10.5" fill="#2C2C2A">Connected components / islands<tspan fill="#8A8980" font-size="9.5"> · graph/2D</tspan></text>
-<text x="365" y="498" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#200</text>
+<text x="107" y="498" font-size="10.5" fill="#2C2C2A">Prerequisite / build order<tspan fill="#8A8980" font-size="9.5"> · graph DAG</tspan></text>
+<text x="365" y="498" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#207</text>
 <rect x="100" y="512" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="524" font-size="10.5" fill="#2C2C2A">Merge overlapping intervals<tspan fill="#8A8980" font-size="9.5"> · intervals</tspan></text>
-<text x="365" y="524" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#56</text>
+<text x="107" y="524" font-size="10.5" fill="#2C2C2A">Parse / validate a nested structure<tspan fill="#8A8980" font-size="9.5"> · stack</tspan></text>
+<text x="365" y="524" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#394</text>
 <rect x="100" y="539" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="552" font-size="10.5" fill="#2C2C2A">Output a 2D array in spiral order<tspan fill="#8A8980" font-size="9.5"> · 2D array</tspan></text>
-<text x="365" y="552" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#54</text>
+<text x="107" y="552" font-size="10.5" fill="#2C2C2A">Connected components / islands<tspan fill="#8A8980" font-size="9.5"> · graph/2D</tspan></text>
+<text x="365" y="552" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#200</text>
 <rect x="100" y="566" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="578" font-size="10.5" fill="#2C2C2A">Binary tree level/pre/in/post order<tspan fill="#8A8980" font-size="9.5"> · tree</tspan></text>
-<text x="365" y="578" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#102</text>
+<text x="107" y="578" font-size="10.5" fill="#2C2C2A">Merge overlapping intervals<tspan fill="#8A8980" font-size="9.5"> · intervals</tspan></text>
+<text x="365" y="578" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#56</text>
 <rect x="100" y="593" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="606" font-size="10.5" fill="#2C2C2A">Prefix / dictionary lookup<tspan fill="#8A8980" font-size="9.5"> · string set</tspan></text>
-<text x="365" y="606" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#208</text>
+<text x="107" y="606" font-size="10.5" fill="#2C2C2A">Output a 2D array in spiral order<tspan fill="#8A8980" font-size="9.5"> · 2D array</tspan></text>
+<text x="365" y="606" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#54</text>
 <rect x="100" y="620" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="632" font-size="10.5" fill="#2C2C2A">Longest palindrome<tspan fill="#8A8980" font-size="9.5"> · string</tspan></text>
-<text x="365" y="632" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#5</text>
+<text x="107" y="632" font-size="10.5" fill="#2C2C2A">Binary tree level/pre/in/post order<tspan fill="#8A8980" font-size="9.5"> · tree</tspan></text>
+<text x="365" y="632" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#102</text>
 <rect x="100" y="647" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
-<text x="107" y="660" font-size="10.5" fill="#2C2C2A">Subarray sum equals k<tspan fill="#8A8980" font-size="9.5"> · array</tspan></text>
-<text x="365" y="660" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#560</text>
+<text x="107" y="660" font-size="10.5" fill="#2C2C2A">Prefix / dictionary over string set<tspan fill="#8A8980" font-size="9.5"> · Trie</tspan></text>
+<text x="365" y="660" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#208</text>
+<rect x="100" y="674" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
+<text x="107" y="686" font-size="10.5" fill="#2C2C2A">O(1) get/put with eviction<tspan fill="#8A8980" font-size="9.5"> · hash+DLL</tspan></text>
+<text x="365" y="686" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#146</text>
+<rect x="100" y="701" width="272" height="23" rx="3" fill="#ffffff" stroke="#D6D4CB" stroke-width="0.8"/>
+<text x="107" y="714" font-size="10.5" fill="#2C2C2A">Range update + query<tspan fill="#8A8980" font-size="9.5"> · Fenwick/segtree</tspan></text>
+<text x="365" y="714" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#308</text>
 <rect x="486" y="20.0" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="33.0" font-size="11" font-weight="400" fill="#444441">Sliding window</text>
-<rect x="486" y="62.1" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
-<text x="496" y="75.1" font-size="11" font-weight="600" fill="#0C447C">Binary search ★</text>
-<rect x="486" y="104.3" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
-<text x="496" y="117.3" font-size="11" font-weight="600" fill="#0C447C">DP ★</text>
-<rect x="486" y="146.4" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="159.4" font-size="11" font-weight="400" fill="#444441">Two pointers</text>
-<rect x="486" y="188.5" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="201.5" font-size="11" font-weight="400" fill="#444441">Fast-slow pointers</text>
-<rect x="486" y="230.7" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
-<text x="496" y="243.7" font-size="11" font-weight="600" fill="#0C447C">Backtracking ★</text>
-<rect x="486" y="272.8" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
-<text x="496" y="285.8" font-size="11" font-weight="600" fill="#0C447C">BFS / DFS ★</text>
-<rect x="486" y="314.9" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="327.9" font-size="11" font-weight="400" fill="#444441">Heap</text>
-<rect x="486" y="357.1" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="370.1" font-size="11" font-weight="400" fill="#444441">Monotonic stack</text>
-<rect x="486" y="399.2" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="412.2" font-size="11" font-weight="400" fill="#444441">Topological sort</text>
-<rect x="486" y="441.3" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="454.3" font-size="11" font-weight="400" fill="#444441">Stack</text>
-<rect x="486" y="483.5" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="496.5" font-size="11" font-weight="400" fill="#444441">Sort + sweep</text>
-<rect x="486" y="525.6" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="538.6" font-size="11" font-weight="400" fill="#444441">Simulation</text>
-<rect x="486" y="567.7" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="580.7" font-size="11" font-weight="400" fill="#444441">Trie</text>
-<rect x="486" y="609.9" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="622.9" font-size="11" font-weight="400" fill="#444441">Expand-center / DP</text>
-<rect x="486" y="652.0" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
-<text x="496" y="665.0" font-size="11" font-weight="400" fill="#444441">Prefix + hash</text>
-<text x="3" y="694" font-size="10" fill="#444441">蓝框=枢纽算法(收多条线) · 灰框=叶子算法(1:1) · 左侧 A–K 意图 block,蓝条 E·F·G=栈/堆同族</text>
+<rect x="486" y="60.4" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
+<text x="496" y="73.4" font-size="11" font-weight="600" fill="#0C447C">Binary search ★</text>
+<rect x="486" y="100.7" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
+<text x="496" y="113.7" font-size="11" font-weight="600" fill="#0C447C">DP ★</text>
+<rect x="486" y="141.1" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="154.1" font-size="11" font-weight="400" fill="#444441">Expand-center / DP</text>
+<rect x="486" y="181.4" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="194.4" font-size="11" font-weight="400" fill="#444441">Two pointers</text>
+<rect x="486" y="221.8" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="234.8" font-size="11" font-weight="400" fill="#444441">Fast-slow pointers</text>
+<rect x="486" y="262.1" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
+<text x="496" y="275.1" font-size="11" font-weight="600" fill="#0C447C">Backtracking ★</text>
+<rect x="486" y="302.5" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="315.5" font-size="11" font-weight="400" fill="#444441">Prefix + hash</text>
+<rect x="486" y="342.8" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="355.8" font-size="11" font-weight="400" fill="#444441">Heap</text>
+<rect x="486" y="383.2" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
+<text x="496" y="396.2" font-size="11" font-weight="600" fill="#0C447C">BFS / DFS ★</text>
+<rect x="486" y="423.5" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="436.5" font-size="11" font-weight="400" fill="#444441">Monotonic stack</text>
+<rect x="486" y="463.9" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="476.9" font-size="11" font-weight="400" fill="#444441">Topological sort</text>
+<rect x="486" y="504.2" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="517.2" font-size="11" font-weight="400" fill="#444441">Stack</text>
+<rect x="486" y="544.6" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="557.6" font-size="11" font-weight="400" fill="#444441">Sort + sweep</text>
+<rect x="486" y="584.9" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="597.9" font-size="11" font-weight="400" fill="#444441">Simulation</text>
+<rect x="486" y="625.3" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="638.3" font-size="11" font-weight="400" fill="#444441">Trie</text>
+<rect x="486" y="665.6" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="678.6" font-size="11" font-weight="400" fill="#444441">Hash + DLL</text>
+<rect x="486" y="706.0" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
+<text x="496" y="719.0" font-size="11" font-weight="400" fill="#444441">Fenwick / segtree</text>
+<text x="3" y="748" font-size="10" fill="#444441">蓝框=枢纽算法(收多条线) · 灰框=叶子算法(1:1) · 左侧 A–K 意图 block,蓝条 E·F·G=栈/堆同族</text>
 </svg>

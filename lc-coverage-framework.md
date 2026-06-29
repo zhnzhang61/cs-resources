@@ -23,7 +23,7 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 
 ## 2. 主表（按意图 block 分组，每格一道代表题）
 
-### A · Optimization (max / min / longest / shortest) — the only block that fans out by data structure
+### A · Optimization (max / min / longest / shortest) — the block that fans out the most across data structures
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
 | Longest/shortest contiguous subarray meeting a condition | array / string | sliding window | **3** Longest Substring Without Repeating | 76, 424 |
@@ -32,6 +32,7 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 | Min/max path through a 2D array | 2D array | 2D DP | **64** Minimum Path Sum | 62, 931 |
 | Best running profit / max subarray (one sweep) | array | scan / rolling DP | **121** Best Time to Buy and Sell Stock | 53, 122/123/188 |
 | Optimum over a sequence + overlapping subproblems | array / string | DP | **322** Coin Change | 72, 300 |
+| Longest palindromic substring | string | expand-around-center / DP | **5** Longest Palindromic Substring | 647, 516 |
 
 ### B · Find one / locate
 | Task | Data structure | Algorithm | Do this | Others |
@@ -50,6 +51,7 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
 | How many ways / number of paths | array / 2D array / string | counting DP | **62** Unique Paths | 518, 91 |
+| Count subarrays with a sum property | array | prefix sum + hashmap | **560** Subarray Sum Equals K | 523, 974 |
 
 ### E · K-th
 | Task | Data structure | Algorithm | Do this | Others |
@@ -80,20 +82,18 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 | Spiral / zigzag output | 2D array | simulation (direction cursor) | **54** Spiral Matrix | 59, 885 |
 | Level order / pre-in-post order | tree | BFS / DFS traversal | **102** Binary Tree Level Order | 94, 144 |
 
-### J · String
+### J · Specialized DS（特化数据结构：朴素太慢 → 上为此定制的结构）
 | Task | Data structure | Algorithm | Do this | Others |
 |---|---|---|---|---|
-| Prefix / dictionary lookup | set of strings | Trie | **208** Implement Trie | 212, 648 |
-| Longest palindrome | string | expand-around-center / DP | **5** Longest Palindromic Substring | 647 |
+| Prefix / dictionary over a string set | Trie | Trie | **208** Implement Trie | 211, 648, 212→C |
+| O(1) get / put with eviction | hash + doubly-linked list | design | **146** LRU Cache | 460 |
+| Range update + range / point query | Fenwick / segment tree | BIT / segment tree | **308** Range Sum Query 2D - Mutable | 307, 715 |
 
-### K · Subarray sum / prefix
-| Task | Data structure | Algorithm | Do this | Others |
-|---|---|---|---|---|
-| Subarray sum equals k | array | prefix sum + hashmap | **560** Subarray Sum Equals K | 523 |
+> union-find（DSU）也是特化 DS，但题干意图是"连通 / 分组"，已归 **H**（#200 / 547 / 721）。
 
 ### 连线图（题干×DS → 算法）
 
-左边按 A–K 意图 block 竖排（竖条标 block 字母 + 名），每行一个「题干 · 代表题」，连到右边算法。**蓝框 = 枢纽**（多条线汇入），灰框 = 叶子（1:1）；E·F·G 三条蓝竖条 = 栈/堆同族。一眼能看出 DP / BFS·DFS / 二分 / 回溯 收了大量线。
+左边按 A–J 意图 block 竖排（竖条标 block 字母 + 名），每行一个「题干 · 代表题」，连到右边算法。**蓝框 = 枢纽**（多条线汇入），灰框 = 叶子（1:1）；E·F·G 三条蓝竖条 = 栈/堆同族。一眼能看出 DP / BFS·DFS / 二分 / 回溯 收了大量线。
 
 ![LC method map — 题干 → 数据结构 → 算法](images/method-map.svg)
 
@@ -112,9 +112,9 @@ LeetCode 解题框架：按**题干 → 数据结构 → 算法**推断方法，
 - **枢纽要消歧**：题干流向 DP/BFS·DFS/二分/回溯 时，必须读数据结构来决定走哪条线。
 - **认知预算**：80% 投在 4 个枢纽算法 × 数据结构的组合上；叶子是查表。
 
-### 规律 2 — A 是唯一的「散射 block」
+### 规律 2 — A 散射最多（D、E 也有少量）
 
-block ≈ 题干意图，而**大部分意图 block 跟算法近 1:1**（B→双指针/二分、F→单调栈/拓扑、G→栈…，看到就落）。唯独 **block A（求最优）一个 block 内部就散到 滑窗 / 二分 / BFS / DP 四个算法**，靠数据结构区分。
+block ≈ 题干意图，而**大部分意图 block 跟算法近 1:1**（B→双指针/二分、F→单调栈/拓扑、G→栈…，看到就落）。**block A（求最优）散得最开**——一个 block 内就分到 滑窗 / 二分 / BFS / DP 四种，靠数据结构区分（D 也散成 计数DP/前缀和、E 散成 静态堆/流堆，但都远不如 A）。
 
 > 合起来：**全表最需要"读数据结构"的地方就是 block A**，那也是枢纽算法扎堆处；其余 block 看到题干基本就落。
 
@@ -123,14 +123,16 @@ block ≈ 题干意图，而**大部分意图 block 跟算法近 1:1**（B→双
 block 按**题干**分；底下的**技法**还能横切成几个家族，这解释了为什么有些 block 感觉相似：
 
 - **栈/极值家族（E 堆 ↔ F 单调栈 ↔ G 普通栈）**：都是"维护一个栈/堆,把*待解决*的项压住,等未来某元素来*解决*或随时拿极值"。括号靠**精确配对**解决,next greater 靠**比较**解决——骨架同,只是 pop 条件不同。**block 已按这条把 E·F·G 排在一起。**
-- **哈希记忆家族（K 前缀和+哈希 ↔ Two Sum）**：存过去见过的状态，查当前的补集在不在。
+- **哈希记忆家族（D 的 #560 前缀和+哈希 ↔ Two Sum）**：存过去见过的状态，查当前的补集在不在。
 - **游标家族（B 双指针/快慢 ↔ A 滑窗）**：序列上移动一两个游标（单 cursor = size-1 frontier）。
+- **枚举/树族（C 回溯 ↔ J Trie）**：回溯 = DFS 一棵*隐式*决策树（边走边生成）；Trie = 一棵*显式*前缀树（DFS 它就枚举所有词 / 按前缀枚举）。212 = 网格回溯（归 C）+ 字典 Trie（在 J 当加速器）剪枝，两棵树一起走。
+- **连续子段族（A 滑窗 #3 ↔ D 前缀和 #560 ↔ A 中心扩展回文 #5）**：都在数组/串上找**一段连续的**；问法不同（最长 / 计数 / 回文）落到不同 block，但技法同源。
 
 这是**技法轴**，跟 block 的**题干轴正交**——两个轴的相邻要求会打架（如 G 栈在意图上属"序列专项",在技法上属"栈家族")，线性顺序只能照顾一个。这里把 E·F·G 按**技法**排到了一起。
 
-### do-list（每个组合一道，21+ 道）
+### do-list（每个组合一道，26 道）
 
-`3 · 875 · 1091 · 64 · `**`121`**` · 322 · 704 · 167 · 287 · 78 · 79 · 62 · 215 · 295 · 739 · 207 · 394 · `**`200`**` · 56 · `**`54`**` · 102 · 208 · 5 · 560`
+`3 · 875 · 1091 · 64 · `**`121`**` · 322 · 5 · 704 · 167 · 287 · 78 · 79 · 62 · 560 · 215 · 295 · 739 · 207 · 394 · `**`200`**` · 56 · `**`54`**` · 102 · 208 · 146 · 308`
 
 > 加粗的 **54 螺旋矩阵**（block I）、**200 岛屿数量**（block G）、**121 买卖股票**（block A）是已经做过的，已归位。浏览 LeetCode 时新题往对应 block 的「其他例」列加；单格 block（D/E/H/I/J/K）会慢慢长起来。
 

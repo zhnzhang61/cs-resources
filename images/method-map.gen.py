@@ -14,8 +14,7 @@ blocks = [
     ("G","匹配/解析","match·parse",True),
     ("H","分组/连通","group",False),
     ("I","遍历产出","traverse",False),
-    ("J","字符串","string",False),
-    ("K","子数组和","prefix-sum",False),
+    ("J","特化DS","spec DS",False),
 ]
 # tasks: (block, label, ds, num, algo_id)
 tasks = [
@@ -25,12 +24,14 @@ tasks = [
     ("A","Cheapest path through a 2D array","2D array","64","DP"),
     ("A","Best buy-sell profit, one sweep","array","121","DP"),
     ("A","Best over a sequence, overlap subs","arr/str","322","DP"),
+    ("A","Longest palindromic substring","string","5","Expand"),
     ("B","Find target in a sorted array","sorted","704","BinSearch"),
     ("B","Find a pair summing to target","sorted","167","TwoPtr"),
     ("B","Detect a cycle / find duplicate","list/array","287","FastSlow"),
     ("C","List all subsets / permutations","decision tree","78","Backtrack"),
     ("C","Search all paths in a 2D array","2D array","79","Backtrack"),
     ("D","Count how many ways / paths","arr/2D/str","62","DP"),
+    ("D","Count subarrays w/ a sum property","array","560","Prefix"),
     ("E","K-th largest / smallest (static)","array","215","Heap"),
     ("E","K-th / median in a stream","stream","295","Heap"),
     ("F","Next greater / smaller element","array","739","MonoStack"),
@@ -40,9 +41,9 @@ tasks = [
     ("H","Merge overlapping intervals","intervals","56","Sweep"),
     ("I","Output a 2D array in spiral order","2D array","54","Sim"),
     ("I","Binary tree level/pre/in/post order","tree","102","BFS"),
-    ("J","Prefix / dictionary lookup","string set","208","Trie"),
-    ("J","Longest palindrome","string","5","Expand"),
-    ("K","Subarray sum equals k","array","560","Prefix"),
+    ("J","Prefix / dictionary over string set","Trie","208","Trie"),
+    ("J","O(1) get/put with eviction","hash+DLL","146","LRU"),
+    ("J","Range update + query","Fenwick/segtree","308","BIT"),
 ]
 # algorithms: id -> (label, is_hub)
 algos = {
@@ -53,6 +54,7 @@ algos = {
     "Topo":("Topological sort",False), "Stack":("Stack",False),
     "Sweep":("Sort + sweep",False), "Sim":("Simulation",False), "Trie":("Trie",False),
     "Expand":("Expand-center / DP",False), "Prefix":("Prefix + hash",False),
+    "LRU":("Hash + DLL",False), "BIT":("Fenwick / segtree",False),
 }
 
 # ---- layout ----

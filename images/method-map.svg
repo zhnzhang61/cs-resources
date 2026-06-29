@@ -1,28 +1,28 @@
 <svg viewBox="0 0 760 760" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
 <rect x="0" y="0" width="760" height="760" fill="#ffffff"/>
 <path d="M 372 37.5 C 429.0 37.5 429.0 32.0 486 32.0" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 64.5 C 429.0 64.5 429.0 72.4 486 72.4" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 91.5 C 429.0 91.5 429.0 395.2 486 395.2" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 118.5 C 429.0 118.5 429.0 112.7 486 112.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 145.5 C 429.0 145.5 429.0 112.7 486 112.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 172.5 C 429.0 172.5 429.0 112.7 486 112.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 64.5 C 429.0 64.5 429.0 72.4 486 72.4" fill="none" stroke="#3D8BDC" stroke-width="1.9" opacity="0.6"/>
+<path d="M 372 91.5 C 429.0 91.5 429.0 395.2 486 395.2" fill="none" stroke="#1D9E75" stroke-width="1.9" opacity="0.6"/>
+<path d="M 372 118.5 C 429.0 118.5 429.0 112.7 486 112.7" fill="none" stroke="#7F77DD" stroke-width="1.9" opacity="0.6"/>
+<path d="M 372 145.5 C 429.0 145.5 429.0 112.7 486 112.7" fill="none" stroke="#7F77DD" stroke-width="1.9" opacity="0.6"/>
+<path d="M 372 172.5 C 429.0 172.5 429.0 112.7 486 112.7" fill="none" stroke="#7F77DD" stroke-width="1.9" opacity="0.6"/>
 <path d="M 372 199.5 C 429.0 199.5 429.0 153.1 486 153.1" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 226.5 C 429.0 226.5 429.0 72.4 486 72.4" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 226.5 C 429.0 226.5 429.0 72.4 486 72.4" fill="none" stroke="#3D8BDC" stroke-width="1.9" opacity="0.6"/>
 <path d="M 372 253.5 C 429.0 253.5 429.0 193.4 486 193.4" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 280.5 C 429.0 280.5 429.0 233.8 486 233.8" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 307.5 C 429.0 307.5 429.0 274.1 486 274.1" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 334.5 C 429.0 334.5 429.0 274.1 486 274.1" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
-<path d="M 372 361.5 C 429.0 361.5 429.0 112.7 486 112.7" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 307.5 C 429.0 307.5 429.0 274.1 486 274.1" fill="none" stroke="#D85A30" stroke-width="1.9" opacity="0.6"/>
+<path d="M 372 334.5 C 429.0 334.5 429.0 274.1 486 274.1" fill="none" stroke="#D85A30" stroke-width="1.9" opacity="0.6"/>
+<path d="M 372 361.5 C 429.0 361.5 429.0 112.7 486 112.7" fill="none" stroke="#7F77DD" stroke-width="1.9" opacity="0.6"/>
 <path d="M 372 388.5 C 429.0 388.5 429.0 314.5 486 314.5" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 415.5 C 429.0 415.5 429.0 354.8 486 354.8" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 442.5 C 429.0 442.5 429.0 354.8 486 354.8" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 469.5 C 429.0 469.5 429.0 435.5 486 435.5" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 496.5 C 429.0 496.5 429.0 475.9 486 475.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 523.5 C 429.0 523.5 429.0 516.2 486 516.2" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 550.5 C 429.0 550.5 429.0 395.2 486 395.2" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 550.5 C 429.0 550.5 429.0 395.2 486 395.2" fill="none" stroke="#1D9E75" stroke-width="1.9" opacity="0.6"/>
 <path d="M 372 577.5 C 429.0 577.5 429.0 556.6 486 556.6" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 604.5 C 429.0 604.5 429.0 596.9 486 596.9" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
-<path d="M 372 631.5 C 429.0 631.5 429.0 395.2 486 395.2" fill="none" stroke="#3D8BDC" stroke-width="1.7" opacity="0.6"/>
+<path d="M 372 631.5 C 429.0 631.5 429.0 395.2 486 395.2" fill="none" stroke="#1D9E75" stroke-width="1.9" opacity="0.6"/>
 <path d="M 372 658.5 C 429.0 658.5 429.0 637.3 486 637.3" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 685.5 C 429.0 685.5 429.0 677.6 486 677.6" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
 <path d="M 372 712.5 C 429.0 712.5 429.0 718.0 486 718.0" fill="none" stroke="#AFAEA6" stroke-width="1.0" opacity="0.6"/>
@@ -34,11 +34,11 @@
 <text x="49.0" y="321.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">C</tspan> enumerate</text>
 <rect x="3" y="350" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
 <text x="49.0" y="375.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">D</tspan> count</text>
-<rect x="3" y="404" width="92" height="50" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
+<rect x="3" y="404" width="92" height="50" rx="4" fill="#FBF1D5" stroke="#C9C7BD" stroke-width="0.8"/>
 <text x="49.0" y="429.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">E</tspan> k-th</text>
-<rect x="3" y="458" width="92" height="50" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
+<rect x="3" y="458" width="92" height="50" rx="4" fill="#FBF1D5" stroke="#C9C7BD" stroke-width="0.8"/>
 <text x="49.0" y="483.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">F</tspan> order</text>
-<rect x="3" y="512" width="92" height="23" rx="4" fill="#E1EEFB" stroke="#C9C7BD" stroke-width="0.8"/>
+<rect x="3" y="512" width="92" height="23" rx="4" fill="#FBF1D5" stroke="#C9C7BD" stroke-width="0.8"/>
 <text x="49.0" y="523.5" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">G</tspan> match·parse</text>
 <rect x="3" y="539" width="92" height="50" rx="4" fill="#ECEAE2" stroke="#C9C7BD" stroke-width="0.8"/>
 <text x="49.0" y="564.0" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A"><tspan font-weight="700" font-size="12">H</tspan> group</text>
@@ -126,24 +126,24 @@
 <text x="365" y="714" text-anchor="end" font-size="10.5" font-weight="600" fill="#185FA5">#308</text>
 <rect x="486" y="20.0" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="33.0" font-size="11" font-weight="400" fill="#444441">Sliding window</text>
-<rect x="486" y="60.4" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
+<rect x="486" y="60.4" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.8"/>
 <text x="496" y="73.4" font-size="11" font-weight="600" fill="#0C447C">Binary search ★</text>
-<rect x="486" y="100.7" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
-<text x="496" y="113.7" font-size="11" font-weight="600" fill="#0C447C">DP ★</text>
+<rect x="486" y="100.7" width="268" height="24" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.8"/>
+<text x="496" y="113.7" font-size="11" font-weight="600" fill="#3C3489">DP ★</text>
 <rect x="486" y="141.1" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="154.1" font-size="11" font-weight="400" fill="#444441">Expand-center / DP</text>
 <rect x="486" y="181.4" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="194.4" font-size="11" font-weight="400" fill="#444441">Two pointers</text>
 <rect x="486" y="221.8" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="234.8" font-size="11" font-weight="400" fill="#444441">Fast-slow pointers</text>
-<rect x="486" y="262.1" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
-<text x="496" y="275.1" font-size="11" font-weight="600" fill="#0C447C">Backtracking ★</text>
+<rect x="486" y="262.1" width="268" height="24" rx="4" fill="#FAECE7" stroke="#C24A22" stroke-width="1.8"/>
+<text x="496" y="275.1" font-size="11" font-weight="600" fill="#7A2E12">Backtracking ★</text>
 <rect x="486" y="302.5" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="315.5" font-size="11" font-weight="400" fill="#444441">Prefix + hash</text>
 <rect x="486" y="342.8" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="355.8" font-size="11" font-weight="400" fill="#444441">Heap</text>
-<rect x="486" y="383.2" width="268" height="24" rx="4" fill="#E1EEFB" stroke="#185FA5" stroke-width="1.6"/>
-<text x="496" y="396.2" font-size="11" font-weight="600" fill="#0C447C">BFS / DFS ★</text>
+<rect x="486" y="383.2" width="268" height="24" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.8"/>
+<text x="496" y="396.2" font-size="11" font-weight="600" fill="#0F6E56">BFS / DFS ★</text>
 <rect x="486" y="423.5" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="436.5" font-size="11" font-weight="400" fill="#444441">Monotonic stack</text>
 <rect x="486" y="463.9" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
@@ -160,5 +160,5 @@
 <text x="496" y="678.6" font-size="11" font-weight="400" fill="#444441">Hash + DLL</text>
 <rect x="486" y="706.0" width="268" height="24" rx="4" fill="#F1EFE8" stroke="#B7B5AB" stroke-width="0.8"/>
 <text x="496" y="719.0" font-size="11" font-weight="400" fill="#444441">Fenwick / segtree</text>
-<text x="3" y="748" font-size="10" fill="#444441">蓝框=枢纽算法(收多条线) · 灰框=叶子算法(1:1) · 左侧 A–K 意图 block,蓝条 E·F·G=栈/堆同族</text>
+<text x="3" y="748" font-size="10" fill="#444441">四色枢纽: 二分=蓝 · DP=紫 · 回溯=橙 · BFS/DFS=绿 (连线同色) · 灰=叶子(1:1) · E·F·G 黄条=栈/堆族</text>
 </svg>

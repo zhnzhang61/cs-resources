@@ -86,10 +86,16 @@ for j,k in enumerate(order):
 # colors
 BG="#ffffff"
 CELL="#ffffff"; CELLB="#D6D4CB"; TXT="#2C2C2A"; NUM="#185FA5"; DS="#8A8980"
-BARD="#ECEAE2"; BARF="#E1EEFB"; BARB="#C9C7BD"; BART="#5F5E5A"
-HUBF="#E1EEFB"; HUBB="#185FA5"; HUBT="#0C447C"
+BARD="#ECEAE2"; BARF="#FBF1D5"; BARB="#C9C7BD"; BART="#5F5E5A"  # BARF = E·F·G family tint (amber, off the hub palette)
 LEAFF="#F1EFE8"; LEAFB="#B7B5AB"; LEAFT="#444441"
-LHUB="#3D8BDC"; LLEAF="#AFAEA6"
+LLEAF="#AFAEA6"
+# per-hub colors: (fill, stroke, text, line)
+HUBCOL={
+  "BinSearch":("#E1EEFB","#185FA5","#0C447C","#3D8BDC"),  # blue
+  "DP":       ("#EEEDFE","#534AB7","#3C3489","#7F77DD"),  # purple
+  "Backtrack":("#FAECE7","#C24A22","#7A2E12","#D85A30"),  # coral
+  "BFS":      ("#E1F5EE","#0F6E56","#0F6E56","#1D9E75"),  # teal
+}
 
 def esc(s): return html.escape(s, quote=True)
 
@@ -99,8 +105,8 @@ svg.append(f'<rect x="0" y="0" width="{W}" height="{H}" fill="{BG}"/>')
 
 # lines first (under nodes)
 for i,(b,lab,ds,num,a) in enumerate(tasks):
-    y1=row_cy(i); y2=ays[a]; hub=algos[a][1]
-    col=LHUB if hub else LLEAF; wdt=1.7 if hub else 1.0
+    y1=row_cy(i); y2=ays[a]; hc=HUBCOL.get(a)
+    col=hc[3] if hc else LLEAF; wdt=1.9 if hc else 1.0
     mx=(lx0+lx1)/2
     svg.append(f'<path d="M {lx0} {y1:.1f} C {mx} {y1:.1f} {mx} {y2:.1f} {lx0+ (lx1-lx0)} {y2:.1f}" fill="none" stroke="{col}" stroke-width="{wdt}" opacity="0.6"/>')
 
@@ -127,16 +133,16 @@ for i,(b,lab,ds,num,a) in enumerate(tasks):
 # right algo nodes
 ah=24
 for k in order:
-    lab,hub=algos[k]; cyc=ays[k]; yt=cyc-ah/2
-    f,bcol,tcol=(HUBF,HUBB,HUBT) if hub else (LEAFF,LEAFB,LEAFT)
-    bw=1.6 if hub else 0.8
+    lab,hub=algos[k]; cyc=ays[k]; yt=cyc-ah/2; hc=HUBCOL.get(k)
+    f,bcol,tcol=(hc[0],hc[1],hc[2]) if hc else (LEAFF,LEAFB,LEAFT)
+    bw=1.8 if hc else 0.8
     svg.append(f'<rect x="{ax0}" y="{yt:.1f}" width="{aw}" height="{ah}" rx="4" fill="{f}" stroke="{bcol}" stroke-width="{bw}"/>')
     fw="600" if hub else "400"
     svg.append(f'<text x="{ax0+10}" y="{cyc+1:.1f}" font-size="11" font-weight="{fw}" fill="{tcol}">{esc(lab)}</text>')
 
 # legend
 ly=H-12
-svg.append(f'<text x="{gx0}" y="{ly}" font-size="10" fill="{LEAFT}">蓝框=枢纽算法(收多条线) · 灰框=叶子算法(1:1) · 左侧 A–K 意图 block,蓝条 E·F·G=栈/堆同族</text>')
+svg.append(f'<text x="{gx0}" y="{ly}" font-size="10" fill="{LEAFT}">四色枢纽: 二分=蓝 · DP=紫 · 回溯=橙 · BFS/DFS=绿 (连线同色) · 灰=叶子(1:1) · E·F·G 黄条=栈/堆族</text>')
 
 svg.append('</svg>')
 

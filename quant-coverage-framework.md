@@ -29,14 +29,18 @@
 
 ## 2. 主表（dynamics × tool）
 
+每格两层：概念清单 + 📖 阅读地图。**C** = Calin《An Informal Introduction to Stochastic Calculus with Applications》章节；**S-I / S-II** = Shreve《Stochastic Calculus for Finance》卷一（二叉树）/ 卷二（连续时间）；**✍️** = 两本都不含，标注第三来源。
+
 | | **L0 离散概率/组合** | **L1 鞅 + 随机分析** | **L2 PDE + 线性代数** | **L3 MC + 回归/ML** |
 |---|---|---|---|---|
-| **扩散 (BM)** | 随机游走→BM 极限 (Donsker)、reflection principle、gambler's ruin、ballot problem | Ito、Girsanov、Feynman-Kac、BS 闭式、⟨W⟩=t、first passage | BS/局部 vol PDE 有限差分（三对角、Crank-Nicolson）、Hull-White 树、收益率曲线 PCA | Euler/Milstein 路径模拟、方差缩减（BS 作 control variate）、**LSMC American** |
-| **纯跳 (Poisson)** | thinning/superposition 谜题、无记忆性 brainteaser、到达时刻条件均匀分布 | 补偿鞅 N−λt、Poisson 版 Ito、survival prob = e^(−∫λ)、Cox process、intensity 的测度变换 | **评级迁移矩阵 = CTMC generator 的矩阵指数**、hazard curve bootstrap（三角线性系统） | default time 逆变换/thinning 模拟、copula 抽 joint default、**importance sampling（违约是稀有事件）** |
-| **混合 (jump-diffusion)** | 复合分布（随机个数求和）、Wald 恒等式 | Lévy–Khintchine、semimartingale Ito、Merton 闭式（Poisson 加权 BS 和）、**特征函数/Fourier 定价** | PIDE（积分项破坏稀疏性→难，冷区）、Carr-Madan FFT（Toeplitz 结构） | jump-adapted 模拟（先抽跳时刻、之间填 diffusion bridge）、MLMC |
+| **扩散 (BM)** | 随机游走→BM 极限 (Donsker)、reflection principle、gambler's ruin、ballot problem<br>📖 S-I Ch.5 Random Walk（reflection/first passage）、S-I Ch.2 离散鞅；Donsker/ballot ✍️ Feller Vol.1 | Ito、Girsanov、Feynman-Kac、BS 闭式、⟨W⟩=t、first passage<br>📖 C 3.1–3.2 (BM/GBM)、5.3 (Ito 积分)、6.2 (Ito 公式)、4.11 (quadratic variation)、4.3 (first passage)、9.7 (Feynman-Kac)、10.4 (Girsanov)；BS 闭式 S-II §4.5 + Ch.5 | BS/局部 vol PDE 有限差分（三对角、Crank-Nicolson）、Hull-White 树、收益率曲线 PCA<br>📖 PDE 来源 C 9.4 (Kolmogorov backward) + S-II Ch.6；利率二叉树 S-I Ch.6；FD 数值与 PCA ✍️ Duffy / Wilmott | Euler/Milstein 路径模拟、方差缩减（BS 作 control variate）、**LSMC American**<br>📖 模拟对象 C 3.2 (GBM)、3.5 (Brownian bridge)、8.1 (SDE)；方法 ✍️ Glasserman Ch.3–4；LSMC ✍️ Longstaff-Schwartz (2001) + Glasserman Ch.8 |
+| **纯跳 (Poisson)** | thinning/superposition 谜题、无记忆性 brainteaser、到达时刻条件均匀分布<br>📖 C 3.8–3.10（Poisson/interarrival/waiting，无记忆性全在这）；thinning/条件均匀 ✍️ Ross《Stochastic Processes》 | 补偿鞅 N−λt、Poisson 版 Ito、survival prob = e^(−∫λ)、Cox process、intensity 的测度变换<br>📖 C 3.11–3.12、5.7–5.9（Poisson 积分）、6.2.2（跳 Ito）、8.6（Poisson SDE）；测度变换 S-II §11.6；Cox/hazard 应用 ✍️ Lando 前 4 章 | **评级迁移矩阵 = CTMC generator 的矩阵指数**、hazard curve bootstrap（三角线性系统）<br>📖 两本全无 ✍️：CTMC/矩阵指数 Norris《Markov Chains》；hazard bootstrap 实务材料 (Lando/Hull) | default time 逆变换/thinning 模拟、copula 抽 joint default、**importance sampling（违约是稀有事件）**<br>📖 逆变换底子 C 3.9；其余 ✍️：IS Glasserman Ch.4；copula Nelsen 前 3 章 |
+| **混合 (jump-diffusion)** | 复合分布（随机个数求和）、Wald 恒等式<br>📖 原料 C 2.11–2.12（和 + 条件期望）；compound Poisson S-II §11.3；Wald ✍️ Ross | Lévy–Khintchine、semimartingale Ito、Merton 闭式（Poisson 加权 BS 和）、**特征函数/Fourier 定价**<br>📖 跳 Ito C 6.2.2；跳过程微积分 + Merton 定价 S-II Ch.11 (§11.5、§11.7)；Lévy–Khintchine/Fourier ✍️ Cont & Tankov | PIDE（积分项破坏稀疏性→难，冷区）、Carr-Madan FFT（Toeplitz 结构）<br>📖 两本全无 ✍️ Cont & Tankov（PIDE 数值章）——冷区可跳 | jump-adapted 模拟（先抽跳时刻、之间填 diffusion bridge）、MLMC<br>📖 两本全无 ✍️ Glasserman（jump-adapted）+ Giles (2008) MLMC |
 
 **热区**（面试火力集中）：扩散行整行、纯跳×L1（credit 面试）、混合×L1 的特征函数定价。
 **冷区**：混合×L2（PIDE 工业界都嫌麻烦，面试基本不碰）、纯跳×L0（偶尔出脑筋急转弯）。
+
+**书架结论**：Calin + Shreve 覆盖左两列和纯跳×L1 的机器；**Glasserman** 一本补掉 L3 列；**Cont & Tankov** 补混合行；**Lando** 补纯跳行的 applied 半边。五本书张成全表。
 
 ## 3. Asset class 怎么进来
 

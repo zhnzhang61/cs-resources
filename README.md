@@ -244,6 +244,7 @@
 
 ### 📎 相关书签
 
+- ⚡ **FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness** (Tri Dao et al., NeurIPS 2022) — **精确**注意力（不做任何近似），靠分块 + 重计算避免把 N×N 注意力矩阵写进 HBM：显存随序列长度从平方降到线性、访存少一个量级。长上下文的地基，如今训练 / 推理栈（vLLM、PyTorch SDPA）默认都在用：<https://arxiv.org/abs/2205.14135>
 - 📖 **How To Scale Your Model** (jax-ml scaling book) — Google DeepMind 出的免费在线书，把 scaling laws / parallelism / collectives 讲透：<https://jax-ml.github.io/scaling-book/>
 - 🎓 **Stanford CS329S — Machine Learning Systems Design** — Chip Huyen 主讲，把 ML 系统设计（data flywheel / deployment / monitoring）讲成系统课：<https://stanford-cs329s.github.io/>
 

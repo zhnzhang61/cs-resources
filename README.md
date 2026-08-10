@@ -8,7 +8,7 @@
 >
 > 📑 **Sibling 文件**：
 > - [`cs-bookmarks.md`](cs-bookmarks.md) — 109 条 CS 通用书签（LeetCode 算法/系统设计、OS/网络/语言基础、UIUC/Stanford 课程归档、Legacy ML 等）
-> - [`lc-coverage-framework.md`](lc-coverage-framework.md) — LeetCode 解题框架：算法三圈 × 五地形 Venn 总览 + 题干 → 数据结构 → 算法（A–J 意图 block + 代表题 + 连线图 + 横切技法家族）+ 刷题笔记
+> - [`lc-coverage-framework.md`](lc-coverage-framework.md) — LeetCode 双框架：Framework 1（算法三圈 × 五地形 Venn，盘点用）+ Framework 0（题干 → 数据结构 → 算法，A–J 意图 block，面试路由用）+ 刷题笔记
 > - [`quant-coverage-framework.md`](quant-coverage-framework.md) — 量化面试知识框架：随机源 (dynamics) × 求解工具 (tool ladder) 交叉表 + task 轴 reminder
 > - [`math-section-reading-template.md`](math-section-reading-template.md) — 数学/金融教材精读模板：拆主题 → 标起止 wording → 解释符号/背景定理 → 定价框架意义 → 若不成立的后果
 > - [`shreve-ii-1.1-measure-theory.md`](shreve-ii-1.1-measure-theory.md) — 上述模板的首次实践：Shreve II §1.1 七主题精读（起止 wording + 定价意义 + digital 母例 + 国土丈量类比）

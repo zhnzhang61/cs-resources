@@ -9,16 +9,13 @@
 
 ## Framework 1：算法三圈 × 五地形（Venn）
 
-三个**算法家族**（圈）× 五种**地形/数据结构**（圈的重叠区）。圈 = 一族算法，镜片 = 它能跑的地形：1-d 走法只上线性地形（1-d·string / 区间 / 链表），图走法只上带边地形（2d / 树 / 图），Everything 圈五种通吃。
+面试做题智商减一半，看到题干能认出来的第一样东西：输入是什么个数据结构。
+经过一定的归纳总结，我觉得有些算法几乎只用在一维数据结构上，有些只用在图上，有些横跨两部分：
+1. 用在一维数据结构（String; Array; LinkedList; Segment(Array上的一部分））上的：Sliding Window, Two Pointers, Fast/Slow Pointers, Monotone Stack/Queue
+2. 用在图类数据结构 (Tree;Graph)上的：BFS/DFS; Backtracking; Union-Find; Topological Sort
+3. 都能用的：DP; Binary Search; Greedy; Bit mask; Prefix Sum; Stack / Queue / Heap
 
 ![Algorithm Venn — 三个算法家族 × 它们能跑的地形](images/algo-venn.svg)
-
-- **专属层 = 走法**（怎么移动），被地形锁死；**通用层 = 算什么**（计算策略），不挑地形。
-- **圈外第四类 = design / 特化 DS**（考「造结构」而非「跑算法」）：208 Trie · 146 LRU · 308 BIT（同族 460 / 380 / 981）。它们的共同点：实现地形 ≠ 接口地形（Trie 实现是树、用起来是前缀字典；LRU 实现是链表+hash、用起来是 O(1) 带淘汰字典；BIT 实现是数组、用起来是树）。按接口用，不按实现分类——heap 同理（实现是树，接口是「随时拿最值」，故归 Everything）。
-- 例外备忘：**85** = 把 2d 切成一行行 1d（单调栈上 2d 的唯一通道）；**127** = 词表长出隐式图（1-d 数据也能长边）。
-
-**三张圈内表：算法 × 地形，格子里是 do-list 代表题**。Everything 表括号里是**全题库**地形分布的手感估计（四舍五入到 5%；给 BFS/DFS 当 frontier 零件的不计入，那些记在 Graph 圈）：
-
 | Everything algo | 1-d | 2-d | 树 | 图 | 区间 |
 |---|---|---|---|---|---|
 | DP | **121 · 322**（70%） | **62 · 64**（15%） | —（5%） | —（5%） | —（5%） |

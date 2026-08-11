@@ -65,7 +65,6 @@
 
 **LC 外的债**：① 分页 / free-list——读表内 vLLM 论文比刷题值；② **order book 本体**——手写 ~100 行（两侧 TreeMap + price-time 队列）。bloom filter / 一致性哈希 / 时间轮：知道即可。
 
-> **stream 线（295→703→346→239→480→352）双重身份**：E 块的流式档 = quant 行情流主线，一条线两份工。
 
 ---
 

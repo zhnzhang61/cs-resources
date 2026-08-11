@@ -14,14 +14,15 @@
 1. 用在一维数据结构（String; Array; LinkedList; Segment(Array上的一部分））上的：Sliding Window, Two Pointers, Fast/Slow Pointers, Monotone Stack/Queue
 2. 用在图类数据结构 (Tree;Graph)上的：BFS/DFS; Backtracking; Union-Find; Topological Sort
 3. 都能用的：DP; Binary Search; Greedy; Bit mask; Prefix Sum; Stack / Queue / Heap
+4. 2-d array：2d array可以放bfs/dfs上去，也可以dp上去，所以特意把它跟图类数据结构凑到一起
 
 ![Algorithm Venn — 三个算法家族 × 它们能跑的地形](images/algo-venn.svg)
 | Everything algo | 1-d | 2-d | 树 | 图 | 区间 |
 |---|---|---|---|---|---|
 | DP | **121 · 322**（70%） | **62 · 64**（15%） | —（5%） | —（5%） | —（5%） |
 | Binary search / sort | **875 · 704**（80%） | —（5%） | — | —（5%） | **56**（10%） |
-| Greedy | —（70%） | —（5%） | —（5%） | —（5%） | —（15%） |
-| Bit mask | —（80%） | —（10%） | — | —（10%） | — |
+| Greedy | **55**（70%） | —（5%） | —（5%） | —（5%） | **435 · 452**（15%） |
+| Bit mask | **136**（80%） | —（10%） | — | —（10%） | — |
 | Prefix sum | **560**（80%） | —（10%） | —（5%） | — | —（5% 差分） |
 | Stack / Queue / heap | **394 · 215 · 295**（80%） | — | —（10%） | —（5%） | —（5%） |
 
@@ -39,15 +40,8 @@
 | Union-Find | — | — | — |
 | 拓扑排序 | — | — | **207** |
 
-**盘点**：26 道里 22 道进圈；圈外 4 道 = **54**（模拟，2d 唯一原住民）+ **208 / 146 / 308**（design / 特化 DS，见上条）。
-
-**空格读法**——空格 = do-list 的结构性缺口，不是地形不存在：
-
-- **Greedy / Bitmask 两整行空**：旧框架（A–J block）里它们没有席位，选题时天然漏掉。按肥尾优先补：**55**（greedy×1-d）、**435**（greedy×区间，15% 肥尾）、**136**（bitmask×1-d）。
 - **图列全表只有 207 一道**：**743** Dijkstra 还欠着（heap×图 / greedy×图 双料代表）。
 - **UF 行空**：200 用 union-find 重做一遍即可补上（或 305 流式版）。
-
-> 读法：**在 1-d 上练，在别处认**——通用算法 70-80% 的题都在 1-d，剩下的考「陌生地形认出老朋友」。两条肥尾值得单独练：DP×2d（62/64）、greedy×区间（435/452）。
 
 ### Design（第四类）：从工业 infra 反推的练题单
 

@@ -49,25 +49,25 @@
 
 思路：**大规模 infra → 常用零件 → design 题**。列从左到右越来越具体（大方向通俗 → 论文精确）；design 题的读法只有一槽——**读 ops 清单 → 推寻址组合 → 报焊接配方**（如「O(1) get + 淘汰最旧」→ 按键+按序 → hash+双链表）。（° = LC 会员题）
 
-最右列「真题」= 2026 面经实锤（a–e 详录见表后）：a 某厂推理引擎 OA · b OpenAI 技术筛 · c OpenAI take-home · d OpenAI onsite · e CodeSignal 银行 OA。
+最右列「真题」= 2026 面经实锤（a–e 详录见表后）：a 某厂推理引擎 OA · b OpenAI 技术筛 · c OpenAI take-home · d OpenAI onsite · e CodeSignal 银行 OA。**加粗的应用 = 先看这 5 行**（真题实锤 × 出题频率）。
 
 AI 五行按**一条请求的生命周期**排序：① 到达 → 调度准入（预算 + KV 账本双检，账本是③的）→ ② 查 radix 复用共享前缀 → ③ 未命中部分分配 KV 页、跑 prefill，此后每步 decode 长一格 → ④ token 流式吐出（客户端增量渲染），完成后回收页/引用减一 → ⑤ 加 GPU 池 + autoscale = 整机。
 
 | 大方向 | 应用 | 关键算法/零件 | 题号 | 论文 | 真题 |
 |---|---|---|---|---|---|
-| AI ① | 调度准入：请求随到随插进批次（continuous batching） | 到达/优先队列调度 · decode 优先 · 预算裁剪 | **1834**（选） | Orca · OSDI'22 | **a·L1** 基础调度 |
+| AI ① | **调度准入：请求随到随插进批次（continuous batching）** | 到达/优先队列调度 · decode 优先 · 预算裁剪 | **1834**（选） | Orca · OSDI'22 | **a·L1** 基础调度 |
 | AI ② | 前缀复用：多请求共享相同前缀，不重复算 | radix 树（压缩 Trie）+ 节点 LRU | **208** / 211 | [SGLang RadixAttention '23](https://arxiv.org/abs/2312.07104) | — |
-| AI ③ | KV 显存：显存里装下更多并发对话（KV cache 分页） | OS 分页 + LRU 淘汰 | **146** | [vLLM · SOSP'23](https://arxiv.org/abs/2309.06180) | **a·L3a** KV-aware 准入 |
+| AI ③ | **KV 显存：显存里装下更多并发对话（KV cache 分页）** | OS 分页 + LRU 淘汰 | **146** | [vLLM · SOSP'23](https://arxiv.org/abs/2309.06180) | **a·L3a** KV-aware 准入 |
 | AI ④ | 流式输出的增量 diff + 回滚（streaming differ） | 序列 diff（编辑距离/LCS 核）· 操作日志 + undo 栈 · 快照/版本 | **72**（diff 核）· 1472（回滚语义） | — | **d1** OpenAI onsite coding |
 | AI ⑤ | 整机：设计 ChatGPT（GPU 池 + autoscale + 分布式协调） | ①–④ 当零件拼装 + 排队/降级 | —（拼装行） | — | **d3** OpenAI onsite design |
-| 两边通吃 | 热数据快速存取与淘汰（Redis） | LRU/LFU · 手造 hashtable · 换尾删除 · 按版本二分 | **146**/460 · **706** · **380** · **981** | — | **b1** versioned KV store |
-| 两边通吃 | 定时任务：延后执行 + 挂了重试（job scheduler） | 按触发时刻的最小堆/时间轮 · 重试退避 · lease/心跳判死 · 幂等 | **1834** · 621（形似） | — | **b2** OpenAI 技术筛 design |
+| 两边通吃 | **热数据快速存取与淘汰（Redis）** | LRU/LFU · 手造 hashtable · 换尾删除 · 按版本二分 | **146**/460 · **706** · **380** · **981** | — | **b1** versioned KV store |
+| 两边通吃 | **定时任务：延后执行 + 挂了重试（job scheduler）** | 按触发时刻的最小堆/时间轮 · 重试退避 · lease/心跳判死 · 幂等 | **1834** · 621（形似） | — | **b2** OpenAI 技术筛 design |
 | 两边通吃 | 事件可靠送达：at-least-once + 死信（webhook delivery） | 持久化队列 · 定时堆重试（指数退避）· 死信队列 DLQ · 幂等键 | **622**（队列本体） | — | **c** OpenAI take-home |
 | 金融 | 行情的滑动统计（均线/极值/中位） | 队列 · 单调队列 · 双堆 · TreeMap | **346**° · **239** · **480**/**295** · **352** | — | — |
 | 金融 | 生产者→消费者零锁传递（低延迟队列） | ring buffer（环形数组） | **622** | LMAX Disruptor 白皮书 '11 | — |
 | 金融 | 撮合引擎：价格档 + 时间优先（order book） | 两侧 TreeMap/堆顶 + FIFO 档内队列 · skiplist | **352**/715° · **1206** · 本体手写 | — | — |
 | 金融 | 历史行情/日志：狂写 + 按时间查（kdb+/LSM） | k 路归并（compaction）· 时间戳二分 · range 改查 | **23** · **981** · **308**/307 | LSM-tree · '96 | — |
-| 金融 | 账务系统：账户/转账/排名/定时支付/合并 | hashmap 账本 · top-k 排序 · 时间戳惰性结算 · 合并重定向（UF 式别名） | **706** · 347 · 721（合并语义） | — | **e** CodeSignal 银行 OA |
+| 金融 | **账务系统：账户/转账/排名/定时支付/合并** | hashmap 账本 · top-k 排序 · 时间戳惰性结算 · 合并重定向（UF 式别名） | **706** · 347 · 721（合并语义） | — | **e** CodeSignal 银行 OA |
 | 先不管 | 分布式文件系统 · 向量检索 · 分片路由 | 路径树 · HNSW · 一致性哈希 | 1166°（选）· 无 LC 题 · 不考 | GFS · SOSP'03 · [HNSW '16](https://arxiv.org/abs/1603.09320) · 一致性哈希 STOC'97 | — |
 
 #### 真题详录（2026 面经 a–e）

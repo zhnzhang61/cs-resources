@@ -49,19 +49,65 @@
 
 思路：**大规模 infra → 常用零件 → design 题**。列从左到右越来越具体（大方向通俗 → 论文精确）；design 题的读法只有一槽——**读 ops 清单 → 推寻址组合 → 报焊接配方**（如「O(1) get + 淘汰最旧」→ 按键+按序 → hash+双链表）。（° = LC 会员题）
 
-| 大方向 | 应用 | 关键算法/零件 | 题号 | 论文 |
-|---|---|---|---|---|
-| AI | 显存里装下更多并发对话（KV cache 分页） | OS 分页 + LRU 淘汰 | **146** | [vLLM · SOSP'23](https://arxiv.org/abs/2309.06180) |
-| AI | 多请求共享相同前缀，不重复算 | radix 树（压缩 Trie）+ 节点 LRU | **208** / 211 | [SGLang RadixAttention '23](https://arxiv.org/abs/2312.07104) |
-| AI | 请求随到随插进批次（continuous batching） | 到达/优先队列调度 | **1834**（选） | Orca · OSDI'22 |
-| 两边通吃 | 热数据快速存取与淘汰（Redis） | LRU/LFU · 手造 hashtable · 换尾删除 · 按版本二分 | **146**/460 · **706** · **380** · **981** | — |
-| 金融 | 行情的滑动统计（均线/极值/中位） | 队列 · 单调队列 · 双堆 · TreeMap | **346**° · **239** · **480**/**295** · **352** | — |
-| 金融 | 生产者→消费者零锁传递（低延迟队列） | ring buffer（环形数组） | **622** | LMAX Disruptor 白皮书 '11 |
-| 金融 | 撮合引擎：价格档 + 时间优先（order book） | 两侧 TreeMap/堆顶 + FIFO 档内队列 · skiplist | **352**/715° · **1206** · 本体手写 | — |
-| 金融 | 历史行情/日志：狂写 + 按时间查（kdb+/LSM） | k 路归并（compaction）· 时间戳二分 · range 改查 | **23** · **981** · **308**/307 | LSM-tree · '96 |
-| 先不管 | 分布式文件系统 · 向量检索 · 分片路由 | 路径树 · HNSW · 一致性哈希 | 1166°（选）· 无 LC 题 · 不考 | GFS · SOSP'03 · [HNSW '16](https://arxiv.org/abs/1603.09320) · 一致性哈希 STOC'97 |
+最右列「真题」= 2026 面经实锤（a–e 详录见表后）：a 某厂推理引擎 OA · b OpenAI 技术筛 · c OpenAI take-home · d OpenAI onsite · e CodeSignal 银行 OA。
+
+| 大方向 | 应用 | 关键算法/零件 | 题号 | 论文 | 真题 |
+|---|---|---|---|---|---|
+| AI | 显存里装下更多并发对话（KV cache 分页） | OS 分页 + LRU 淘汰 | **146** | [vLLM · SOSP'23](https://arxiv.org/abs/2309.06180) | **a·L3a** KV-aware 准入 |
+| AI | 多请求共享相同前缀，不重复算 | radix 树（压缩 Trie）+ 节点 LRU | **208** / 211 | [SGLang RadixAttention '23](https://arxiv.org/abs/2312.07104) | — |
+| AI | 请求随到随插进批次（continuous batching） | 到达/优先队列调度 | **1834**（选） | Orca · OSDI'22 | **a·L1** 基础调度 |
+| AI | 流式输出的增量 diff + 回滚（streaming differ） | 序列 diff（编辑距离/LCS 核）· 操作日志 + undo 栈 · 快照/版本 | **72**（diff 核）· 1472（回滚语义） | — | **d1** OpenAI onsite coding |
+| AI | 整机：设计 ChatGPT（GPU 池 + autoscale + 分布式协调） | 上面三个 AI 行当零件拼装 + 排队/降级 | —（拼装行） | — | **d3** OpenAI onsite design |
+| 两边通吃 | 热数据快速存取与淘汰（Redis） | LRU/LFU · 手造 hashtable · 换尾删除 · 按版本二分 | **146**/460 · **706** · **380** · **981** | — | **b1** versioned KV store |
+| 两边通吃 | 定时任务：延后执行 + 挂了重试（job scheduler） | 按触发时刻的最小堆/时间轮 · 重试退避 · lease/心跳判死 · 幂等 | **1834** · 621（形似） | — | **b2** OpenAI 技术筛 design |
+| 两边通吃 | 事件可靠送达：at-least-once + 死信（webhook delivery） | 持久化队列 · 定时堆重试（指数退避）· 死信队列 DLQ · 幂等键 | **622**（队列本体） | — | **c** OpenAI take-home |
+| 金融 | 行情的滑动统计（均线/极值/中位） | 队列 · 单调队列 · 双堆 · TreeMap | **346**° · **239** · **480**/**295** · **352** | — | — |
+| 金融 | 生产者→消费者零锁传递（低延迟队列） | ring buffer（环形数组） | **622** | LMAX Disruptor 白皮书 '11 | — |
+| 金融 | 撮合引擎：价格档 + 时间优先（order book） | 两侧 TreeMap/堆顶 + FIFO 档内队列 · skiplist | **352**/715° · **1206** · 本体手写 | — | — |
+| 金融 | 历史行情/日志：狂写 + 按时间查（kdb+/LSM） | k 路归并（compaction）· 时间戳二分 · range 改查 | **23** · **981** · **308**/307 | LSM-tree · '96 | — |
+| 金融 | 账务系统：账户/转账/排名/定时支付/合并 | hashmap 账本 · top-k 排序 · 时间戳惰性结算 · 合并重定向（UF 式别名） | **706** · 347 · 721（合并语义） | — | **e** CodeSignal 银行 OA |
+| 先不管 | 分布式文件系统 · 向量检索 · 分片路由 | 路径树 · HNSW · 一致性哈希 | 1166°（选）· 无 LC 题 · 不考 | GFS · SOSP'03 · [HNSW '16](https://arxiv.org/abs/1603.09320) · 一致性哈希 STOC'97 | — |
+
+#### 真题详录（2026 面经 a–e）
+
+**a · LLM 推理引擎调度器**（某厂 OA，CodeSignal 风多级渐进）
+
+- 题面：实现 vLLM/SGLang 类推理引擎的**请求调度器**——每个 time step 决定 GPU 服务哪些请求。不要求 LLM 背景（题面自含）；不许 AI 辅助/搜索/外部库；按过测数计分，不看 code style，正常做不完全部级。
+- 概念：**prefill** = 处理整个 prompt + 出第 1 个 token，费 `prompt_len` 单位、一步内并行完成（L1）；**decode** = 之后每 token 1 单位、同请求必须逐步串行（不同请求可同一步各 decode 一个）；请求带 `max_tokens` 上限；状态机 `waiting → admitted → 完成`。
+- **L1 调度规则**：① 先给所有 admitted 各安排 1 次 decode（按 `view.admitted` 顺序，最老优先）→ ② 再按到达序逐个 admit waiting 的 prefill，保证本步总功 ≤ `view.max_work` → ③ **第一个塞不下就停，不许跳过它去捡后面更小的**。
+- L1 worked example：`max_work=10`，step0 到达 A(prompt 6, max 3)·B(3, 2)·C(5, 2)。step1: prefill A(6)+B(3)=9，C 要 5 塞不下 → 停；step2: decode A(1)+decode B(1)+prefill C(5)。
+- **L3a KV-aware 准入**：显存池 `view.kv_capacity` 个 slot；每请求 1 slot/已 prefill 输入 token + 1 slot/已 decode 输出 token → **peak = prompt_len + max_tokens**（最后一步达峰）；准入条件 = 所有 admitted **各按 peak 计** + 候选 peak ≤ `kv_capacity`——`max_tokens` 是上界不是预测，请求可能提前结束但不可预知 → **按最坏情况预留**（保守，但保证 admitted 必能跑完）；公平性照旧：最老的塞不下就停、不跳队；内存整步占用、步后才回收；L3 不做 chunking（每个 prefill 仍一步完成）。
+- L3a 例：`max_work=10, kv_capacity=6`，step0 到达 A(prompt 2, max 2 → peak 3)·B(4, 2 → 5)·C(2, 2 → 3)。
+- 考点：**预算贪心 + 不跳队公平 + 悲观预留（worst-case admission）**——就是表内 146(vLLM 分页) / 1834(continuous batching) 两行的 OA 化。
+
+**b · OpenAI 技术筛**（同天两轮，各 60 min）
+
+- **b1 coding：versioned key-value store**——981 的版本化推广：`key → append-only (version, value) 列表`，get 按版本二分。
+- **b2 design：带容错的 job scheduler**——零件：按触发时刻的最小堆（或时间轮）· 到期出队执行 · 失败重试 + 指数退避 · worker lease/心跳（超时视为死亡、任务重新派发）· 幂等（防重复执行）。
+
+**c · OpenAI take-home**（48h 造真东西）
+
+- **分布式 webhook 投递系统**：at-least-once 投递 · 失败重试（退避定时堆）· 重试超限进**死信队列（DLQ）** · 幂等键去重 · 持久化（重启不丢）。
+- 后接 **Technical Deep Dive**：面试官读完你的项目后自己列一张问题清单，**逐行盘问每个选择**——每个 tradeoff 都要说得出为什么。
+
+**d · OpenAI onsite**（4 轮）
+
+- **d1 coding 1**（渐进多段：每段先跑对才开下一段，get something correct early, then iterate）：**token 级 streaming differ**——流式收 token 算增量 diff（编辑距离/LCS 核）+ 状态变更追踪 + **回滚**（操作日志/undo 栈，1472 Browser History 的回滚语义）。
+- **d2 coding 2**（系统味）：状态管理 · 并发 · 内存效率；Python internals 直问：**generators / async 构件 / iterators**。
+- **d3 design：设计 ChatGPT**——考察 GPU 池分配、非平稳流量下的 autoscaling、分布式协调；**model-serving 层抽象掉**（除非被要求）＝把本表 146 / 208 / 1834 三行当零件拼整机。
+
+**e · CodeSignal 银行系统**（4 级渐进，工业实现 OA 的祖师爷）
+
+- 规则：过全部当前级测试才开下一级；**不求最优实现，过测即可**；所有操作带 `timestamp`（字符串毫秒，唯一、严格递增）。
+- **L1** 建户 / 存款 / 两账户间转账（校验存在性/余额）。
+- **L2** 按**转出总额**（outgoing）给账户排名 → top-k / 排序。
+- **L3** 定时支付 + 查询支付状态 → timestamp 严格递增 ⇒ 每个操作进来先**惰性结算**所有到期的 scheduled payment（不需要真实定时器）。
+- **L4** 合并两账户，保留双方余额 + 交易历史 → 旧号→新号**重定向**（union-find 式别名表），历史归并。
+- 考点：不是算法而是**增量重构**——每级在上一级代码上长出来，L1 数据结构选错会在 L3/L4 还债；≈ 706(hashmap) + 347(top-k) + 721(合并语义)。
 
 **Design do-list（按表序）**：`146 → 208 → 622 → 706 → 380 → 352 → 1206 → 981 → 23`（**308** 已做免修；选做 460 · 715° · 1166°）
+
+**真题带出的新题（选）**：1472（回滚语义）· 721（合并语义）· 621（调度形似）——其余真题零件已被 do-list 覆盖。
 
 **LC 外的债**：① 分页 / free-list——读表内 vLLM 论文比刷题值；② **order book 本体**——手写 ~100 行（两侧 TreeMap + price-time 队列）。bloom filter / 一致性哈希 / 时间轮：知道即可。
 

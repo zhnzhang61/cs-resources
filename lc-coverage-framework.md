@@ -51,13 +51,15 @@
 
 最右列「真题」= 2026 面经实锤（a–e 详录见表后）：a 某厂推理引擎 OA · b OpenAI 技术筛 · c OpenAI take-home · d OpenAI onsite · e CodeSignal 银行 OA。
 
+AI 五行按**一条请求的生命周期**排序：① 到达 → 调度准入（预算 + KV 账本双检，账本是③的）→ ② 查 radix 复用共享前缀 → ③ 未命中部分分配 KV 页、跑 prefill，此后每步 decode 长一格 → ④ token 流式吐出（客户端增量渲染），完成后回收页/引用减一 → ⑤ 加 GPU 池 + autoscale = 整机。
+
 | 大方向 | 应用 | 关键算法/零件 | 题号 | 论文 | 真题 |
 |---|---|---|---|---|---|
-| AI | 显存里装下更多并发对话（KV cache 分页） | OS 分页 + LRU 淘汰 | **146** | [vLLM · SOSP'23](https://arxiv.org/abs/2309.06180) | **a·L3a** KV-aware 准入 |
-| AI | 多请求共享相同前缀，不重复算 | radix 树（压缩 Trie）+ 节点 LRU | **208** / 211 | [SGLang RadixAttention '23](https://arxiv.org/abs/2312.07104) | — |
-| AI | 请求随到随插进批次（continuous batching） | 到达/优先队列调度 | **1834**（选） | Orca · OSDI'22 | **a·L1** 基础调度 |
-| AI | 流式输出的增量 diff + 回滚（streaming differ） | 序列 diff（编辑距离/LCS 核）· 操作日志 + undo 栈 · 快照/版本 | **72**（diff 核）· 1472（回滚语义） | — | **d1** OpenAI onsite coding |
-| AI | 整机：设计 ChatGPT（GPU 池 + autoscale + 分布式协调） | 上面三个 AI 行当零件拼装 + 排队/降级 | —（拼装行） | — | **d3** OpenAI onsite design |
+| AI ① | 调度准入：请求随到随插进批次（continuous batching） | 到达/优先队列调度 · decode 优先 · 预算裁剪 | **1834**（选） | Orca · OSDI'22 | **a·L1** 基础调度 |
+| AI ② | 前缀复用：多请求共享相同前缀，不重复算 | radix 树（压缩 Trie）+ 节点 LRU | **208** / 211 | [SGLang RadixAttention '23](https://arxiv.org/abs/2312.07104) | — |
+| AI ③ | KV 显存：显存里装下更多并发对话（KV cache 分页） | OS 分页 + LRU 淘汰 | **146** | [vLLM · SOSP'23](https://arxiv.org/abs/2309.06180) | **a·L3a** KV-aware 准入 |
+| AI ④ | 流式输出的增量 diff + 回滚（streaming differ） | 序列 diff（编辑距离/LCS 核）· 操作日志 + undo 栈 · 快照/版本 | **72**（diff 核）· 1472（回滚语义） | — | **d1** OpenAI onsite coding |
+| AI ⑤ | 整机：设计 ChatGPT（GPU 池 + autoscale + 分布式协调） | ①–④ 当零件拼装 + 排队/降级 | —（拼装行） | — | **d3** OpenAI onsite design |
 | 两边通吃 | 热数据快速存取与淘汰（Redis） | LRU/LFU · 手造 hashtable · 换尾删除 · 按版本二分 | **146**/460 · **706** · **380** · **981** | — | **b1** versioned KV store |
 | 两边通吃 | 定时任务：延后执行 + 挂了重试（job scheduler） | 按触发时刻的最小堆/时间轮 · 重试退避 · lease/心跳判死 · 幂等 | **1834** · 621（形似） | — | **b2** OpenAI 技术筛 design |
 | 两边通吃 | 事件可靠送达：at-least-once + 死信（webhook delivery） | 持久化队列 · 定时堆重试（指数退避）· 死信队列 DLQ · 幂等键 | **622**（队列本体） | — | **c** OpenAI take-home |
@@ -79,6 +81,8 @@
 - **L3a KV-aware 准入**：显存池 `view.kv_capacity` 个 slot；每请求 1 slot/已 prefill 输入 token + 1 slot/已 decode 输出 token → **peak = prompt_len + max_tokens**（最后一步达峰）；准入条件 = 所有 admitted **各按 peak 计** + 候选 peak ≤ `kv_capacity`——`max_tokens` 是上界不是预测，请求可能提前结束但不可预知 → **按最坏情况预留**（保守，但保证 admitted 必能跑完）；公平性照旧：最老的塞不下就停、不跳队；内存整步占用、步后才回收；L3 不做 chunking（每个 prefill 仍一步完成）。
 - L3a 例：`max_work=10, kv_capacity=6`，step0 到达 A(prompt 2, max 2 → peak 3)·B(4, 2 → 5)·C(2, 2 → 3)。
 - 考点：**预算贪心 + 不跳队公平 + 悲观预留（worst-case admission）**——就是表内 146(vLLM 分页) / 1834(continuous batching) 两行的 OA 化。
+- 缺的 L2 大概率 = **chunked prefill**：L3a 特意写「not handle chunking; each prefill completes in one step, *as in Level 1*」——"回到 L1 方式"反推中间那级引入过 chunking（长 prompt 切片跨步，免得独占一整步）。
+- 保真度：控制流真（Orca 连续批处理 · decode 优先 · FCFS 不跳队 · token 预算）；但准入按 peak 预留是 **TGI 式保守派**——vLLM 的招牌恰恰是不按 peak 预留（分页按需分配，用满了 preempt/swap/重算）。没建模：分页块、抢占、前缀复用、批大小上限。一句话：**这题 = Orca 调度 + TGI 准入，不是 vLLM**。
 
 **b · OpenAI 技术筛**（同天两轮，各 60 min）
 
@@ -105,7 +109,7 @@
 - **L4** 合并两账户，保留双方余额 + 交易历史 → 旧号→新号**重定向**（union-find 式别名表），历史归并。
 - 考点：不是算法而是**增量重构**——每级在上一级代码上长出来，L1 数据结构选错会在 L3/L4 还债；≈ 706(hashmap) + 347(top-k) + 721(合并语义)。
 
-**Design do-list（按表序）**：`146 → 208 → 622 → 706 → 380 → 352 → 1206 → 981 → 23`（**308** 已做免修；选做 460 · 715° · 1166°）
+**Design do-list**：`146 → 208 → 622 → 706 → 380 → 352 → 1206 → 981 → 23`（**308** 已做免修；选做 460 · 715° · 1166°）
 
 **真题带出的新题（选）**：1472（回滚语义）· 721（合并语义）· 621（调度形似）——其余真题零件已被 do-list 覆盖。
 

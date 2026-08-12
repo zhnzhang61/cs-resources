@@ -55,7 +55,7 @@ AI 五行按**一条请求的生命周期**排序：① 到达 → 调度准入�
 
 | 大方向 | 应用 | 关键算法/零件 | 题号 | 论文 | 真题 |
 |---|---|---|---|---|---|
-| AI ① | **调度准入：请求随到随插进批次（continuous batching）** | 到达/优先队列调度 · decode 优先 · 预算裁剪 | **1834**（选） | Orca · OSDI'22 | **a·L1** 基础调度 |
+| AI ① | **调度准入：请求随到随插进批次（continuous batching）** | 到达/优先队列调度 · decode 优先 · 预算裁剪 | **1834**（选） | [Orca · OSDI'22](https://www.usenix.org/conference/osdi22/presentation/yu) | **a·L1** 基础调度 |
 | AI ② | 前缀复用：多请求共享相同前缀，不重复算 | radix 树（压缩 Trie）+ 节点 LRU | **208** / 211 | [SGLang RadixAttention '23](https://arxiv.org/abs/2312.07104) | — |
 | AI ③ | **KV 显存：显存里装下更多并发对话（KV cache 分页）** | OS 分页 + LRU 淘汰 | **146** | [vLLM · SOSP'23](https://arxiv.org/abs/2309.06180) | **a·L3a** KV-aware 准入 |
 | AI ④ | 流式输出的增量 diff + 回滚（streaming differ） | 序列 diff（编辑距离/LCS 核）· 操作日志 + undo 栈 · 快照/版本 | **72**（diff 核）· 1472（回滚语义） | — | **d1** OpenAI onsite coding |

@@ -31,10 +31,10 @@
 
 | 1-d algo (moves) | 1-d · string | 链表 | 区间 |
 |---|---|---|---|
-| Sliding window | **3 · 480**（480 = 窗口中位，双堆） | — | — |
+| Sliding window | **3**（基本）· **239**（×单调队列）· **480**（×双堆） | — | — |
 | Two pointers (incl. expand-center) | **167 · 5** | — | — |
 | Fast–slow pointers | **287**（数组当链表） | 141 / 142 | — |
-| Monotonic stack / deque | **739 · 239** | — | — |
+| Monotonic stack / deque | **739** | — | — |
 
 | Graph algo (moves) | 2d（图眼镜） | 树 | 图 | stream |
 |---|---|---|---|---|

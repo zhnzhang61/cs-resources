@@ -17,33 +17,31 @@
 4. 2-d array：2d array可以放bfs/dfs上去，也可以dp上去，所以特意把它跟图类数据结构凑到一起
 
 ![Algorithm Venn — 三个算法家族 × 它们能跑的地形](images/algo-venn.svg)
-| Everything algo | 1-d | 2-d | 树 | 图 | 区间 |
-|---|---|---|---|---|---|
-| DP | **121 · 322**（70%） | **62 · 64**（15%） | —（5%） | —（5%） | —（5%） |
-| Binary search / sort | **875 · 704**（80%） | —（5%） | — | —（5%） | **56**（10%） |
-| Greedy | **55**（70%） | —（5%） | —（5%） | **743** Dijkstra（5%） | **435 · 452**（15%） |
-| Bit mask | **136**（80%） | —（10%） | — | —（10%） | — |
-| Prefix sum | **560**（80%） | —（10%） | —（5%） | — | —（5% 差分） |
-| Stack (LIFO: nesting / undo / defer) | **394**（85%） | — | 94 迭代遍历（15%） | — | — |
-| Queue (FIFO: arrival order / sliding counts) | **622** · 346° · 933（95%） | — | —（102 记在 Graph 圈当 frontier） | — | — |
-| Heap (priority: extremum anytime) | **215 · 295** · 703 · **23**（70%） | — | — | **743**（10%，与 greedy 行同题双料） | 253°（20%，会议室族） |
-| TreeMap (total order: neighbor / rank) | **352**（60%） | — | — | — | 729 · 715°（40%，日历/区间簿） |
-
-> 在线/stream = 1-d 的受限变体（随机访问被没收）→ sort/二分/对撞指针出局 → 只剩「边收边维护」功率谱，正好是上面四行从便宜到贵各选一档：346 队列 → 239 单调队列 → 703 定容堆 → 295/480 双堆 → 352 TreeMap。
+| Everything algo | 1-d | stream（数据不一次给全，来一个处理一个） | 2-d | 树 | 图 | 区间 |
+|---|---|---|---|---|---|---|
+| DP | **121 · 322**（70%） | — | **62 · 64**（15%） | —（5%） | —（5%） | —（5%） |
+| Binary search / sort | **875 · 704**（80%） | — | —（5%） | — | —（5%） | **56**（10%） |
+| Greedy | **55**（70%） | — | —（5%） | —（5%） | **743** Dijkstra（5%） | **435 · 452**（15%） |
+| Bit mask | **136**（80%） | — | —（10%） | — | —（10%） | — |
+| Prefix sum | **560**（80%） | — | —（10%） | —（5%） | — | —（5% 差分） |
+| Stack (LIFO: nesting / undo / defer) | **394**（85%） | — | — | 94 迭代遍历（15%） | — | — |
+| Queue (FIFO: arrival order / sliding counts) | **622** · 933（95%） | **346**° | — | —（102 记在 Graph 圈当 frontier） | — | — |
+| Heap (priority: extremum anytime) | **215** · **23**（70%） | **295** · 703 | — | — | **743**（10%，与 greedy 行同题双料） | 253°（20%，会议室族） |
+| TreeMap (total order: neighbor / rank) | — | **352**（60%） | — | — | — | 729 · 715°（40%，日历/区间簿） |
 
 | 1-d algo (moves) | 1-d · string | 链表 | 区间 |
 |---|---|---|---|
-| Sliding window | **3** | — | — |
+| Sliding window | **3 · 480**（480 = 窗口中位，双堆） | — | — |
 | Two pointers (incl. expand-center) | **167 · 5** | — | — |
 | Fast–slow pointers | **287**（数组当链表） | 141 / 142 | — |
-| Monotonic stack / deque | **739** | — | — |
+| Monotonic stack / deque | **739 · 239** | — | — |
 
-| Graph algo (moves) | 2d（图眼镜） | 树 | 图 |
-|---|---|---|---|
-| BFS / DFS | **1091 · 200** | **102** | — |
-| Backtracking | **79** | **78**（输入 1-d，决策树自造） | — |
-| Union-Find | **200** 用 UF 重做 · 305°（流式版） | — | — |
-| Topological sort | — | — | **207** |
+| Graph algo (moves) | 2d（图眼镜） | 树 | 图 | stream |
+|---|---|---|---|---|
+| BFS / DFS | **1091 · 200** | **102** | — | — |
+| Backtracking | **79** | **78**（输入 1-d，决策树自造） | — | — |
+| Union-Find | **200** 用 UF 重做 | — | — | **305**°（陆地一格格到来，增量数岛） |
+| Topological sort | — | — | **207** | — |
 
 ### Design（第四类）：从工业 infra 反推的练题单
 

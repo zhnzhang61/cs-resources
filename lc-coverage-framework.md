@@ -14,7 +14,7 @@
 1. 用在一维数据结构（String; Array; LinkedList; Segment(Array上的一部分））上的：Sliding Window, Two Pointers, Fast/Slow Pointers, Monotone Stack/Queue
 2. 用在图类数据结构 (Tree;Graph)上的：BFS/DFS; Backtracking; Union-Find; Topological Sort
 3. 都能用的：DP; Binary Search; Greedy; Bit mask; Prefix Sum; Stack / Queue / Heap
-4. 2-d array：2d array可以放bfs/dfs上去，也可以dp上去，所以特意把它跟图类数据结构凑到一起
+4. 2-d array和stream：2d array可以放bfs/dfs上去，也可以dp上去，所以特意把它跟图类数据结构凑到一起。stream可以union find做，也可以queue/heap做，所以也放到图和everything的交界处。
 
 ![Algorithm Venn — 三个算法家族 × 它们能跑的地形](images/algo-venn.svg)
 | Everything algo | 1-d | stream（数据不一次给全，来一个处理一个） | 2-d | 树 | 图 | 区间 |

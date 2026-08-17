@@ -20,6 +20,11 @@
 
 一根主轴 P0–P6 串起整个仓库：本 README 挂**资源**（§ 列），[`lc-coverage-framework.md`](lc-coverage-framework.md) 的 Design 节挂**零件 / 真题**（最后一列），两边靠阶段号互引。
 
+```
+P0 数据 → P1 预训练 → P2 后训练 → P3 RL/Agentic-RL → P4 Serving → P5 Agent runtime → P6 评测/安全
+                                                     └───── 主攻带 ─────┘
+```
+
 | 阶段 | 实际做啥 | 面试考啥 | 我的资产（README §） | 零件 / 真题（LC Design） | 定位 |
 |---|---|---|---|---|---|
 | P0 数据 | 清洗去重配比、数据管线 | 分布式处理、去重 | — | — | 了解 |

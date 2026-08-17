@@ -16,6 +16,26 @@
 
 ---
 
+## Pipeline 总表：LLM 生命周期 × 我在哪
+
+一根主轴 P0–P6 串起整个仓库：本 README 挂**资源**（§ 列），[`lc-coverage-framework.md`](lc-coverage-framework.md) 的 Design 节挂**零件 / 真题**（最后一列），两边靠阶段号互引。
+
+| 阶段 | 实际做啥 | 面试考啥 | 我的资产（README §） | 零件 / 真题（LC Design） | 定位 |
+|---|---|---|---|---|---|
+| P0 数据 | 清洗去重配比、数据管线 | 分布式处理、去重 | — | — | 了解 |
+| P1 预训练 | 并行训练、稳定性 | Megatron/FSDP、通信 | §1 Transformer · §2 架构 · §6.2 infra 图 | — | 了解 |
+| P2 后训练 | SFT / RLHF / DPO、评测 | 对齐方法、reward | §3 | — | 了解 |
+| P3 RL / Agentic-RL | 环境、reward、**rollout infra** | RL 基础 + 大规模采样系统 | §4 | 复用 P4 调度 + P5 沙箱 | 延伸 |
+| **P4 Serving** | 调度、KV、量化、吞吐 / 延迟 | 调度器 / KV / 批处理 design | §6.1 量化 · §6.3 书 · §7.2 llmfit | **AI ①②③⑤ · 真题 a · d3** | **主攻** |
+| **P5 Agent runtime** | 工具 / 权限 / 沙箱 / 记忆 / 可观测 | 权限模型、可靠投递、调度 | §5 全部 · §7.1 / 7.3 / 7.4 | **AI ④ · job scheduler b2 · webhook c · Redis 族 b1** | **主攻** |
+| P6 评测 / 安全 | benchmark、红队、监控 | 评估方法、失效模式 | — | — | 了解 |
+
+**主攻带定位**：Serving + Agent runtime，以系统能力为主轴的**推理与运行时 infra**——不是训练 infra。两段共享同一套零件：**调度 · 资源账本 · 隔离 · 可观测**。P3 的 rollout infra 是同一套零件的第三个用户，故标"延伸"。
+
+**面试叙事一句话**：我做的不是 agent，是让 agent **安全地拿到系统能力**——模型吃不掉、"植入 OS"也吃不掉的恰是这一层。
+
+---
+
 ## 目录
 
 1. [Foundations — Transformer 原理](#1-foundations--transformer-原理)

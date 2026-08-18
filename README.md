@@ -28,7 +28,8 @@ LLM 知识地图，**从下往上读**：底部是学习的目的地（主攻带
 - **微积分：链式法则**（backprop）
 - **softmax / logsumexp**（online softmax）
 - **数值：fp16 / bf16 / int8 精度与溢出**（量化）
-- 回归 · 分布（DS 柱用）
+- **概率 / 分布：LLM 是概率机——最后一步 `p = softmax(z / T)`，然后 greedy · top-k · top-p · 采样；logprobs · perplexity**（P4 decode 步 refer；面试必问"最后一步公式长啥样"）
+- 回归（DS 柱 / quant 用）
 
 <div align="center">↑ 被引用</div>
 
@@ -40,7 +41,8 @@ LLM 知识地图，**从下往上读**：底部是学习的目的地（主攻带
 - **进程 / 线程：隔离 · 容器 / microVM**（沙箱）
 - **并发：async / event loop / GIL**（Python internals，OpenAI d2 点名）
 - **调度：优先级 · 公平 · 抢占**（continuous batching 就是 CPU 调度换皮）
-- CPU · 磁盘 · 并行：了解
+- **Disk / 存储：顺序写 + 索引 · WAL / checkpoint · LSM**（P5 可靠执行的持久化底座——"重启不丢"；LC 呼应：**981** 版本二分 · **23** k 路归并 / LSM compaction · **706** 幂等键 = 去重表）
+- CPU · 并行：了解
 
 **Machine Learning** ← LLM 主轴 refer；P4 只 refer 前向
 - **神经网络前向：矩阵乘 + 非线性**（serving 只跑这个）
@@ -49,7 +51,7 @@ LLM 知识地图，**从下往上读**：底部是学习的目的地（主攻带
 - Backprop / 梯度下降：P1 / P2 用，能讲即可
 - 经典 ML：了解
 
-**Data Science** ← 仅 P0 数据 / P6 评测 refer（整根降级）
+**Data Science** ← 仅 P0 数据 / P6 评测 refer（与主攻带正交，但 quant 面试用——留着）
 - 数据清洗 · 去重 · 配比（P0）
 - 评测指标 · 统计检验（P6）
 - 时间序列 · 异常值 · 非神经网络统计模型 · Kaggle
@@ -80,9 +82,10 @@ P0 data → P1 pretraining → P2 post-training → P3 RL → [ P4 Serving → P
 - 预训练：并行 / 稳定性
 - 后训练：SFT / RLHF / DPO
 
-**P3 RL**（延伸）— rollout infra = P4 调度 + P5 沙箱的第三个用户
-- RL 基础
-- **大规模采样系统**（复用零件）
+**P3 RL**（延伸）— **rollout** = 让当前模型跑一遍、生成一批样本（RL 循环：采样 → 打分 → 更新参数 的第一步）
+- LLM 的 RL 里生成是最慢的一步，所以训练器内嵌一个推理引擎专做 rollout（verl / OpenRLHF 底下就是 vLLM / SGLang）；agentic RL 的 rollout 还要给每条轨迹起沙箱跑工具
+- **它的调度 / KV / 抢占 / 沙箱 / 超时问题 = P4 + P5 同一套**，只是服务对象从"用户请求"换成"训练器要的样本" → 学完主攻带 P3 顺路
+- 剩下的只是 RL 算法本身
 
 **P6 Safety**（了解）
 - 评测 · 红队 · 监控

@@ -1,5 +1,5 @@
-<svg viewBox="0 0 1000 1220" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,sans-serif">
-<rect x="0" y="0" width="1000" height="1220" fill="#ffffff"/>
+<svg viewBox="0 0 1000 1300" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,sans-serif">
+<rect x="0" y="0" width="1000" height="1300" fill="#ffffff"/>
 
 <!-- ===== 标题 ===== -->
 <text x="500" y="34" text-anchor="middle" font-size="19" font-weight="600" fill="#2C2C2A">LLM 知识地图 · 从下往上读</text>
@@ -74,65 +74,77 @@
 <text x="696" y="474" font-size="12" fill="#5F5E5A">• Kaggle</text>
 
 <!-- 箭头 -->
+
+<!-- ===== 算子 / kernel 层（夹在柱子和主轴之间） ===== -->
 <text x="500" y="600" text-anchor="middle" font-size="12" fill="#888780">↑ 被引用</text>
+<text x="40" y="634" font-size="12" font-weight="600" fill="#888780">算子 / kernel 层 · 模型定义（ML）与硬件（OS）之间："这个算子在这块硬件上怎么算"</text>
+<line x1="600" y1="630" x2="960" y2="630" stroke="#D3D1C7" stroke-width="0.8"/>
+<rect x="40" y="646" width="450" height="66" rx="10" fill="#ffffff" stroke="#B4B2A9" stroke-width="1"/>
+<text x="56" y="668" font-size="14" font-weight="600" fill="#2C2C2A">FlashAttention</text>
+<text x="56" y="684" font-size="10.5" fill="#185FA5">← P4 refer；自身 refer OS·GPU 层次 + ML·attention + 数理·分块/logsumexp</text>
+<text x="56" y="702" font-size="12" font-weight="600" fill="#2C2C2A">• IO-aware · 分块 · online softmax · 显存 O(N)（少 HBM 读写，非少 FLOPs）</text>
+<rect x="510" y="646" width="450" height="66" rx="10" fill="#ffffff" stroke="#B4B2A9" stroke-width="1"/>
+<text x="526" y="668" font-size="14" font-weight="600" fill="#2C2C2A">量化</text>
+<text x="526" y="684" font-size="10.5" fill="#185FA5">← P4 refer；自身 refer ML·精度 + 数理·fp16/int8 + OS/硬件·算子支持</text>
+<text x="526" y="702" font-size="12" font-weight="600" fill="#2C2C2A">• PTQ / QAT · INT8 / FP8 / FP4 · 精度取舍（权重小 → 显存/带宽省）</text>
+
+<text x="500" y="730" text-anchor="middle" font-size="12" fill="#888780">↑ 被引用</text>
 
 <!-- ===== 第三层：LLM 主轴 ===== -->
-<text x="40" y="634" font-size="12" font-weight="600" fill="#888780">LLM 主轴 · P0–P6</text>
-<line x1="170" y1="630" x2="960" y2="630" stroke="#D3D1C7" stroke-width="0.8"/>
+<text x="40" y="764" font-size="12" font-weight="600" fill="#888780">LLM 主轴 · P0–P6</text>
+<line x1="170" y1="760" x2="960" y2="760" stroke="#D3D1C7" stroke-width="0.8"/>
 
-<rect x="40" y="646" width="920" height="54" rx="8" fill="#F1EFE8" stroke="none"/>
-<text x="500" y="669" text-anchor="middle" font-size="13" font-family="SFMono-Regular,Menlo,Consolas,monospace" fill="#2C2C2A">P0 data → P1 pretraining → P2 post-training → P3 RL → [ P4 Serving → P5 Agent runtime ] → P6 safety</text>
-<line x1="592" y1="686" x2="812" y2="686" stroke="#185FA5" stroke-width="2"/>
-<text x="702" y="697" text-anchor="middle" font-size="10.5" font-weight="600" fill="#185FA5">主攻带</text>
+<rect x="40" y="776" width="920" height="54" rx="8" fill="#F1EFE8" stroke="none"/>
+<text x="500" y="799" text-anchor="middle" font-size="13" font-family="SFMono-Regular,Menlo,Consolas,monospace" fill="#2C2C2A">P0 data → P1 pretraining → P2 post-training → P3 RL → [ P4 Serving → P5 Agent runtime ] → P6 safety</text>
+<line x1="592" y1="816" x2="812" y2="816" stroke="#185FA5" stroke-width="2"/>
+<text x="702" y="827" text-anchor="middle" font-size="10.5" font-weight="600" fill="#185FA5">主攻带</text>
 
 <!-- P0-P2 -->
-<rect x="40" y="716" width="300" height="104" rx="10" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
-<text x="56" y="740" font-size="14" font-weight="600" fill="#5F5E5A">P0–P2 上游（能讲即可）</text>
-<text x="56" y="762" font-size="12" fill="#5F5E5A">• tokenizer · word2vec → BERT → Transformer</text>
-<text x="56" y="782" font-size="12" fill="#5F5E5A">• 预训练：并行 / 稳定性</text>
-<text x="56" y="802" font-size="12" fill="#5F5E5A">• 后训练：SFT / RLHF / DPO</text>
+<rect x="40" y="846" width="300" height="104" rx="10" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+<text x="56" y="870" font-size="14" font-weight="600" fill="#5F5E5A">P0–P2 上游（能讲即可）</text>
+<text x="56" y="892" font-size="12" fill="#5F5E5A">• tokenizer · word2vec → BERT → Transformer</text>
+<text x="56" y="912" font-size="12" fill="#5F5E5A">• 预训练：并行 / 稳定性</text>
+<text x="56" y="932" font-size="12" fill="#5F5E5A">• 后训练：SFT / RLHF / DPO</text>
 
 <!-- P3 -->
-<rect x="360" y="716" width="300" height="104" rx="10" fill="#ffffff" stroke="#B4B2A9" stroke-width="1"/>
-<text x="376" y="740" font-size="14" font-weight="600" fill="#2C2C2A">P3 RL（延伸）</text>
-<text x="376" y="757" font-size="11" fill="#185FA5">rollout infra = P4 调度 + P5 沙箱的第三个用户</text>
-<text x="376" y="782" font-size="12" fill="#5F5E5A">• RL 基础</text>
-<text x="376" y="802" font-size="12" font-weight="600" fill="#2C2C2A">• 大规模采样系统（复用零件）</text>
+<rect x="360" y="846" width="300" height="104" rx="10" fill="#ffffff" stroke="#B4B2A9" stroke-width="1"/>
+<text x="376" y="870" font-size="14" font-weight="600" fill="#2C2C2A">P3 RL（延伸）</text>
+<text x="376" y="887" font-size="11" fill="#185FA5">rollout infra = P4 调度 + P5 沙箱的第三个用户</text>
+<text x="376" y="912" font-size="12" fill="#5F5E5A">• RL 基础</text>
+<text x="376" y="932" font-size="12" font-weight="600" fill="#2C2C2A">• 大规模采样系统（复用零件）</text>
 
 <!-- P6 -->
-<rect x="680" y="716" width="280" height="104" rx="10" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
-<text x="696" y="740" font-size="14" font-weight="600" fill="#5F5E5A">P6 Safety（了解）</text>
-<text x="696" y="762" font-size="12" fill="#5F5E5A">• 评测 · 红队 · 监控</text>
+<rect x="680" y="846" width="280" height="104" rx="10" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+<text x="696" y="870" font-size="14" font-weight="600" fill="#5F5E5A">P6 Safety（了解）</text>
+<text x="696" y="892" font-size="12" fill="#5F5E5A">• 评测 · 红队 · 监控</text>
 
 <!-- 箭头 -->
-<text x="500" y="850" text-anchor="middle" font-size="12" fill="#888780">↑ 目标</text>
+<text x="500" y="980" text-anchor="middle" font-size="12" fill="#888780">↑ 目标</text>
 
 <!-- ===== 第四层：主攻带 ===== -->
-<text x="40" y="884" font-size="12" font-weight="600" fill="#185FA5">主攻带 · 学习的目的地</text>
-<line x1="200" y1="880" x2="960" y2="880" stroke="#B5D4F4" stroke-width="0.8"/>
+<text x="40" y="1014" font-size="12" font-weight="600" fill="#185FA5">主攻带 · 学习的目的地</text>
+<line x1="200" y1="1010" x2="960" y2="1010" stroke="#B5D4F4" stroke-width="0.8"/>
 
 <!-- P4 -->
-<rect x="40" y="896" width="450" height="236" rx="12" fill="#E6F1FB" stroke="#378ADD" stroke-width="2"/>
-<text x="56" y="922" font-size="16" font-weight="600" fill="#0C447C">P4 Serving（推理引擎控制流）</text>
-<text x="56" y="940" font-size="11" fill="#185FA5">脚下两块砖：FlashAttention（算子快）· 量化（权重小）</text>
-<text x="56" y="964" font-size="12.5" font-weight="600" fill="#042C53">• ① 调度准入 continuous batching（Orca）</text>
-<text x="56" y="986" font-size="12.5" font-weight="600" fill="#042C53">• ② 前缀复用 radix（SGLang）</text>
-<text x="56" y="1008" font-size="12.5" font-weight="600" fill="#042C53">• ③ KV 分页 PagedAttention（vLLM）</text>
-<text x="56" y="1030" font-size="12.5" font-weight="600" fill="#042C53">• ⑤ 整机：GPU 池 · autoscale</text>
-<text x="56" y="1058" font-size="12.5" font-weight="600" fill="#042C53">• FlashAttention：IO-aware · 分块 · online softmax · 显存 O(N)</text>
-<text x="56" y="1080" font-size="12.5" font-weight="600" fill="#042C53">• 量化：PTQ / QAT · INT8 / FP8 / FP4 · 精度取舍</text>
+<rect x="40" y="1026" width="450" height="190" rx="12" fill="#E6F1FB" stroke="#378ADD" stroke-width="2"/>
+<text x="56" y="1052" font-size="16" font-weight="600" fill="#0C447C">P4 Serving（推理引擎控制流）</text>
+<text x="56" y="1070" font-size="11" fill="#185FA5">脚下两块砖 FlashAttention / 量化 → 见上方「算子 / kernel 层」</text>
+<text x="56" y="1094" font-size="12.5" font-weight="600" fill="#042C53">• ① 调度准入 continuous batching（Orca）</text>
+<text x="56" y="1116" font-size="12.5" font-weight="600" fill="#042C53">• ② 前缀复用 radix（SGLang）</text>
+<text x="56" y="1138" font-size="12.5" font-weight="600" fill="#042C53">• ③ KV 分页 PagedAttention（vLLM）</text>
+<text x="56" y="1160" font-size="12.5" font-weight="600" fill="#042C53">• ⑤ 整机：GPU 池 · autoscale</text>
 
 <!-- P5 -->
-<rect x="510" y="896" width="450" height="236" rx="12" fill="#E6F1FB" stroke="#378ADD" stroke-width="2"/>
-<text x="526" y="922" font-size="16" font-weight="600" fill="#0C447C">P5 Agent runtime</text>
-<text x="526" y="940" font-size="11" fill="#185FA5">共享零件：调度 · 资源账本 · 隔离 · 可观测</text>
-<text x="526" y="964" font-size="12.5" font-weight="600" fill="#042C53">• 权限 / 委托身份（on-behalf-of · capability）</text>
-<text x="526" y="986" font-size="12.5" font-weight="600" fill="#042C53">• 沙箱：容器 / microVM · 配额 · 副作用分级</text>
-<text x="526" y="1008" font-size="12.5" font-weight="600" fill="#042C53">• 可靠执行：job scheduler · webhook + DLQ · checkpoint</text>
-<text x="526" y="1030" font-size="12.5" font-weight="600" fill="#042C53">• 可观测：trace 树 · 成本归因 · 回放</text>
-<text x="526" y="1058" font-size="12.5" font-weight="600" fill="#042C53">• ④ streaming differ · 记忆分层 · 工具网关（MCP）</text>
+<rect x="510" y="1026" width="450" height="190" rx="12" fill="#E6F1FB" stroke="#378ADD" stroke-width="2"/>
+<text x="526" y="1052" font-size="16" font-weight="600" fill="#0C447C">P5 Agent runtime</text>
+<text x="526" y="1070" font-size="11" fill="#185FA5">共享零件：调度 · 资源账本 · 隔离 · 可观测</text>
+<text x="526" y="1094" font-size="12.5" font-weight="600" fill="#042C53">• 权限 / 委托身份（on-behalf-of · capability）</text>
+<text x="526" y="1116" font-size="12.5" font-weight="600" fill="#042C53">• 沙箱：容器 / microVM · 配额 · 副作用分级</text>
+<text x="526" y="1138" font-size="12.5" font-weight="600" fill="#042C53">• 可靠执行：job scheduler · webhook + DLQ · checkpoint</text>
+<text x="526" y="1160" font-size="12.5" font-weight="600" fill="#042C53">• 可观测：trace 树 · 成本归因 · 回放</text>
+<text x="526" y="1188" font-size="12.5" font-weight="600" fill="#042C53">• ④ streaming differ · 记忆分层 · 工具网关（MCP）</text>
 
 <!-- 底部定位 -->
-<text x="500" y="1166" text-anchor="middle" font-size="12" fill="#5F5E5A">定位：Serving + Agent runtime，以系统能力为主轴的<tspan font-weight="600" fill="#2C2C2A">推理与运行时 infra</tspan>——不是训练 infra</text>
-<text x="500" y="1188" text-anchor="middle" font-size="12" fill="#5F5E5A">叙事：我做的不是 agent，是让 agent <tspan font-weight="600" fill="#2C2C2A">安全地拿到系统能力</tspan>——模型吃不掉、"植入 OS"也吃不掉的恰是这一层</text>
+<text x="500" y="1250" text-anchor="middle" font-size="12" fill="#5F5E5A">定位：Serving + Agent runtime，以系统能力为主轴的<tspan font-weight="600" fill="#2C2C2A">推理与运行时 infra</tspan>——不是训练 infra</text>
+<text x="500" y="1272" text-anchor="middle" font-size="12" fill="#5F5E5A">叙事：我做的不是 agent，是让 agent <tspan font-weight="600" fill="#2C2C2A">安全地拿到系统能力</tspan>——模型吃不掉、"植入 OS"也吃不掉的恰是这一层</text>
 </svg>

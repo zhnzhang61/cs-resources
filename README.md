@@ -56,6 +56,18 @@ LLM 知识地图，**从下往上读**：底部是学习的目的地（主攻带
 
 <div align="center">↑ 被引用</div>
 
+## 算子 / kernel 层 · 模型定义（ML）与硬件（OS）之间
+
+"这个算子在这块硬件上怎么算"——同时 refer OS 柱和 ML 柱，不属于任何一根，故单列一层。是 P4 引擎脚下的两块砖。
+
+**FlashAttention** ← P4 refer；自身 refer OS·GPU 层次 + ML·attention 算子 + 数理·分块 / logsumexp
+- **IO-aware · 分块 · online softmax · 显存 O(N)**（快在少 HBM 读写，不是少 FLOPs）
+
+**量化** ← P4 refer；自身 refer ML·精度影响 + 数理·fp16 / int8 数值 + OS/硬件·算子支持
+- **PTQ / QAT · INT8 / FP8 / FP4 · 精度取舍**（权重小 → 显存 / 带宽省）
+
+<div align="center">↑ 被引用</div>
+
 ## LLM 主轴 · P0–P6
 
 ```
@@ -79,13 +91,11 @@ P0 data → P1 pretraining → P2 post-training → P3 RL → [ P4 Serving → P
 
 ## 主攻带 · 学习的目的地
 
-**P4 Serving（推理引擎控制流）** — 脚下两块砖：FlashAttention（算子快）· 量化（权重小）
+**P4 Serving（推理引擎控制流）** — 脚下两块砖 FlashAttention / 量化 见上方「算子 / kernel 层」
 - **① 调度准入 continuous batching**（Orca）
 - **② 前缀复用 radix**（SGLang）
 - **③ KV 分页 PagedAttention**（vLLM）
 - **⑤ 整机：GPU 池 · autoscale**
-- **FlashAttention：IO-aware · 分块 · online softmax · 显存 O(N)**
-- **量化：PTQ / QAT · INT8 / FP8 / FP4 · 精度取舍**
 
 **P5 Agent runtime** — 共享零件：调度 · 资源账本 · 隔离 · 可观测
 - **权限 / 委托身份**（on-behalf-of · capability）

@@ -1,4 +1,4 @@
-# cs-resources
+# Knowledge Map
 
 LLM 知识地图，**从下往上读**：底部是学习的目的地（主攻带 P4 Serving / P5 Agent runtime），每往上一层是被下一层引用的"砖"，一直追到算法与数理基础。每块砖旁的「←」标明是谁 refer 了它——任何一条你追一下箭头就知道它为什么在图上。
 

@@ -6,9 +6,9 @@ LLM 知识地图，**从下往上读**：底部是学习的目的地（主攻带
 
 > 📑 **Sibling 文件**：
 > - [`cs-bookmarks.md`](cs-bookmarks.md) — 全部资源明细（AI 截图 + 书签按 P0–P6 分节，含 Pipeline 总表 + CS 通用书签）
-> - [`lc-coverage-framework.md`](lc-coverage-framework.md) — LeetCode 双框架 + Design 表（零件 / 真题，标 P4/P5）+ 练习学习清单 + 刷题笔记
-> - [`quant-coverage-framework.md`](quant-coverage-framework.md) — 量化面试知识框架
-> - [`math-section-reading-template.md`](math-section-reading-template.md) · [`shreve-ii-1.1-measure-theory.md`](shreve-ii-1.1-measure-theory.md) · [`esl-ch2-ontology.md`](esl-ch2-ontology.md) — 数学 / 统计精读
+> - [`Notes LeetCode and Algo.md`](Notes%20LeetCode%20and%20Algo.md) — LeetCode 双框架 + Design 表（零件 / 真题，标 P4/P5）+ 练习学习清单 + 刷题笔记
+> - [`Notes Stochastic.md`](Notes%20Stochastic.md) — 量化面试知识框架 + 数学教材精读模板 + Shreve II §1.1 精读
+> - [`Notes Stats.md`](Notes%20Stats.md) — 统计学习本体论（ESL Ch 2 精读）
 
 ![LLM 知识地图 · 从下往上读](images/llm-knowledge-map.svg)
 
@@ -124,6 +124,6 @@ P0 data → P1 pretraining → P2 post-training → P3 RL → [ P4 Serving → P
 
 **定位一句话**：Serving + Agent runtime，以系统能力为主轴的**推理与运行时 infra**——不是训练 infra。**面试叙事**：我做的不是 agent，是让 agent 安全地拿到系统能力——模型吃不掉、"植入 OS"也吃不掉的恰是这一层。
 
-零件 / 真题 / 练习清单 → [`lc-coverage-framework.md` Design 节](lc-coverage-framework.md)；资源明细 → [`cs-bookmarks.md`](cs-bookmarks.md)。
+零件 / 真题 / 练习清单 → [`Notes LeetCode and Algo.md` Design 节](Notes%20LeetCode%20and%20Algo.md)；资源明细 → [`cs-bookmarks.md`](cs-bookmarks.md)。
 
 </details>

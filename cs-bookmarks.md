@@ -1,6 +1,6 @@
 # CS Bookmarks (Non-AI sibling)
 
-从 Chrome 书签 `Computer Science` 文件夹里挑出来、跟 AI/ML 主线没那么强相关的部分。跟 [README.md](README.md) 主索引并列——把 AI 主题轴保持干净，CS 通用资源放这里。
+从 Chrome 书签 `Computer Science` 文件夹里挑出来、跟 AI/ML 主线没那么强相关的部分。跟 [Knowledge Map.md](Knowledge%20Map.md) 主索引并列——把 AI 主题轴保持干净，CS 通用资源放这里。
 
 共 **109 条**，按 CS 通用主题分类。最后的「Unclassified」是我没把握分类的，等你看一眼判断。
 
@@ -291,17 +291,15 @@
 >
 > 📑 **Sibling 文件**：
 > - [`cs-bookmarks.md`](cs-bookmarks.md) — 109 条 CS 通用书签（LeetCode 算法/系统设计、OS/网络/语言基础、UIUC/Stanford 课程归档、Legacy ML 等）
-> - [`lc-coverage-framework.md`](lc-coverage-framework.md) — LeetCode 双框架：Framework 1（算法三圈 × 五地形 Venn，盘点用）+ Framework 0（题干 → 数据结构 → 算法，A–J 意图 block，面试路由用）+ 刷题笔记
-> - [`quant-coverage-framework.md`](quant-coverage-framework.md) — 量化面试知识框架：随机源 (dynamics) × 求解工具 (tool ladder) 交叉表 + task 轴 reminder
-> - [`math-section-reading-template.md`](math-section-reading-template.md) — 数学/金融教材精读模板：拆主题 → 标起止 wording → 解释符号/背景定理 → 定价框架意义 → 若不成立的后果
-> - [`shreve-ii-1.1-measure-theory.md`](shreve-ii-1.1-measure-theory.md) — 上述模板的首次实践：Shreve II §1.1 七主题精读（起止 wording + 定价意义 + digital 母例 + 国土丈量类比）
-> - [`esl-ch2-ontology.md`](esl-ch2-ontology.md) — 统计学习的本体论重写（ESL Ch 2 精读产物）：曲面（联合分布）→ 山脊线（E[Y|X]）→ 两笔账（可约/不可约误差）→ 借数据的耦合梯子（光滑/单调/指定画具/精确公式）+ 白话-术语对照 + 假设层级
+> - [`Notes LeetCode and Algo.md`](Notes%20LeetCode%20and%20Algo.md) — LeetCode 双框架：Framework 1（算法三圈 × 五地形 Venn，盘点用）+ Framework 0（题干 → 数据结构 → 算法，A–J 意图 block，面试路由用）+ 刷题笔记
+> - [`Notes Stochastic.md`](Notes%20Stochastic.md) — 量化面试知识框架（随机源 dynamics × 求解工具 tool ladder 交叉表 + task 轴 reminder）+ 数学/金融教材精读模板 + Shreve II §1.1 七主题精读
+> - [`Notes Stats.md`](Notes%20Stats.md) — 统计学习的本体论重写（ESL Ch 2 精读产物）：曲面（联合分布）→ 山脊线（E[Y|X]）→ 两笔账（可约/不可约误差）→ 借数据的耦合梯子（光滑/单调/指定画具/精确公式）+ 白话-术语对照 + 假设层级
 
 ---
 
 ## Pipeline 总表：LLM 生命周期 × 我在哪
 
-一根主轴 P0–P6 串起整个仓库：本 README 挂**资源**（§ 列），[`lc-coverage-framework.md`](lc-coverage-framework.md) 的 Design 节挂**零件 / 真题**（最后一列），两边靠阶段号互引。
+一根主轴 P0–P6 串起整个仓库：本 README 挂**资源**（§ 列），[`Notes LeetCode and Algo.md`](Notes%20LeetCode%20and%20Algo.md) 的 Design 节挂**零件 / 真题**（最后一列），两边靠阶段号互引。
 
 ```
 P0 数据 → P1 预训练 → P2 后训练 → P3 RL/Agentic-RL → P4 Serving → P5 Agent runtime → P6 评测/安全

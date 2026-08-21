@@ -73,7 +73,7 @@ Asset class 不是轴，是**行的参数化**（漂移与边界条件的约束�
 把一节稠密的数学教材（定义-定理-证明体）拆成可攻的主题，并且**每个主题都强制回答"这对定价框架意味着什么 / 如果它不成立会怎样"**——逼出 quant 干货，而不是停在数学复述。
 
 > **目标函数**：读完一节后，既能在白板上复述定义，又能回答面试官的"so what / what breaks if not"。
-> **首次实践**：Shreve《Stochastic Calculus for Finance II》§1.1（见 [quant-coverage-framework.md](quant-coverage-framework.md) L0→L1 关卡）。
+> **首次实践**：Shreve《Stochastic Calculus for Finance II》§1.1（见上方 framework 的 L0→L1 关卡）。
 
 ---
 
@@ -139,9 +139,9 @@ Asset class 不是轴，是**行的参数化**（漂移与边界条件的约束�
 
 # Shreve II §1.1 精读：Infinite Probability Spaces
 
-用 [math-section-reading-template.md](math-section-reading-template.md) 的方法精读 Shreve《Stochastic Calculus for Finance II》§1.1（书页 1–7）。每个主题：**起止 wording → 原文解读 → 定价框架意义 → 若不成立 → 衍生品变种 → 现实类比**。
+用上方「数学/金融教材精读模板」的方法精读 Shreve《Stochastic Calculus for Finance II》§1.1（书页 1–7）。每个主题：**起止 wording → 原文解读 → 定价框架意义 → 若不成立 → 衍生品变种 → 现实类比**。
 
-对应 [quant-coverage-framework.md](quant-coverage-framework.md) 的 L0→L1 关卡：卷一 §2.1 是 L0 列的公理化（一切有限、可查、可加），本节是 L1 列的入场券（质量进集合，工具只剩积分与极限）。
+对应上方 framework 的 L0→L1 关卡：卷一 §2.1 是 L0 列的公理化（一切有限、可查、可加），本节是 L1 列的入场券（质量进集合，工具只剩积分与极限）。
 
 ---
 

@@ -12,6 +12,21 @@ LLM 知识地图，**从下往上读**：底部是学习的目的地（主攻带
 
 ![LLM 知识地图 · 从下往上读](images/llm-knowledge-map.svg)
 
+## Shared foundations · Stochastic Calculus × ESL/ISL × Transformer/LLM
+
+The three directions grow out of the same calculus / linear algebra / probability base. Ranked by how load-bearing each item is across all three at once.
+
+| # | Shared foundation | In Stochastic Calculus | In ESL/ISL | In Transformer/LLM |
+|---|---|---|---|---|
+| 1 | **Conditional expectation / conditional distribution E[Y\|X]** | Pricing is a conditional expectation: V = E^Q[discounted payoff \| F_t]; the very definition of a martingale | The regression function is defined as E[Y\|X] — the whole book is about approximating it | Next-token prediction = estimating the conditional distribution p(x_t \| x_{<t}); autoregressive factorization |
+| 2 | **Linear algebra: matmul · projection · eigendecomposition / SVD** | Cholesky for correlated Brownian motions; PCA factors on curves | OLS as projection geometry; ridge as spectral shrinkage; PCA | Everything is matmul: QKᵀ in attention; LoRA low-rank; FlashAttention tiling |
+| 3 | **Chain rule + Taylor expansion (bookkeeping of 1st/2nd derivatives)** | Itô's lemma = a second-order Taylor expansion with (dW)² = dt; Greeks are derivatives of the price | Gradient descent / Newton's method; convexity; logsumexp for numerical stability | Backprop = the chain rule; optimizers; loss-landscape curvature |
+| 4 | **Gaussians & variance scaling laws** (how variance moves with time / dimension / sample size) | √t scaling of Brownian motion; lognormal dynamics; vol annualization | Bias-variance decomposition; least squares = Gaussian MLE; noise models | The 1/√d_k in attention is a variance argument; initialization variance; CLT intuition |
+| 5 | **Likelihood · cross-entropy · KL · change of measure** (the likelihood-ratio family) | Girsanov: dQ/dP is a likelihood ratio; importance sampling | MLE, deviance, EM; log-loss of logistic regression | Training objective = cross-entropy = KL minimization; the KL penalty in RLHF |
+| 6 | **Sampling / Monte Carlo** (replacing integrals and distributions with draws) | MC pricing: simulate paths, average to approximate E^Q[payoff]; variance reduction (antithetic, control variates, importance sampling) | Bootstrap; cross-validation; bagging's random resampling; MCMC | Decoding is sampling from p = softmax(z/T): greedy / top-k / top-p / temperature; RL rollouts; MC dropout |
+
+Note: #5 and #6 are a pair — #5 is how to convert between distributions (likelihood ratios), #6 is how to replace integrals with draws; importance sampling sits exactly at their intersection.
+
 <details>
 <summary>文字版（可搜索 / 可复制）</summary>
 

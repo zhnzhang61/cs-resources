@@ -42,6 +42,7 @@
   .node.strong rect { stroke-width: 2; stroke: var(--fg); }
   .node.strong text { font-weight: 600; }
   .node.corenode rect { fill: var(--anc-bg); }
+  .seclab   { font-size: 14px; font-weight: 600; fill: var(--muted); letter-spacing: 2px; }
   .ringlab  { font-size: 11px; fill: var(--muted); letter-spacing: 1px; }
   .corering { fill: none; stroke: var(--node-stroke); stroke-dasharray: 4 5; }
 
@@ -57,8 +58,8 @@
 <body>
 <header>
   <h1>Knowledge Graph</h1>
-  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基（直连三个方向）；<b>中环</b> = 三个面试方向；<b>外环</b> = 各方向独有知识——LLM 扇区占上半圆，含系统砖与 P0–P6 管线（P4/P5 主攻带加粗）。
-    hover 内环节点 = 同一概念在三方向的化身；hover 方向 hub = 蓝色是它站的根基（上游），橙色是它自己的知识（下游）；点击可固定。蓝 = 前序，橙 = 后续。</div>
+  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆）：数理化身 → 系统砖 → kernel（FlashAttention / 量化）→ P0–P6 管线；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）同理。
+    hover（或点击固定）任意节点：蓝 = 前序链，橙 = 后续链。</div>
   <div class="legend"><span class="l-cur">当前</span><span class="l-anc">前序（它依赖谁）</span><span class="l-desc">后续（谁依赖它）</span></div>
 </header>
 <div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg></div>
@@ -96,22 +97,12 @@ function buildGraph(svg, nodes, edges, edgePath){
 
   function show(id){
     const anc = reach(id, rev), desc = reach(id, fwd);
-    const isHub = !!byId[id].hub;   /* hub：内环=蓝(上游根基)，扇区=橙(方向内容) */
-    nodeEls.forEach(n => {
-      let s;
-      if (n.id===id) s = "cur";
-      else if (anc.has(n.id)) s = (isHub && !byId[n.id].core) ? "desc" : "anc";
-      else if (desc.has(n.id)) s = "desc";
-      else s = "dim";
-      n.el.setAttribute("class", n.base + " " + s);
-    });
+    nodeEls.forEach(n => n.el.setAttribute("class",
+      n.base + " " + (n.id===id ? "cur" : anc.has(n.id) ? "anc" : desc.has(n.id) ? "desc" : "dim")));
     edgeEls.forEach(e => {
-      const inAnc  = anc.has(e.a) && (e.b===id || anc.has(e.b));
-      const inDesc = desc.has(e.b) && (e.a===id || desc.has(e.a));
-      let s = "dim";
-      if (inAnc) s = (isHub && !byId[e.a].core) ? "desc" : "anc";
-      else if (inDesc) s = "desc";
-      e.el.setAttribute("class", "edge " + s);
+      const isAnc  = anc.has(e.a) && (e.b===id || anc.has(e.b));
+      const isDesc = desc.has(e.b) && (e.a===id || desc.has(e.a));
+      e.el.setAttribute("class", "edge " + (isAnc ? "anc" : isDesc ? "desc" : "dim"));
     });
   }
   function clear(){
@@ -120,123 +111,110 @@ function buildGraph(svg, nodes, edges, edgePath){
   }
 }
 
-/* ================= 数据 ================= */
-/* 内环 core：三方向共有（shared foundations 表的行） */
-/* 外环：ring + slot 定位；LLM 占上半圆三条弧（A 数理化身 / B 系统砖 / C P0–P6 管线） */
+/* ================= 数据 =================
+   core: 内环 3×2 网格（col: -1/0/1, row: -1/1）
+   其余: 极坐标 {a: 角度, r: 半径}，按扇区分层：
+   LLM  上半圆  A(数理化身 r400) → B(系统砖 r530) → K(kernel r625) → C(P0–P6 r705)
+   STO  左下    L1(r420) → L2(r530) → L3(r635)
+   ESL  右下    S1(r420) → S2(r530)                                            */
 const NODES = [
   /* 内环 */
-  { id:"ce", label:"E[Y|X] 条件期望 / 分布", core:true },
-  { id:"la", label:"线代 · 矩阵乘 / SVD",    core:true },
-  { id:"ct", label:"链式法则 + Taylor",      core:true },
-  { id:"gv", label:"Gaussian · 方差标度",    core:true },
-  { id:"kl", label:"似然 · softmax · CE · KL", core:true },
-  { id:"mc", label:"采样 · Monte Carlo",     core:true },
-  /* 中环 hubs */
-  { id:"LLM", label:"Transformer / LLM",  hub:"llm", strong:true },
-  { id:"ESL", label:"ESL / ISL 统计学习", hub:"esl", strong:true },
-  { id:"STO", label:"Stochastic Calculus", hub:"sto", strong:true },
-  /* LLM 扇区 · 弧 A（数理化身）*/
-  { id:"llm-next", label:"Next-token · 自回归",       sector:"llm", ring:"A", slot:0 },
-  { id:"attn",     label:"Attention · QKᵀ 前向",      sector:"llm", ring:"A", slot:1 },
-  { id:"backprop", label:"Backprop / 梯度下降",       sector:"llm", ring:"A", slot:2 },
-  { id:"llm-var",  label:"1/√dₖ · 初始化方差",        sector:"llm", ring:"A", slot:3 },
-  { id:"llm-ce",   label:"Cross-entropy · RLHF KL",   sector:"llm", ring:"A", slot:4 },
-  { id:"llm-dec",  label:"Decoding · top-k/p",        sector:"llm", ring:"A", slot:5 },
-  /* LLM 扇区 · 弧 B（系统砖）*/
-  { id:"ds",       label:"hash / 堆 / Trie / radix",  sector:"llm", ring:"B", slot:0 },
-  { id:"paging",   label:"OS · 分页 / 调度 / 抢占",    sector:"llm", ring:"B", slot:1 },
-  { id:"gpu",      label:"GPU · HBM / SRAM 层次",     sector:"llm", ring:"B", slot:2 },
-  { id:"flash",    label:"FlashAttention · online softmax", sector:"llm", ring:"B", slot:3 },
-  { id:"quant",    label:"量化 · fp16 / int8 · PTQ",  sector:"llm", ring:"B", slot:4 },
-  { id:"isolation",label:"OS · 隔离 / 存储 WAL",      sector:"llm", ring:"B", slot:5 },
-  { id:"datasci",  label:"Data Sci · 清洗 / 评测",    sector:"llm", ring:"B", slot:6 },
-  /* LLM 扇区 · 弧 C（P0–P6 管线）*/
-  { id:"p0", label:"P0 数据",              sector:"llm", ring:"C", slot:0 },
-  { id:"p1", label:"P1 预训练",            sector:"llm", ring:"C", slot:1 },
-  { id:"p2", label:"P2 后训练 SFT/RLHF",   sector:"llm", ring:"C", slot:2 },
-  { id:"p3", label:"P3 RL · rollout",      sector:"llm", ring:"C", slot:3 },
-  { id:"p4", label:"P4 Serving 推理引擎",  sector:"llm", ring:"C", slot:4, strong:true },
-  { id:"p5", label:"P5 Agent Runtime",     sector:"llm", ring:"C", slot:5, strong:true },
-  { id:"p6", label:"P6 Safety · 红队",     sector:"llm", ring:"C", slot:6 },
-  /* ESL 扇区（双弧）*/
-  { id:"esl-reg",  label:"回归函数 · E[Y|X] 逼近",  sector:"esl", ring:"S1", slot:0 },
-  { id:"esl-ols",  label:"OLS 投影 · ridge / PCA", sector:"esl", ring:"S1", slot:1 },
-  { id:"esl-gd",   label:"GD · Newton · 凸性",     sector:"esl", ring:"S1", slot:2 },
-  { id:"esl-bv",   label:"Bias-Variance 分解",     sector:"esl", ring:"S1", slot:3 },
-  { id:"esl-tree", label:"树 · Boosting · RF",     sector:"esl", ring:"S2", slot:0 },
-  { id:"esl-mle",  label:"MLE · EM · log-loss",    sector:"esl", ring:"S2", slot:1 },
-  { id:"esl-cv",   label:"Bootstrap · CV",         sector:"esl", ring:"S2", slot:2 },
-  /* Stochastic 扇区（双弧）*/
-  { id:"st-mart", label:"鞅 · 风险中性定价 E^Q",   sector:"sto", ring:"S1", slot:0 },
-  { id:"st-chol", label:"Cholesky · 相关布朗",     sector:"sto", ring:"S1", slot:1 },
-  { id:"st-ito",  label:"Itô 引理 · Greeks",       sector:"sto", ring:"S1", slot:2 },
-  { id:"st-bm",   label:"√t 标度 · lognormal",     sector:"sto", ring:"S1", slot:3 },
-  { id:"st-vol",  label:"Vol surface · SVI/SABR",  sector:"sto", ring:"S2", slot:0 },
-  { id:"st-gir",  label:"Girsanov · 测度变换",     sector:"sto", ring:"S2", slot:1 },
-  { id:"st-mc",   label:"MC 定价 · 方差缩减",      sector:"sto", ring:"S2", slot:2 },
+  { id:"ce", label:"E[Y|X] 条件期望 / 分布", core:true, col:-1, row:-1 },
+  { id:"ct", label:"链式法则 + Taylor",      core:true, col:0,  row:-1 },
+  { id:"kl", label:"似然 · softmax · CE · KL", core:true, col:1, row:-1 },
+  { id:"la", label:"线代 · 矩阵乘 / SVD",    core:true, col:-1, row:1 },
+  { id:"gv", label:"Gaussian · 方差标度",    core:true, col:0,  row:1 },
+  { id:"mc", label:"采样 · Monte Carlo",     core:true, col:1,  row:1 },
+  /* LLM · A 数理化身 */
+  { id:"llm-next", label:"Next-token · 自回归",     a:-150, r:400 },
+  { id:"llm-var",  label:"1/√dₖ · 初始化方差",      a:-126, r:400 },
+  { id:"attn",     label:"Attention · QKᵀ 前向",    a:-105, r:400 },
+  { id:"backprop", label:"Backprop / 梯度下降",     a:-75,  r:400 },
+  { id:"llm-ce",   label:"Cross-entropy · RLHF KL", a:-54,  r:400 },
+  { id:"llm-dec",  label:"Decoding · top-k/p",      a:-28,  r:400 },
+  /* LLM · B 系统砖 */
+  { id:"datasci",  label:"Data Sci · 清洗 / 评测",   a:-163, r:550 },
+  { id:"paging",   label:"OS · 分页 / 调度 / 抢占",  a:-125, r:530 },
+  { id:"gpu",      label:"GPU · HBM / SRAM 层次",   a:-90,  r:530 },
+  { id:"isolation",label:"OS · 隔离 / 存储 WAL",    a:-55,  r:530 },
+  { id:"ds",       label:"hash / 堆 / Trie / radix", a:-13, r:565 },
+  /* LLM · K kernel 层 */
+  { id:"flash",    label:"FlashAttention · online softmax", a:-105, r:625 },
+  { id:"quant",    label:"量化 · fp16 / int8 · PTQ",        a:-75,  r:625 },
+  /* LLM · C P0–P6 管线 */
+  { id:"p0", label:"P0 数据",             a:-162, r:705 },
+  { id:"p1", label:"P1 预训练",           a:-138, r:705 },
+  { id:"p2", label:"P2 后训练 SFT/RLHF",  a:-114, r:705 },
+  { id:"p3", label:"P3 RL · rollout",     a:-90,  r:705 },
+  { id:"p4", label:"P4 Serving 推理引擎", a:-66,  r:705, strong:true },
+  { id:"p5", label:"P5 Agent Runtime",    a:-42,  r:705, strong:true },
+  { id:"p6", label:"P6 Safety · 红队",    a:-18,  r:705 },
+  /* ESL · S1 */
+  { id:"esl-mle", label:"MLE · EM · log-loss",     a:18, r:420 },
+  { id:"esl-reg", label:"回归函数 · E[Y|X] 逼近",  a:41, r:420 },
+  { id:"esl-ols", label:"OLS 投影 · ridge / PCA",  a:64, r:420 },
+  { id:"esl-gd",  label:"GD · Newton · 凸性",      a:84, r:420 },
+  /* ESL · S2 */
+  { id:"esl-cv",   label:"Bootstrap · CV",       a:20, r:530 },
+  { id:"esl-bv",   label:"Bias-Variance 分解",   a:45, r:530 },
+  { id:"esl-tree", label:"树 · Boosting · RF",   a:70, r:530 },
+  /* STO · L1 */
+  { id:"st-ito",  label:"Itô 引理 · Greeks",   a:110, r:420 },
+  { id:"st-bm",   label:"√t 标度 · lognormal", a:131, r:420 },
+  { id:"st-chol", label:"Cholesky · 相关布朗", a:155, r:420 },
+  /* STO · L2 */
+  { id:"st-gir",  label:"Girsanov · 测度变换",     a:104, r:530 },
+  { id:"st-mart", label:"鞅 · 风险中性定价 E^Q",   a:129, r:530 },
+  { id:"st-vol",  label:"Vol surface · SVI/SABR",  a:154, r:530 },
+  /* STO · L3 */
+  { id:"st-mc",   label:"MC 定价 · 方差缩减",      a:128, r:635 },
 ];
 
 const EDGES = [
-  /* 内环 → 三个方向 hub（根基直连方向）*/
-  ["ce","LLM"],["la","LLM"],["ct","LLM"],["gv","LLM"],["kl","LLM"],["mc","LLM"],
-  ["ce","ESL"],["la","ESL"],["ct","ESL"],["gv","ESL"],["kl","ESL"],["mc","ESL"],
-  ["ce","STO"],["la","STO"],["ct","STO"],["gv","STO"],["kl","STO"],["mc","STO"],
-  /* 内环 → 各方向化身（表格的 cell）*/
-  ["ce","llm-next"], ["la","attn"], ["ct","backprop"], ["gv","llm-var"], ["kl","llm-ce"], ["mc","llm-dec"],
-  ["ce","esl-reg"], ["la","esl-ols"], ["ct","esl-gd"], ["gv","esl-bv"], ["kl","esl-mle"], ["mc","esl-cv"],
-  ["ce","st-mart"], ["la","st-chol"], ["ct","st-ito"], ["gv","st-bm"], ["kl","st-gir"], ["mc","st-mc"],
-  /* LLM 扇区内部依赖（原图二，去重后）*/
-  ["llm-next","p1"], ["attn","flash"], ["backprop","p1"], ["backprop","p2"],
-  ["llm-var","p1"], ["llm-ce","p2"], ["llm-dec","p4"],
-  ["ds","p4"], ["ds","p5"], ["paging","p4"], ["gpu","flash"], ["gpu","quant"],
-  ["flash","p4"], ["quant","p4"], ["isolation","p5"], ["datasci","p0"], ["datasci","p6"],
+  /* 内环 → 各扇区最内层（相邻层，允许直连）*/
+  ["ce","llm-next"], ["gv","llm-var"], ["la","attn"], ["ct","backprop"], ["kl","llm-ce"], ["mc","llm-dec"],
+  ["kl","esl-mle"], ["ce","esl-reg"], ["la","esl-ols"], ["ct","esl-gd"], ["mc","esl-cv"],
+  ["ct","st-ito"], ["gv","st-bm"], ["la","st-chol"],
+  /* LLM 扇区内部：A → 管线 / kernel */
+  ["llm-next","p1"], ["llm-var","p1"], ["attn","flash"],
+  ["backprop","p1"], ["backprop","p2"], ["llm-ce","p3"], ["llm-dec","p4"],
+  /* B 系统砖 → kernel / 管线 */
+  ["gpu","flash"], ["gpu","quant"],
+  ["datasci","p0"], ["datasci","p6"], ["paging","p4"], ["isolation","p5"],
+  ["ds","p4"], ["ds","p5"],
+  /* kernel → 管线 */
+  ["flash","p4"], ["quant","p4"],
+  /* 管线 */
   ["p0","p1"], ["p1","p2"], ["p2","p3"], ["p3","p4"], ["p4","p5"], ["p5","p6"],
-  ["p6","LLM"],                                   /* 管线收口回 LLM 方向 */
-  /* ESL / STO 扇区 → 各自 hub */
-  ["esl-reg","ESL"],["esl-ols","ESL"],["esl-gd","ESL"],["esl-tree","ESL"],
-  ["esl-bv","ESL"],["esl-mle","ESL"],["esl-cv","ESL"],
-  ["st-mart","STO"],["st-chol","STO"],["st-ito","STO"],["st-vol","STO"],
-  ["st-bm","STO"],["st-gir","STO"],["st-mc","STO"],
+  /* ESL 内部分层 */
+  ["esl-reg","esl-bv"], ["esl-gd","esl-tree"],
+  /* STO 内部分层：BM → Itô → Girsanov → 鞅/定价 → MC */
+  ["st-bm","st-ito"], ["st-bm","st-vol"],
+  ["st-ito","st-gir"], ["st-gir","st-mart"], ["st-mart","st-mc"],
 ];
 
 /* ================= 布局 ================= */
 (function(){
-  const W=1480, H=1380, CX=740, CY=770;
+  const W=1510, H=1380, CX=755, CY=770;
   const rad = d => d*Math.PI/180;
-  const HUB = { llm:{a:-90, r:295}, esl:{a:52, r:295}, sto:{a:128, r:295} };
-  const RING = {
-    "llm-A":  { r:430, start:-152, step:25 },
-    "llm-B":  { r:565, start:-165, step:25 },
-    "llm-C":  { r:695, start:-162, step:24 },
-    "esl-S1": { r:450, start:18,  step:19 },
-    "esl-S2": { r:575, start:25,  step:24 },
-    "sto-S1": { r:450, start:105, step:19 },
-    "sto-S2": { r:575, start:107, step:24 },
-  };
 
   NODES.forEach(n => {
     n.h = 34;
-    n.w = Math.max(90, measure(n.label) + (n.hub ? 40 : 24));
+    n.w = Math.max(90, measure(n.label) + 24);
     let cx, cy;
-    if (n.core) {
-      const i = NODES.filter(m=>m.core).indexOf(n);
-      cx = CX + (i%2===0 ? -118 : 118);
-      cy = CY + (Math.floor(i/2)-1)*54;
-    } else if (n.hub) {
-      const h = HUB[n.hub];
-      cx = CX + h.r*Math.cos(rad(h.a)); cy = CY + h.r*Math.sin(rad(h.a));
-    } else {
-      const cfg = RING[n.sector+"-"+n.ring];
-      const a = rad(cfg.start + cfg.step*n.slot);
-      cx = CX + cfg.r*Math.cos(a); cy = CY + cfg.r*Math.sin(a);
-    }
+    if (n.core) { cx = CX + n.col*185; cy = CY + n.row*33; }
+    else { cx = CX + n.r*Math.cos(rad(n.a)); cy = CY + n.r*Math.sin(rad(n.a)); }
     n.x = cx - n.w/2; n.y = cy - n.h/2; n.cx = cx; n.cy = cy;
   });
 
   const svg = document.getElementById("g");
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  el("ellipse", {cx:CX, cy:CY, rx:265, ry:128, class:"corering"}, svg);
-  el("text", {x:CX, y:CY-143, "text-anchor":"middle", class:"ringlab"}, svg).textContent = "内环 · 三方向共有";
+  el("ellipse", {cx:CX, cy:CY, rx:335, ry:100, class:"corering"}, svg);
+  el("text", {x:CX, y:CY-115, "text-anchor":"middle", class:"ringlab"}, svg).textContent = "内环 · 三方向共有";
+  /* 扇区文字标签（非节点）*/
+  el("text", {x:CX,     y:CY-165, "text-anchor":"middle", class:"seclab"}, svg).textContent = "TRANSFORMER / LLM";
+  el("text", {x:CX-285, y:CY+185, "text-anchor":"middle", class:"seclab"}, svg).textContent = "STOCHASTIC CALC";
+  el("text", {x:CX+285, y:CY+185, "text-anchor":"middle", class:"seclab"}, svg).textContent = "ESL / ISL";
 
   const path = (A,B) => {
     const mx=(A.cx+B.cx)/2, my=(A.cy+B.cy)/2;

@@ -77,7 +77,7 @@
 <body>
 <header>
   <h1>Knowledge Graph</h1>
-  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆）：左侧 算法层 → OS 层 → P4/P5（P4 用 OS、OS 靠算法），中部 kernel（FlashAttention / 量化），右侧 ML 数理链近 ESL → 管线（P0 右起 → P6 左，P4/P5 在 OS 簇上方；P0–P6 间无顺序连线，各自只连真实依赖；P6 在 P0 旁）；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）：统计原语 → 方法 两层。
+  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆）：左侧 算法层 → OS 层 → P4/P5（P4 用 OS、OS 靠算法），中部 kernel（FlashAttention / 量化），右侧 ML 数理链近 ESL → 管线（P0 右起 → P6 左，P4/P5 在 OS 簇上方；P0–P6 间无顺序连线，各自只连真实依赖；P6 在 P0 旁；P4/P5 各自独有的技术在最外圈）；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）：统计原语 → 方法 两层。
     hover（或点击固定）任意节点：只有相关节点（前序链 / 后续链）点亮，颜色 = 到它的距离——1 跳最深、越远越淡；无关节点保持暗色。</div>
   <div class="legend"><span class="l-cur">当前</span><span class="l-d1">1 跳</span><span class="l-d2">2 跳</span><span class="l-d3">3 跳</span><span class="l-d4">4 跳</span><span class="l-d5">≥5 跳</span></div>
 </header>
@@ -186,6 +186,17 @@ const NODES = [
   { id:"p4", label:"P4 Serving engine",          a:-114, r:705, strong:true },
   { id:"p5", label:"P5 Agent Runtime",           a:-138, r:705, strong:true },
   { id:"p6", label:"P6 Safety · red team",       a:-8,   r:660 },
+  /* LLM · P4-exclusive techniques (outermost) */
+  { id:"cbatch",    label:"Continuous batching (Orca)",    a:-122, r:830 },
+  { id:"pagedattn", label:"PagedAttention · KV paging",    a:-105, r:790 },
+  { id:"radixreuse",label:"Prefix cache · radix (SGLang)", a:-135, r:830 },
+  { id:"autoscale", label:"GPU pool · autoscale",          a:-147, r:840 },
+  /* LLM · P5-exclusive bricks (outermost) */
+  { id:"sandbox",   label:"Sandbox · quota / effects",     a:-157, r:820 },
+  { id:"reliable",  label:"Reliable exec · DLQ / ckpt",    a:-166, r:790 },
+  { id:"authz",     label:"Auth · on-behalf-of",           a:-174, r:780 },
+  { id:"observ",    label:"Trace tree · replay",           a:178,  r:770 },
+  { id:"memgw",     label:"Memory tiers · MCP gateway",    a:170,  r:760 },
   /* ESL · S1 statistical primitives (adjacent to core) */
   { id:"esl-mle", label:"MLE · EM · log-loss",         a:14, r:420 },
   { id:"esl-reg", label:"Regression · E[Y|X] fit",     a:31, r:420 },
@@ -225,9 +236,16 @@ const EDGES = [
   ["gpu","flash"], ["gpu","quant"], ["paging","flash"],
   ["datasci","p0"], ["datasci","p6"],
   /* 算法层 → OS 层：调度用堆/队列、LSM 用有序结构/二分、页表 = radix 树 */
-  ["ds","sched"], ["ds","storage"], ["binsearch","storage"], ["trie","paging"], ["trie","p4"],
-  /* OS 层 → 主攻带 */
-  ["paging","p4"], ["sched","p4"], ["concur","p4"], ["isolation","p5"], ["storage","p5"],
+  ["ds","sched"], ["ds","storage"], ["binsearch","storage"], ["trie","paging"],
+  /* OS 层 → P4/P5 独有技术层 → 主攻带 */
+  ["concur","p4"],
+  ["sched","cbatch"], ["cbatch","p4"],
+  ["paging","pagedattn"], ["pagedattn","p4"],
+  ["trie","radixreuse"], ["radixreuse","p4"],
+  ["gpu","autoscale"], ["autoscale","p4"],
+  ["isolation","sandbox"], ["sandbox","p5"],
+  ["storage","reliable"], ["ds","reliable"], ["reliable","p5"],
+  ["authz","p5"], ["observ","p5"], ["memgw","p5"],
   /* kernel → 管线 */
   ["flash","p4"], ["quant","p4"],
   /* ESL：S1 primitives → S2 methods（logistic=MLE 应用、lasso 靠凸优化、boosting=函数空间 GD、bagging 用 bootstrap）*/
@@ -240,7 +258,7 @@ const EDGES = [
 
 /* ================= 布局 ================= */
 (function(){
-  const W=1510, H=1380, CX=755, CY=770;
+  const W=1640, H=1450, CX=885, CY=830;
   const rad = d => d*Math.PI/180;
 
   NODES.forEach(n => {

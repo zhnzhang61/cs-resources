@@ -8,16 +8,26 @@
   :root {
     --bg: #fafafa; --fg: #1f2328; --muted: #656d76;
     --node-fill: #ffffff; --node-stroke: #d0d7de; --edge: #d0d7de;
-    --anc: #2563eb; --anc-bg: #dbeafe;   /* 前序 蓝 */
-    --desc: #d97706; --desc-bg: #fef3c7; /* 后续 橙 */
+    --anc: #2563eb; --anc-bg: #dbeafe;
     --hover-bg: #1f2328; --hover-fg: #ffffff;
+    /* 距离色带：近 → 远 */
+    --d1:#2563eb; --d1-bg:#dbeafe;
+    --d2:#0d9488; --d2-bg:#ccfbf1;
+    --d3:#ca8a04; --d3-bg:#fef9c3;
+    --d4:#ea580c; --d4-bg:#ffedd5;
+    --d5:#8b8f96; --d5-bg:#eceef1;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #0d1117; --fg: #e6edf3; --muted: #8b949e;
       --node-fill: #161b22; --node-stroke: #30363d; --edge: #30363d;
-      --anc: #58a6ff; --anc-bg: #0d2a52; --desc: #e3b341; --desc-bg: #3a2d10;
+      --anc: #58a6ff; --anc-bg: #0d2a52;
       --hover-bg: #e6edf3; --hover-fg: #0d1117;
+      --d1:#58a6ff; --d1-bg:#0d2a52;
+      --d2:#2dd4bf; --d2-bg:#053331;
+      --d3:#facc15; --d3-bg:#3a3305;
+      --d4:#fb923c; --d4-bg:#431a07;
+      --d5:#6e7681; --d5-bg:#21262d;
     }
   }
   * { box-sizing: border-box; }
@@ -29,9 +39,12 @@
   .legend { display: flex; gap: 16px; margin-top: 10px; font-size: 12px; color: var(--muted); }
   .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px;
                          border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
-  .legend .l-anc::before  { background: var(--anc); }
-  .legend .l-desc::before { background: var(--desc); }
-  .legend .l-cur::before  { background: var(--hover-bg); }
+  .legend .l-cur::before { background: var(--hover-bg); }
+  .legend .l-d1::before { background: var(--d1); }
+  .legend .l-d2::before { background: var(--d2); }
+  .legend .l-d3::before { background: var(--d3); }
+  .legend .l-d4::before { background: var(--d4); }
+  .legend .l-d5::before { background: var(--d5); }
   .wrap { max-width: 1150px; margin: 0 auto; padding: 8px 8px 40px; overflow-x: auto; }
   svg { display: block; width: 100%; height: auto; min-width: 950px; }
 
@@ -49,18 +62,24 @@
   .dim { opacity: .1; }
   .node.cur rect  { fill: var(--hover-bg); stroke: var(--hover-bg); }
   .node.cur text  { fill: var(--hover-fg); font-weight: 600; }
-  .node.anc rect  { fill: var(--anc-bg); stroke: var(--anc); stroke-width: 2; }
-  .node.desc rect { fill: var(--desc-bg); stroke: var(--desc); stroke-width: 2; }
-  .edge.anc  { stroke: var(--anc); stroke-width: 2.5; }
-  .edge.desc { stroke: var(--desc); stroke-width: 2.5; }
+  .node.d1 rect { fill: var(--d1-bg); stroke: var(--d1); stroke-width: 2.2; }
+  .node.d2 rect { fill: var(--d2-bg); stroke: var(--d2); stroke-width: 2; }
+  .node.d3 rect { fill: var(--d3-bg); stroke: var(--d3); stroke-width: 1.8; }
+  .node.d4 rect { fill: var(--d4-bg); stroke: var(--d4); stroke-width: 1.6; }
+  .node.d5 rect { fill: var(--d5-bg); stroke: var(--d5); stroke-width: 1.4; opacity: .8; }
+  .edge.d1 { stroke: var(--d1); stroke-width: 2.6; }
+  .edge.d2 { stroke: var(--d2); stroke-width: 2.2; }
+  .edge.d3 { stroke: var(--d3); stroke-width: 1.9; }
+  .edge.d4 { stroke: var(--d4); stroke-width: 1.6; }
+  .edge.d5 { stroke: var(--d5); stroke-width: 1.3; opacity: .7; }
 </style>
 </head>
 <body>
 <header>
   <h1>Knowledge Graph</h1>
   <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆，OS/算法砖聚左、ML 数理聚右近 ESL）：数理化身 → 系统砖 → kernel（FlashAttention / 量化）→ 管线（P0 右起 → P6 左，P4/P5 在 OS 簇上方；P0–P6 间无顺序连线，各自只连真实依赖；P6 在 P0 旁）；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）同理。
-    hover（或点击固定）任意节点：蓝 = 前序链，橙 = 后续链。</div>
-  <div class="legend"><span class="l-cur">当前</span><span class="l-anc">前序（它依赖谁）</span><span class="l-desc">后续（谁依赖它）</span></div>
+    hover（或点击固定）任意节点：只有相关节点（前序链 / 后续链）点亮，颜色 = 到它的距离——1 跳最深、越远越淡；无关节点保持暗色。</div>
+  <div class="legend"><span class="l-cur">当前</span><span class="l-d1">1 跳</span><span class="l-d2">2 跳</span><span class="l-d3">3 跳</span><span class="l-d4">4 跳</span><span class="l-d5">≥5 跳</span></div>
 </header>
 <div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg></div>
 
@@ -75,9 +94,10 @@ function buildGraph(svg, nodes, edges, edgePath){
   const byId = Object.fromEntries(nodes.map(n=>[n.id,n]));
   const fwd = {}, rev = {};
   edges.forEach(([a,b]) => { (fwd[a]=fwd[a]||[]).push(b); (rev[b]=rev[b]||[]).push(a); });
-  const reach = (id, adj) => { const seen=new Set(), st=[id];
-    while(st.length){ const n=st.pop(); for(const m of (adj[n]||[])) if(!seen.has(m)){seen.add(m); st.push(m);} }
-    return seen; };
+  const distVia = (id, adj) => { const d = {}; d[id] = 0; const q = [id];
+    while(q.length){ const n = q.shift();
+      for(const m of (adj[n]||[])) if(!(m in d)){ d[m] = d[n]+1; q.push(m); } }
+    return d; };
 
   const edgeEls = edges.map(([a,b]) =>
     ({ a, b, el: el("path",{d: edgePath(byId[a], byId[b]), class:"edge"}, svg) }));
@@ -96,13 +116,23 @@ function buildGraph(svg, nodes, edges, edgePath){
   svg.addEventListener("click", ()=>{ pinned=null; clear(); });
 
   function show(id){
-    const anc = reach(id, rev), desc = reach(id, fwd);
-    nodeEls.forEach(n => n.el.setAttribute("class",
-      n.base + " " + (n.id===id ? "cur" : anc.has(n.id) ? "anc" : desc.has(n.id) ? "desc" : "dim")));
+    /* 只点亮相关节点（前序链 ∪ 后续链），颜色按到当前节点的距离 */
+    const up = distVia(id, rev), down = distVia(id, fwd);
+    nodeEls.forEach(n => {
+      let s;
+      if (n.id === id) s = "cur";
+      else if (n.id in up)   s = "d" + Math.min(up[n.id], 5);
+      else if (n.id in down) s = "d" + Math.min(down[n.id], 5);
+      else s = "dim";
+      n.el.setAttribute("class", n.base + " " + s);
+    });
     edgeEls.forEach(e => {
-      const isAnc  = anc.has(e.a) && (e.b===id || anc.has(e.b));
-      const isDesc = desc.has(e.b) && (e.a===id || desc.has(e.a));
-      e.el.setAttribute("class", "edge " + (isAnc ? "anc" : isDesc ? "desc" : "dim"));
+      const isAnc  = (e.a in up) && (e.b === id || e.b in up);
+      const isDesc = (e.b in down) && (e.a === id || e.a in down);
+      let s = "dim";
+      if (isAnc)       s = "d" + Math.min(up[e.a], 5);
+      else if (isDesc) s = "d" + Math.min(down[e.b], 5);
+      e.el.setAttribute("class", "edge " + s);
     });
   }
   function clear(){

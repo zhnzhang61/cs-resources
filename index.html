@@ -77,7 +77,7 @@
 <body>
 <header>
   <h1>Knowledge Graph</h1>
-  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆，OS/算法砖聚左、ML 数理聚右近 ESL）：数理化身 → 系统砖 → kernel（FlashAttention / 量化）→ 管线（P0 右起 → P6 左，P4/P5 在 OS 簇上方；P0–P6 间无顺序连线，各自只连真实依赖；P6 在 P0 旁）；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）同理。
+  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆）：左侧 算法层 → OS 层 → P4/P5（P4 用 OS、OS 靠算法），中部 kernel（FlashAttention / 量化），右侧 ML 数理链近 ESL → 管线（P0 右起 → P6 左，P4/P5 在 OS 簇上方；P0–P6 间无顺序连线，各自只连真实依赖；P6 在 P0 旁）；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）同理。
     hover（或点击固定）任意节点：只有相关节点（前序链 / 后续链）点亮，颜色 = 到它的距离——1 跳最深、越远越淡；无关节点保持暗色。</div>
   <div class="legend"><span class="l-cur">当前</span><span class="l-d1">1 跳</span><span class="l-d2">2 跳</span><span class="l-d3">3 跳</span><span class="l-d4">4 跳</span><span class="l-d5">≥5 跳</span></div>
 </header>
@@ -163,13 +163,18 @@ const NODES = [
   { id:"llm-var",  label:"1/√dₖ · 初始化方差",      a:-60,  r:560 },
   { id:"llm-ce",   label:"Cross-entropy · RLHF KL", a:-30,  r:420 },
   { id:"llm-next", label:"Next-token · 自回归",     a:-14,  r:430 },
-  /* LLM · 系统砖（OS + 算法簇靠左）*/
-  { id:"isolation",label:"OS · 隔离 / 存储 WAL",    a:-165, r:530 },
-  { id:"ds",       label:"hash / 堆 / 队列",        a:-149, r:545 },
-  { id:"trie",     label:"Trie / radix",            a:-133, r:530 },
-  { id:"paging",   label:"OS · 分页 / 调度",        a:-117, r:560 },
-  { id:"gpu",      label:"GPU · HBM / SRAM 层次",   a:-102, r:470 },
-  { id:"datasci",  label:"Data Sci · 清洗 / 评测",  a:6,    r:560 },
+  /* LLM · 算法层（内圈，OS 依赖它们）*/
+  { id:"binsearch", label:"二分 · 前缀和 · 单调结构",   a:-166, r:415 },
+  { id:"ds",        label:"hash / 堆 / 队列",           a:-146, r:425 },
+  { id:"trie",      label:"Trie / radix",              a:-126, r:430 },
+  /* LLM · OS 层（外圈，托着 P4/P5）*/
+  { id:"storage",  label:"存储 · WAL / LSM / checkpoint", a:-174, r:555 },
+  { id:"isolation",label:"进程 · 隔离 / 容器 / microVM",  a:-160, r:560 },
+  { id:"concur",   label:"并发 · async / GIL",            a:-144, r:555 },
+  { id:"sched",    label:"调度 · 优先级 / 抢占",           a:-125, r:580 },
+  { id:"paging",   label:"内存 · 分页 / 页表 / 虚拟内存",  a:-108, r:545 },
+  { id:"gpu",      label:"GPU · HBM / SRAM 层次",        a:-102, r:470 },
+  { id:"datasci",  label:"Data Sci · 清洗 / 评测",       a:6,    r:560 },
   /* LLM · kernel 层（量化归 OS 侧，Flash 居中偏右）*/
   { id:"quant",    label:"量化 · fp16 / int8 · PTQ",        a:-126, r:660 },
   { id:"flash",    label:"FlashAttention · online softmax", a:-95,  r:625 },
@@ -215,8 +220,11 @@ const EDGES = [
   ["backprop","p2"], ["llm-ce","p3"], ["llm-dec","p3"], ["llm-dec","p4"], ["attn","flash"],
   /* B 系统砖 → kernel / 管线 */
   ["gpu","flash"], ["gpu","quant"], ["paging","flash"],
-  ["datasci","p0"], ["datasci","p6"], ["paging","p4"], ["isolation","p5"],
-  ["ds","p4"], ["ds","p5"], ["trie","p4"],
+  ["datasci","p0"], ["datasci","p6"],
+  /* 算法层 → OS 层：调度用堆/队列、LSM 用有序结构/二分、页表 = radix 树 */
+  ["ds","sched"], ["ds","storage"], ["binsearch","storage"], ["trie","paging"], ["trie","p4"],
+  /* OS 层 → 主攻带 */
+  ["paging","p4"], ["sched","p4"], ["concur","p4"], ["isolation","p5"], ["storage","p5"],
   /* kernel → 管线 */
   ["flash","p4"], ["quant","p4"],
   /* ESL 内部分层 */

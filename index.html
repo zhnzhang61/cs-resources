@@ -77,7 +77,7 @@
 <body>
 <header>
   <h1>Knowledge Graph</h1>
-  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆）：左侧 算法层 → OS 层 → P4/P5（P4 用 OS、OS 靠算法），中部 kernel（FlashAttention / 量化），右侧 ML 数理链近 ESL → 管线（P0 右起 → P6 左，P4/P5 在 OS 簇上方；P0–P6 间无顺序连线，各自只连真实依赖；P6 在 P0 旁）；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）同理。
+  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆）：左侧 算法层 → OS 层 → P4/P5（P4 用 OS、OS 靠算法），中部 kernel（FlashAttention / 量化），右侧 ML 数理链近 ESL → 管线（P0 右起 → P6 左，P4/P5 在 OS 簇上方；P0–P6 间无顺序连线，各自只连真实依赖；P6 在 P0 旁）；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）：统计原语 → 方法 两层。
     hover（或点击固定）任意节点：只有相关节点（前序链 / 后续链）点亮，颜色 = 到它的距离——1 跳最深、越远越淡；无关节点保持暗色。</div>
   <div class="legend"><span class="l-cur">当前</span><span class="l-d1">1 跳</span><span class="l-d2">2 跳</span><span class="l-d3">3 跳</span><span class="l-d4">4 跳</span><span class="l-d5">≥5 跳</span></div>
 </header>
@@ -148,63 +148,66 @@ function buildGraph(svg, nodes, edges, edgePath){
    STO  左下    L1(r420) → L2(r530) → L3(r635)
    ESL  右下    S1(r420) → S2(r530)                                            */
 const NODES = [
-  /* 内环 · 六边形环（中心留空，减少穿越交叉）*/
-  { id:"mc", label:"采样 · Monte Carlo",     core:true, hx:0,    hy:-130 },
-  { id:"kl", label:"似然 · softmax · CE · KL", core:true, hx:199, hy:-65 },
-  { id:"ce", label:"E[Y|X] 条件期望 / 分布", core:true, hx:199,  hy:65 },
-  { id:"ct", label:"链式法则 + Taylor",      core:true, hx:0,    hy:130 },
-  { id:"la", label:"线代 · 矩阵乘 / SVD",    core:true, hx:-199, hy:65 },
-  { id:"gv", label:"Gaussian · 方差标度",    core:true, hx:-199, hy:-65 },
-  /* LLM · 数理化身（ML 簇靠右，顺时针转过水平线贴近 ESL）*/
-  { id:"forward",  label:"前向 · 矩阵乘 + 非线性",   a:-52,  r:330 },
-  { id:"attn",     label:"Attention · QKᵀ",         a:-85,  r:420 },
-  { id:"llm-dec",  label:"Decoding · top-k/p",      a:-76,  r:540 },
-  { id:"backprop", label:"Backprop / 梯度下降",     a:-50,  r:430 },
-  { id:"llm-var",  label:"1/√dₖ · 初始化方差",      a:-60,  r:560 },
-  { id:"llm-ce",   label:"Cross-entropy · RLHF KL", a:-30,  r:420 },
-  { id:"llm-next", label:"Next-token · 自回归",     a:-14,  r:430 },
-  /* LLM · 算法层（内圈，OS 依赖它们）*/
-  { id:"binsearch", label:"二分 · 前缀和 · 单调结构",   a:-166, r:415 },
-  { id:"ds",        label:"hash / 堆 / 队列",           a:-146, r:425 },
-  { id:"trie",      label:"Trie / radix",              a:-126, r:430 },
-  /* LLM · OS 层（外圈，托着 P4/P5）*/
-  { id:"storage",  label:"存储 · WAL / LSM / checkpoint", a:-174, r:555 },
-  { id:"isolation",label:"进程 · 隔离 / 容器 / microVM",  a:-160, r:560 },
-  { id:"concur",   label:"并发 · async / GIL",            a:-144, r:555 },
-  { id:"sched",    label:"调度 · 优先级 / 抢占",           a:-125, r:580 },
-  { id:"paging",   label:"内存 · 分页 / 页表 / 虚拟内存",  a:-108, r:545 },
-  { id:"gpu",      label:"GPU · HBM / SRAM 层次",        a:-102, r:470 },
-  { id:"datasci",  label:"Data Sci · 清洗 / 评测",       a:6,    r:560 },
-  /* LLM · kernel 层（量化归 OS 侧，Flash 居中偏右）*/
-  { id:"quant",    label:"量化 · fp16 / int8 · PTQ",        a:-126, r:660 },
-  { id:"flash",    label:"FlashAttention · online softmax", a:-95,  r:625 },
-  /* LLM · C 管线：P0 从右起（近 ML/数据），P4/P5 落在 OS 簇上方 */
-  { id:"p0", label:"P0 数据",             a:-18,  r:705 },
-  { id:"p1", label:"P1 预训练",           a:-42,  r:705 },
-  { id:"p2", label:"P2 后训练 SFT/RLHF",  a:-66,  r:705 },
-  { id:"p3", label:"P3 RL · rollout",     a:-90,  r:705 },
-  { id:"p4", label:"P4 Serving 推理引擎", a:-114, r:705, strong:true },
-  { id:"p5", label:"P5 Agent Runtime",    a:-138, r:705, strong:true },
-  { id:"p6", label:"P6 Safety · 红队",    a:-8,   r:690 },
-  /* ESL · S1 */
-  { id:"esl-mle", label:"MLE · EM · log-loss",     a:18, r:420 },
-  { id:"esl-reg", label:"回归函数 · E[Y|X] 逼近",  a:41, r:420 },
-  { id:"esl-ols", label:"OLS 投影 · ridge / PCA",  a:64, r:420 },
-  { id:"esl-gd",  label:"GD · Newton · 凸性",      a:84, r:420 },
-  /* ESL · S2 */
-  { id:"esl-cv",   label:"Bootstrap · CV",       a:20, r:530 },
-  { id:"esl-bv",   label:"Bias-Variance 分解",   a:45, r:530 },
-  { id:"esl-tree", label:"树 · Boosting · RF",   a:70, r:530 },
+  /* Core hexagon (shared foundations) */
+  { id:"mc", label:"Sampling · Monte Carlo",            core:true, hx:0,    hy:-130 },
+  { id:"kl", label:"Likelihood · softmax · CE · KL",    core:true, hx:199,  hy:-65 },
+  { id:"ce", label:"E[Y|X] · conditional distribution", core:true, hx:199,  hy:65 },
+  { id:"ct", label:"Chain rule + Taylor",               core:true, hx:0,    hy:130 },
+  { id:"la", label:"Linear algebra · matmul / SVD",     core:true, hx:-199, hy:65 },
+  { id:"gv", label:"Gaussian · variance scaling",       core:true, hx:-199, hy:-65 },
+  /* LLM · math incarnations (ML cluster right, near ESL) */
+  { id:"forward",  label:"Feed-forward · matmul + ReLU", a:-52,  r:330 },
+  { id:"attn",     label:"Attention · QKᵀ",              a:-85,  r:420 },
+  { id:"llm-dec",  label:"Decoding · top-k/p",           a:-76,  r:540 },
+  { id:"backprop", label:"Backprop / gradient descent",  a:-50,  r:430 },
+  { id:"llm-var",  label:"1/√dₖ · init variance",        a:-60,  r:560 },
+  { id:"llm-ce",   label:"Cross-entropy · RLHF KL",      a:-30,  r:420 },
+  { id:"llm-next", label:"Next-token · autoregressive",  a:-14,  r:430 },
+  /* LLM · algorithms ring (inner; OS depends on these) */
+  { id:"binsearch", label:"Binary search · prefix sums", a:-166, r:415 },
+  { id:"ds",        label:"hash / heap / queue",         a:-146, r:425 },
+  { id:"trie",      label:"Trie / radix",                a:-126, r:430 },
+  /* LLM · OS ring (outer; carries P4/P5) */
+  { id:"storage",  label:"Storage · WAL / LSM / checkpoint", a:-174, r:555 },
+  { id:"isolation",label:"Process · isolation / microVM",    a:-160, r:560 },
+  { id:"concur",   label:"Concurrency · async / GIL",        a:-144, r:555 },
+  { id:"sched",    label:"Scheduling · preemption",          a:-126, r:590 },
+  { id:"paging",   label:"Memory · paging / page tables",    a:-106, r:545 },
+  { id:"gpu",      label:"GPU · HBM / SRAM hierarchy",       a:-102, r:470 },
+  { id:"datasci",  label:"Data Sci · cleaning / evals",      a:6,    r:560 },
+  /* LLM · kernel layer */
+  { id:"quant",    label:"Quantization · fp16 / int8",       a:-126, r:660 },
+  { id:"flash",    label:"FlashAttention · online softmax",  a:-95,  r:625 },
+  /* LLM · pipeline (P0 right → P6 parked beside it) */
+  { id:"p0", label:"P0 Data",                    a:-18,  r:705 },
+  { id:"p1", label:"P1 Pretraining",             a:-42,  r:705 },
+  { id:"p2", label:"P2 Post-training SFT/RLHF",  a:-66,  r:705 },
+  { id:"p3", label:"P3 RL · rollout",            a:-90,  r:705 },
+  { id:"p4", label:"P4 Serving engine",          a:-114, r:705, strong:true },
+  { id:"p5", label:"P5 Agent Runtime",           a:-138, r:705, strong:true },
+  { id:"p6", label:"P6 Safety · red team",       a:-8,   r:660 },
+  /* ESL · S1 statistical primitives (adjacent to core) */
+  { id:"esl-mle", label:"MLE · EM · log-loss",         a:14, r:420 },
+  { id:"esl-reg", label:"Regression · E[Y|X] fit",     a:31, r:420 },
+  { id:"esl-ols", label:"OLS · projection / PCA",      a:48, r:420 },
+  { id:"esl-gd",  label:"GD · Newton · convexity",     a:65, r:420 },
+  { id:"esl-cv",  label:"Bootstrap · CV / resampling", a:82, r:420 },
+  /* ESL · S2 methods (built on S1) */
+  { id:"esl-logit", label:"Logistic · LDA",            a:16, r:545 },
+  { id:"esl-bv",    label:"Bias-variance tradeoff",    a:31, r:560 },
+  { id:"esl-lasso", label:"Ridge / Lasso · shrinkage", a:50, r:545 },
+  { id:"esl-tree",  label:"Trees · Boosting · RF",     a:67, r:545 },
+  { id:"esl-ts",    label:"Time-series CV · purged",   a:86, r:555 },
   /* STO · L1 */
-  { id:"st-ito",  label:"Itô 引理 · Greeks",   a:110, r:420 },
-  { id:"st-bm",   label:"√t 标度 · lognormal", a:131, r:420 },
-  { id:"st-chol", label:"Cholesky · 相关布朗", a:155, r:420 },
+  { id:"st-ito",  label:"Itô lemma · Greeks",       a:110, r:420 },
+  { id:"st-bm",   label:"√t scaling · lognormal",   a:131, r:420 },
+  { id:"st-chol", label:"Cholesky · correlated BM", a:155, r:420 },
   /* STO · L2 */
-  { id:"st-gir",  label:"Girsanov · 测度变换",     a:104, r:530 },
-  { id:"st-mart", label:"鞅 · 风险中性定价 E^Q",   a:129, r:530 },
-  { id:"st-vol",  label:"Vol surface · SVI/SABR",  a:154, r:530 },
+  { id:"st-gir",  label:"Girsanov · measure change",     a:104, r:530 },
+  { id:"st-mart", label:"Martingale · E^Q pricing",      a:129, r:530 },
+  { id:"st-vol",  label:"Vol surface · SVI / SABR",      a:154, r:530 },
   /* STO · L3 */
-  { id:"st-mc",   label:"MC 定价 · 方差缩减",      a:128, r:635 },
+  { id:"st-mc",   label:"MC pricing · variance reduction", a:128, r:635 },
 ];
 
 const EDGES = [
@@ -227,8 +230,9 @@ const EDGES = [
   ["paging","p4"], ["sched","p4"], ["concur","p4"], ["isolation","p5"], ["storage","p5"],
   /* kernel → 管线 */
   ["flash","p4"], ["quant","p4"],
-  /* ESL 内部分层 */
-  ["esl-reg","esl-bv"], ["esl-gd","esl-tree"],
+  /* ESL：S1 primitives → S2 methods（logistic=MLE 应用、lasso 靠凸优化、boosting=函数空间 GD、bagging 用 bootstrap）*/
+  ["esl-mle","esl-logit"], ["esl-reg","esl-bv"], ["esl-ols","esl-lasso"], ["esl-gd","esl-lasso"],
+  ["esl-gd","esl-tree"], ["esl-cv","esl-tree"], ["esl-cv","esl-ts"],
   /* STO 内部分层：BM → Itô → Girsanov → 鞅/定价 → MC */
   ["st-bm","st-ito"], ["st-bm","st-vol"],
   ["st-ito","st-gir"], ["st-gir","st-mart"], ["st-mart","st-mc"],
@@ -251,7 +255,7 @@ const EDGES = [
   const svg = document.getElementById("g");
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   el("ellipse", {cx:CX, cy:CY, rx:330, ry:190, class:"corering"}, svg);
-  el("text", {x:CX, y:CY+4, "text-anchor":"middle", class:"ringlab"}, svg).textContent = "内环 · 三方向共有";
+  el("text", {x:CX, y:CY+4, "text-anchor":"middle", class:"ringlab"}, svg).textContent = "SHARED CORE";
   /* 扇区文字标签（非节点）*/
   el("text", {x:CX,     y:CY-238, "text-anchor":"middle", class:"seclab"}, svg).textContent = "TRANSFORMER / LLM";
   el("text", {x:CX-285, y:CY+245, "text-anchor":"middle", class:"seclab"}, svg).textContent = "STOCHASTIC CALC";

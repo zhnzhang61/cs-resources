@@ -58,7 +58,7 @@
 <body>
 <header>
   <h1>Knowledge Graph</h1>
-  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆）：数理化身 → 系统砖 → kernel（FlashAttention / 量化）→ P0–P6 管线；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）同理。
+  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基；三个扇区各自<b>分层</b>，外层依赖内层——LLM（上半圆，OS/算法砖聚左、ML 数理聚右近 ESL）：数理化身 → 系统砖 → kernel（FlashAttention / 量化）→ 管线（P0 右起 → P6 左，P4/P5 在 OS 簇上方）；Stochastic（左下）：BM → Itô → Girsanov → 定价 → MC；ESL（右下）同理。
     hover（或点击固定）任意节点：蓝 = 前序链，橙 = 后续链。</div>
   <div class="legend"><span class="l-cur">当前</span><span class="l-anc">前序（它依赖谁）</span><span class="l-desc">后续（谁依赖它）</span></div>
 </header>
@@ -125,30 +125,31 @@ const NODES = [
   { id:"la", label:"线代 · 矩阵乘 / SVD",    core:true, col:-1, row:1 },
   { id:"gv", label:"Gaussian · 方差标度",    core:true, col:0,  row:1 },
   { id:"mc", label:"采样 · Monte Carlo",     core:true, col:1,  row:1 },
-  /* LLM · A 数理化身 */
-  { id:"llm-next", label:"Next-token · 自回归",     a:-150, r:400 },
-  { id:"llm-var",  label:"1/√dₖ · 初始化方差",      a:-126, r:400 },
-  { id:"attn",     label:"Attention · QKᵀ 前向",    a:-105, r:400 },
-  { id:"backprop", label:"Backprop / 梯度下降",     a:-75,  r:400 },
-  { id:"llm-ce",   label:"Cross-entropy · RLHF KL", a:-54,  r:400 },
-  { id:"llm-dec",  label:"Decoding · top-k/p",      a:-28,  r:400 },
-  /* LLM · B 系统砖 */
-  { id:"datasci",  label:"Data Sci · 清洗 / 评测",   a:-163, r:550 },
-  { id:"paging",   label:"OS · 分页 / 调度 / 抢占",  a:-125, r:530 },
-  { id:"gpu",      label:"GPU · HBM / SRAM 层次",   a:-90,  r:530 },
-  { id:"isolation",label:"OS · 隔离 / 存储 WAL",    a:-55,  r:530 },
-  { id:"ds",       label:"hash / 堆 / Trie / radix", a:-13, r:565 },
+  /* LLM · A 数理化身（ML 簇靠右，近 ESL）*/
+  { id:"attn",     label:"Attention · QKᵀ 前向",    a:-124, r:400 },
+  { id:"llm-dec",  label:"Decoding · top-k/p",      a:-104, r:400 },
+  { id:"llm-ce",   label:"Cross-entropy · RLHF KL", a:-75,  r:400 },
+  { id:"backprop", label:"Backprop / 梯度下降",     a:-60,  r:400 },
+  { id:"llm-next", label:"Next-token · 自回归",     a:-44,  r:400 },
+  { id:"llm-var",  label:"1/√dₖ · 初始化方差",      a:-28,  r:400 },
+  /* LLM · B 系统砖（OS + 算法簇靠左）*/
+  { id:"isolation",label:"OS · 隔离 / 存储 WAL",    a:-165, r:530 },
+  { id:"ds",       label:"hash / 堆 / 队列",        a:-149, r:545 },
+  { id:"trie",     label:"Trie / radix",            a:-133, r:530 },
+  { id:"paging",   label:"OS · 分页 / 调度",        a:-117, r:560 },
+  { id:"gpu",      label:"GPU · HBM / SRAM 层次",   a:-99,  r:520 },
+  { id:"datasci",  label:"Data Sci · 清洗 / 评测",  a:-16,  r:550 },
   /* LLM · K kernel 层 */
-  { id:"flash",    label:"FlashAttention · online softmax", a:-105, r:625 },
-  { id:"quant",    label:"量化 · fp16 / int8 · PTQ",        a:-75,  r:625 },
-  /* LLM · C P0–P6 管线 */
-  { id:"p0", label:"P0 数据",             a:-162, r:705 },
-  { id:"p1", label:"P1 预训练",           a:-138, r:705 },
-  { id:"p2", label:"P2 后训练 SFT/RLHF",  a:-114, r:705 },
+  { id:"flash",    label:"FlashAttention · online softmax", a:-118, r:625 },
+  { id:"quant",    label:"量化 · fp16 / int8 · PTQ",        a:-96,  r:625 },
+  /* LLM · C 管线：P0 从右起（近 ML/数据），P4/P5 落在 OS 簇上方 */
+  { id:"p0", label:"P0 数据",             a:-18,  r:705 },
+  { id:"p1", label:"P1 预训练",           a:-42,  r:705 },
+  { id:"p2", label:"P2 后训练 SFT/RLHF",  a:-66,  r:705 },
   { id:"p3", label:"P3 RL · rollout",     a:-90,  r:705 },
-  { id:"p4", label:"P4 Serving 推理引擎", a:-66,  r:705, strong:true },
-  { id:"p5", label:"P5 Agent Runtime",    a:-42,  r:705, strong:true },
-  { id:"p6", label:"P6 Safety · 红队",    a:-18,  r:705 },
+  { id:"p4", label:"P4 Serving 推理引擎", a:-114, r:705, strong:true },
+  { id:"p5", label:"P5 Agent Runtime",    a:-138, r:705, strong:true },
+  { id:"p6", label:"P6 Safety · 红队",    a:-162, r:705 },
   /* ESL · S1 */
   { id:"esl-mle", label:"MLE · EM · log-loss",     a:18, r:420 },
   { id:"esl-reg", label:"回归函数 · E[Y|X] 逼近",  a:41, r:420 },
@@ -181,7 +182,7 @@ const EDGES = [
   /* B 系统砖 → kernel / 管线 */
   ["gpu","flash"], ["gpu","quant"],
   ["datasci","p0"], ["datasci","p6"], ["paging","p4"], ["isolation","p5"],
-  ["ds","p4"], ["ds","p5"],
+  ["ds","p4"], ["ds","p5"], ["trie","p4"],
   /* kernel → 管线 */
   ["flash","p4"], ["quant","p4"],
   /* 管线 */

@@ -58,7 +58,7 @@
 <header>
   <h1>Knowledge Graph</h1>
   <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基（直连三个方向）；<b>中环</b> = 三个面试方向；<b>外环</b> = 各方向独有知识——LLM 扇区占上半圆，含系统砖与 P0–P6 管线（P4/P5 主攻带加粗）。
-    hover 内环节点 = 同一概念在三方向的化身；hover 方向 hub = 该方向全部知识；点击可固定。蓝 = 前序，橙 = 后续。</div>
+    hover 内环节点 = 同一概念在三方向的化身；hover 方向 hub = 蓝色是它站的根基（上游），橙色是它自己的知识（下游）；点击可固定。蓝 = 前序，橙 = 后续。</div>
   <div class="legend"><span class="l-cur">当前</span><span class="l-anc">前序（它依赖谁）</span><span class="l-desc">后续（谁依赖它）</span></div>
 </header>
 <div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg></div>
@@ -96,12 +96,22 @@ function buildGraph(svg, nodes, edges, edgePath){
 
   function show(id){
     const anc = reach(id, rev), desc = reach(id, fwd);
-    nodeEls.forEach(n => n.el.setAttribute("class",
-      n.base + " " + (n.id===id ? "cur" : anc.has(n.id) ? "anc" : desc.has(n.id) ? "desc" : "dim")));
+    const isHub = !!byId[id].hub;   /* hub：内环=蓝(上游根基)，扇区=橙(方向内容) */
+    nodeEls.forEach(n => {
+      let s;
+      if (n.id===id) s = "cur";
+      else if (anc.has(n.id)) s = (isHub && !byId[n.id].core) ? "desc" : "anc";
+      else if (desc.has(n.id)) s = "desc";
+      else s = "dim";
+      n.el.setAttribute("class", n.base + " " + s);
+    });
     edgeEls.forEach(e => {
-      const isAnc  = anc.has(e.a) && (e.b===id || anc.has(e.b));
-      const isDesc = desc.has(e.b) && (e.a===id || desc.has(e.a));
-      e.el.setAttribute("class", "edge " + (isAnc ? "anc" : isDesc ? "desc" : "dim"));
+      const inAnc  = anc.has(e.a) && (e.b===id || anc.has(e.b));
+      const inDesc = desc.has(e.b) && (e.a===id || desc.has(e.a));
+      let s = "dim";
+      if (inAnc) s = (isHub && !byId[e.a].core) ? "desc" : "anc";
+      else if (inDesc) s = "desc";
+      e.el.setAttribute("class", "edge " + s);
     });
   }
   function clear(){

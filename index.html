@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LLM Knowledge Graph</title>
+<title>Knowledge Graph</title>
 <style>
   :root {
     --bg: #fafafa; --fg: #1f2328; --muted: #656d76;
@@ -23,7 +23,7 @@
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--fg);
          font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
-  header { max-width: 1100px; margin: 0 auto; padding: 24px 16px 0; }
+  header { max-width: 1150px; margin: 0 auto; padding: 24px 16px 0; }
   h1 { font-size: 20px; margin: 0 0 6px; }
   .hint { color: var(--muted); font-size: 13px; }
   .legend { display: flex; gap: 16px; margin-top: 10px; font-size: 12px; color: var(--muted); }
@@ -32,19 +32,20 @@
   .legend .l-anc::before  { background: var(--anc); }
   .legend .l-desc::before { background: var(--desc); }
   .legend .l-cur::before  { background: var(--hover-bg); }
-  #wrap { max-width: 1100px; margin: 0 auto; padding: 8px 8px 40px; overflow-x: auto; }
-  svg { display: block; width: 100%; height: auto; min-width: 900px; }
+  .wrap { max-width: 1150px; margin: 0 auto; padding: 8px 8px 40px; overflow-x: auto; }
+  svg { display: block; width: 100%; height: auto; min-width: 950px; }
 
-  .edge { stroke: var(--edge); stroke-width: 1.5; fill: none; transition: all .15s; }
+  .edge { stroke: var(--edge); stroke-width: 1.4; fill: none; transition: all .15s; }
   .node rect { fill: var(--node-fill); stroke: var(--node-stroke); stroke-width: 1.2;
                rx: 8; transition: all .15s; cursor: pointer; }
-  .node text { font-size: 13px; fill: var(--fg); pointer-events: none; transition: all .15s; }
+  .node text { font-size: 13.5px; fill: var(--fg); pointer-events: none; transition: all .15s; }
   .node.strong rect { stroke-width: 2; stroke: var(--fg); }
   .node.strong text { font-weight: 600; }
-  .layerlab { font-size: 11px; fill: var(--muted); }
+  .node.corenode rect { fill: var(--anc-bg); }
+  .ringlab  { font-size: 11px; fill: var(--muted); letter-spacing: 1px; }
+  .corering { fill: none; stroke: var(--node-stroke); stroke-dasharray: 4 5; }
 
-  /* highlight states */
-  .dim { opacity: .12; }
+  .dim { opacity: .1; }
   .node.cur rect  { fill: var(--hover-bg); stroke: var(--hover-bg); }
   .node.cur text  { fill: var(--hover-fg); font-weight: 600; }
   .node.anc rect  { fill: var(--anc-bg); stroke: var(--anc); stroke-width: 2; }
@@ -55,150 +56,185 @@
 </head>
 <body>
 <header>
-  <h1>LLM Knowledge Graph</h1>
-  <div class="hint">从上往下：基础 → 柱子 → 算子 → LLM 主轴（P4 / P5 为主攻带）。鼠标悬停（或点击固定）任意知识点：蓝色 = 前序，橙色 = 后续。</div>
+  <h1>Knowledge Graph</h1>
+  <div class="hint">同心结构：<b>内环</b> = 三方向共有的数理根基（直连三个方向）；<b>中环</b> = 三个面试方向；<b>外环</b> = 各方向独有知识——LLM 扇区占上半圆，含系统砖与 P0–P6 管线（P4/P5 主攻带加粗）。
+    hover 内环节点 = 同一概念在三方向的化身；hover 方向 hub = 该方向全部知识；点击可固定。蓝 = 前序，橙 = 后续。</div>
   <div class="legend"><span class="l-cur">当前</span><span class="l-anc">前序（它依赖谁）</span><span class="l-desc">后续（谁依赖它）</span></div>
 </header>
-<div id="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg></div>
 
 <script>
-/* ---------- 数据：以后只改这两个数组 ---------- */
-/* layer 0 在最上（基础），数字越大越靠下（目的地）；strong = 主攻带加粗 */
-const NODES = [
-  /* 基础层 */
-  { id:"ds",       label:"hash / 堆 / 队列 / TreeMap", layer:0 },
-  { id:"trie",     label:"Trie / radix",               layer:0 },
-  { id:"linalg",   label:"线代 · 矩阵乘 / 分块",        layer:0 },
-  { id:"chain",    label:"微积分 · 链式法则",           layer:0 },
-  { id:"softmax",  label:"softmax / logsumexp",        layer:0 },
-  { id:"numeric",  label:"数值 · fp16 / int8",         layer:0 },
-  { id:"prob",     label:"概率 · 采样 / logprobs",     layer:0 },
-  /* OS 柱 */
-  { id:"paging",   label:"内存 · 分页 / 虚拟内存",      layer:1 },
-  { id:"gpu",      label:"GPU · HBM / SRAM 层次",      layer:1 },
-  { id:"isolation",label:"进程 · 容器 / microVM",      layer:1 },
-  { id:"concur",   label:"并发 · async / GIL",         layer:1 },
-  { id:"sched",    label:"调度 · 优先级 / 抢占",        layer:1 },
-  { id:"storage",  label:"存储 · WAL / LSM",           layer:1 },
-  /* ML 柱 + DS 柱 */
-  { id:"forward",  label:"NN 前向 · 矩阵乘 + 非线性",   layer:2 },
-  { id:"attn",     label:"Attention 算子",             layer:2 },
-  { id:"backprop", label:"Backprop / 梯度下降",        layer:2 },
-  { id:"datasci",  label:"Data Science · 清洗 / 评测", layer:2 },
-  /* 算子 / kernel 层 */
-  { id:"flash",    label:"FlashAttention",             layer:3 },
-  { id:"quant",    label:"量化 · PTQ / QAT",           layer:3 },
-  /* LLM 主轴 · 上游 */
-  { id:"p0",       label:"P0 数据",                    layer:4 },
-  { id:"p1",       label:"P1 预训练",                  layer:4 },
-  { id:"p2",       label:"P2 后训练 SFT / RLHF",       layer:4 },
-  { id:"p3",       label:"P3 RL · rollout",            layer:4 },
-  /* 主攻带 + P6 */
-  { id:"p4",       label:"P4 Serving 推理引擎",        layer:5, strong:true },
-  { id:"p5",       label:"P5 Agent Runtime",           layer:5, strong:true },
-  { id:"p6",       label:"P6 Safety · 评测 / 红队",    layer:5 },
-];
-/* [前序, 后续] */
-const EDGES = [
-  /* 基础 → 柱子 / kernel / 主轴 */
-  ["linalg","forward"], ["linalg","attn"], ["linalg","flash"],
-  ["chain","backprop"],
-  ["softmax","attn"], ["softmax","flash"],
-  ["numeric","quant"],
-  ["prob","p4"],
-  ["ds","sched"], ["ds","p5"],
-  ["trie","p4"],
-  /* OS 柱 → */
-  ["paging","p4"],
-  ["gpu","flash"], ["gpu","quant"],
-  ["isolation","p5"],
-  ["concur","p4"],
-  ["sched","p4"],
-  ["storage","p5"],
-  /* ML 柱 + DS 柱 → */
-  ["forward","p4"],
-  ["attn","flash"],
-  ["backprop","p1"], ["backprop","p2"],
-  ["datasci","p0"], ["datasci","p6"],
-  /* kernel → */
-  ["flash","p4"], ["quant","p4"],
-  /* LLM 主轴 pipeline */
-  ["p0","p1"], ["p1","p2"], ["p2","p3"], ["p3","p4"], ["p4","p5"], ["p5","p6"],
-];
-const LAYER_LABELS = ["基础层 · 算法+数理", "OS 柱", "ML 柱 · DS 柱", "算子 / kernel 层", "LLM 主轴 · 上游", "主攻带 + P6"];
-
-/* ---------- 布局与渲染（不用改） ---------- */
-const W = 1250, ROW = 118, PAD_Y = 40, NODE_H = 34;
-const layers = [...new Set(NODES.map(n=>n.layer))].sort((a,b)=>a-b);
-const H = PAD_Y*2 + (layers.length-1)*ROW + NODE_H;
-const byId = Object.fromEntries(NODES.map(n=>[n.id,n]));
-
-NODES.forEach(n => { n.w = Math.max(90, measure(n.label) + 26); n.h = NODE_H; });
-layers.forEach(L => {
-  const row = NODES.filter(n=>n.layer===L);
-  const total = row.reduce((s,n)=>s+n.w,0), gap = (W-110-total)/(row.length+1);
-  let x = 100 + gap;
-  row.forEach(n => { n.x = x; n.y = PAD_Y + L*ROW; x += n.w + gap; });
-});
-function measure(s){ let w=0; for (const c of s) w += c.charCodeAt(0)>255 ? 13.5 : 7.5; return w; }
-
-const fwd = {}, rev = {};
-EDGES.forEach(([a,b]) => { (fwd[a]=fwd[a]||[]).push(b); (rev[b]=rev[b]||[]).push(a); });
-function reach(id, adj){ const seen=new Set(), st=[id];
-  while(st.length){ const n=st.pop(); for(const m of (adj[n]||[])) if(!seen.has(m)){seen.add(m); st.push(m);} }
-  return seen; }
-
-const svg = document.getElementById("g");
-svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+/* ================= 通用渲染 ================= */
 const NS = "http://www.w3.org/2000/svg";
 function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag);
-  for(const k in attrs) e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
+  for(const k in attrs) e.setAttribute(k,attrs[k]); parent.appendChild(e); return e; }
+function measure(s){ let w=0; for (const c of s) w += c.charCodeAt(0)>255 ? 13.5 : 7.5; return w; }
 
-LAYER_LABELS.forEach((t,i)=> el("text",{x:8,y:PAD_Y+i*ROW+NODE_H/2+4,class:"layerlab"}).textContent=t);
+function buildGraph(svg, nodes, edges, edgePath){
+  const byId = Object.fromEntries(nodes.map(n=>[n.id,n]));
+  const fwd = {}, rev = {};
+  edges.forEach(([a,b]) => { (fwd[a]=fwd[a]||[]).push(b); (rev[b]=rev[b]||[]).push(a); });
+  const reach = (id, adj) => { const seen=new Set(), st=[id];
+    while(st.length){ const n=st.pop(); for(const m of (adj[n]||[])) if(!seen.has(m)){seen.add(m); st.push(m);} }
+    return seen; };
 
-const edgeEls = EDGES.map(([a,b]) => {
-  const A=byId[a], B=byId[b];
-  let d;
-  if (A.layer === B.layer) {           /* 同层：横向弧线 */
-    const dir = B.x > A.x ? 1 : -1;
-    const x1 = dir===1 ? A.x+A.w : A.x, x2 = dir===1 ? B.x : B.x+B.w;
-    const y  = A.y + A.h/2, yb = y + 30;
-    d = `M${x1},${y} C${x1+28*dir},${yb} ${x2-28*dir},${yb} ${x2},${y}`;
-  } else {                             /* 跨层：纵向曲线 */
-    const x1=A.x+A.w/2, y1=A.y+A.h, x2=B.x+B.w/2, y2=B.y, my=(y1+y2)/2;
-    d = `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;
-  }
-  return { a, b, el: el("path",{d, class:"edge"}) };
-});
-
-const nodeEls = NODES.map(n => {
-  const g = el("g",{class:"node" + (n.strong ? " strong" : "")});
-  el("rect",{x:n.x, y:n.y, width:n.w, height:n.h, rx:8}, g);
-  const t = el("text",{x:n.x+n.w/2, y:n.y+n.h/2+4.5,"text-anchor":"middle"}, g);
-  t.textContent = n.label;
-  g.addEventListener("mouseenter", ()=>{ if(!pinned) show(n.id); });
-  g.addEventListener("mouseleave", ()=>{ if(!pinned) clear(); });
-  g.addEventListener("click", e=>{ e.stopPropagation();
-    if(pinned===n.id){ pinned=null; clear(); } else { pinned=n.id; show(n.id); } });
-  return { id:n.id, base:"node" + (n.strong ? " strong" : ""), el:g };
-});
-let pinned = null;
-document.addEventListener("click", ()=>{ pinned=null; clear(); });
-
-function show(id){
-  const anc = reach(id, rev), desc = reach(id, fwd);
-  nodeEls.forEach(n => n.el.setAttribute("class",
-    n.base + " " + (n.id===id ? "cur" : anc.has(n.id) ? "anc" : desc.has(n.id) ? "desc" : "dim")));
-  edgeEls.forEach(e => {
-    const isAnc  = anc.has(e.a) && (e.b===id || anc.has(e.b));
-    const isDesc = desc.has(e.b) && (e.a===id || desc.has(e.a));
-    e.el.setAttribute("class", "edge " + (isAnc ? "anc" : isDesc ? "desc" : "dim"));
+  const edgeEls = edges.map(([a,b]) =>
+    ({ a, b, el: el("path",{d: edgePath(byId[a], byId[b]), class:"edge"}, svg) }));
+  let pinned = null;
+  const nodeEls = nodes.map(n => {
+    const base = "node" + (n.strong ? " strong" : "") + (n.core ? " corenode" : "");
+    const g = el("g",{class: base}, svg);
+    el("rect",{x:n.x, y:n.y, width:n.w, height:n.h, rx:8}, g);
+    el("text",{x:n.x+n.w/2, y:n.y+n.h/2+4.5,"text-anchor":"middle"}, g).textContent = n.label;
+    g.addEventListener("mouseenter", ()=>{ if(!pinned) show(n.id); });
+    g.addEventListener("mouseleave", ()=>{ if(!pinned) clear(); });
+    g.addEventListener("click", e=>{ e.stopPropagation();
+      if(pinned===n.id){ pinned=null; clear(); } else { pinned=n.id; show(n.id); } });
+    return { id:n.id, base, el:g };
   });
+  svg.addEventListener("click", ()=>{ pinned=null; clear(); });
+
+  function show(id){
+    const anc = reach(id, rev), desc = reach(id, fwd);
+    nodeEls.forEach(n => n.el.setAttribute("class",
+      n.base + " " + (n.id===id ? "cur" : anc.has(n.id) ? "anc" : desc.has(n.id) ? "desc" : "dim")));
+    edgeEls.forEach(e => {
+      const isAnc  = anc.has(e.a) && (e.b===id || anc.has(e.b));
+      const isDesc = desc.has(e.b) && (e.a===id || desc.has(e.a));
+      e.el.setAttribute("class", "edge " + (isAnc ? "anc" : isDesc ? "desc" : "dim"));
+    });
+  }
+  function clear(){
+    nodeEls.forEach(n => n.el.setAttribute("class", n.base));
+    edgeEls.forEach(e => e.el.setAttribute("class","edge"));
+  }
 }
-function clear(){
-  nodeEls.forEach(n => n.el.setAttribute("class", n.base));
-  edgeEls.forEach(e => e.el.setAttribute("class","edge"));
-}
+
+/* ================= 数据 ================= */
+/* 内环 core：三方向共有（shared foundations 表的行） */
+/* 外环：ring + slot 定位；LLM 占上半圆三条弧（A 数理化身 / B 系统砖 / C P0–P6 管线） */
+const NODES = [
+  /* 内环 */
+  { id:"ce", label:"E[Y|X] 条件期望 / 分布", core:true },
+  { id:"la", label:"线代 · 矩阵乘 / SVD",    core:true },
+  { id:"ct", label:"链式法则 + Taylor",      core:true },
+  { id:"gv", label:"Gaussian · 方差标度",    core:true },
+  { id:"kl", label:"似然 · softmax · CE · KL", core:true },
+  { id:"mc", label:"采样 · Monte Carlo",     core:true },
+  /* 中环 hubs */
+  { id:"LLM", label:"Transformer / LLM",  hub:"llm", strong:true },
+  { id:"ESL", label:"ESL / ISL 统计学习", hub:"esl", strong:true },
+  { id:"STO", label:"Stochastic Calculus", hub:"sto", strong:true },
+  /* LLM 扇区 · 弧 A（数理化身）*/
+  { id:"llm-next", label:"Next-token · 自回归",       sector:"llm", ring:"A", slot:0 },
+  { id:"attn",     label:"Attention · QKᵀ 前向",      sector:"llm", ring:"A", slot:1 },
+  { id:"backprop", label:"Backprop / 梯度下降",       sector:"llm", ring:"A", slot:2 },
+  { id:"llm-var",  label:"1/√dₖ · 初始化方差",        sector:"llm", ring:"A", slot:3 },
+  { id:"llm-ce",   label:"Cross-entropy · RLHF KL",   sector:"llm", ring:"A", slot:4 },
+  { id:"llm-dec",  label:"Decoding · top-k/p",        sector:"llm", ring:"A", slot:5 },
+  /* LLM 扇区 · 弧 B（系统砖）*/
+  { id:"ds",       label:"hash / 堆 / Trie / radix",  sector:"llm", ring:"B", slot:0 },
+  { id:"paging",   label:"OS · 分页 / 调度 / 抢占",    sector:"llm", ring:"B", slot:1 },
+  { id:"gpu",      label:"GPU · HBM / SRAM 层次",     sector:"llm", ring:"B", slot:2 },
+  { id:"flash",    label:"FlashAttention · online softmax", sector:"llm", ring:"B", slot:3 },
+  { id:"quant",    label:"量化 · fp16 / int8 · PTQ",  sector:"llm", ring:"B", slot:4 },
+  { id:"isolation",label:"OS · 隔离 / 存储 WAL",      sector:"llm", ring:"B", slot:5 },
+  { id:"datasci",  label:"Data Sci · 清洗 / 评测",    sector:"llm", ring:"B", slot:6 },
+  /* LLM 扇区 · 弧 C（P0–P6 管线）*/
+  { id:"p0", label:"P0 数据",              sector:"llm", ring:"C", slot:0 },
+  { id:"p1", label:"P1 预训练",            sector:"llm", ring:"C", slot:1 },
+  { id:"p2", label:"P2 后训练 SFT/RLHF",   sector:"llm", ring:"C", slot:2 },
+  { id:"p3", label:"P3 RL · rollout",      sector:"llm", ring:"C", slot:3 },
+  { id:"p4", label:"P4 Serving 推理引擎",  sector:"llm", ring:"C", slot:4, strong:true },
+  { id:"p5", label:"P5 Agent Runtime",     sector:"llm", ring:"C", slot:5, strong:true },
+  { id:"p6", label:"P6 Safety · 红队",     sector:"llm", ring:"C", slot:6 },
+  /* ESL 扇区（双弧）*/
+  { id:"esl-reg",  label:"回归函数 · E[Y|X] 逼近",  sector:"esl", ring:"S1", slot:0 },
+  { id:"esl-ols",  label:"OLS 投影 · ridge / PCA", sector:"esl", ring:"S1", slot:1 },
+  { id:"esl-gd",   label:"GD · Newton · 凸性",     sector:"esl", ring:"S1", slot:2 },
+  { id:"esl-bv",   label:"Bias-Variance 分解",     sector:"esl", ring:"S1", slot:3 },
+  { id:"esl-tree", label:"树 · Boosting · RF",     sector:"esl", ring:"S2", slot:0 },
+  { id:"esl-mle",  label:"MLE · EM · log-loss",    sector:"esl", ring:"S2", slot:1 },
+  { id:"esl-cv",   label:"Bootstrap · CV",         sector:"esl", ring:"S2", slot:2 },
+  /* Stochastic 扇区（双弧）*/
+  { id:"st-mart", label:"鞅 · 风险中性定价 E^Q",   sector:"sto", ring:"S1", slot:0 },
+  { id:"st-chol", label:"Cholesky · 相关布朗",     sector:"sto", ring:"S1", slot:1 },
+  { id:"st-ito",  label:"Itô 引理 · Greeks",       sector:"sto", ring:"S1", slot:2 },
+  { id:"st-bm",   label:"√t 标度 · lognormal",     sector:"sto", ring:"S1", slot:3 },
+  { id:"st-vol",  label:"Vol surface · SVI/SABR",  sector:"sto", ring:"S2", slot:0 },
+  { id:"st-gir",  label:"Girsanov · 测度变换",     sector:"sto", ring:"S2", slot:1 },
+  { id:"st-mc",   label:"MC 定价 · 方差缩减",      sector:"sto", ring:"S2", slot:2 },
+];
+
+const EDGES = [
+  /* 内环 → 三个方向 hub（根基直连方向）*/
+  ["ce","LLM"],["la","LLM"],["ct","LLM"],["gv","LLM"],["kl","LLM"],["mc","LLM"],
+  ["ce","ESL"],["la","ESL"],["ct","ESL"],["gv","ESL"],["kl","ESL"],["mc","ESL"],
+  ["ce","STO"],["la","STO"],["ct","STO"],["gv","STO"],["kl","STO"],["mc","STO"],
+  /* 内环 → 各方向化身（表格的 cell）*/
+  ["ce","llm-next"], ["la","attn"], ["ct","backprop"], ["gv","llm-var"], ["kl","llm-ce"], ["mc","llm-dec"],
+  ["ce","esl-reg"], ["la","esl-ols"], ["ct","esl-gd"], ["gv","esl-bv"], ["kl","esl-mle"], ["mc","esl-cv"],
+  ["ce","st-mart"], ["la","st-chol"], ["ct","st-ito"], ["gv","st-bm"], ["kl","st-gir"], ["mc","st-mc"],
+  /* LLM 扇区内部依赖（原图二，去重后）*/
+  ["llm-next","p1"], ["attn","flash"], ["backprop","p1"], ["backprop","p2"],
+  ["llm-var","p1"], ["llm-ce","p2"], ["llm-dec","p4"],
+  ["ds","p4"], ["ds","p5"], ["paging","p4"], ["gpu","flash"], ["gpu","quant"],
+  ["flash","p4"], ["quant","p4"], ["isolation","p5"], ["datasci","p0"], ["datasci","p6"],
+  ["p0","p1"], ["p1","p2"], ["p2","p3"], ["p3","p4"], ["p4","p5"], ["p5","p6"],
+  ["p6","LLM"],                                   /* 管线收口回 LLM 方向 */
+  /* ESL / STO 扇区 → 各自 hub */
+  ["esl-reg","ESL"],["esl-ols","ESL"],["esl-gd","ESL"],["esl-tree","ESL"],
+  ["esl-bv","ESL"],["esl-mle","ESL"],["esl-cv","ESL"],
+  ["st-mart","STO"],["st-chol","STO"],["st-ito","STO"],["st-vol","STO"],
+  ["st-bm","STO"],["st-gir","STO"],["st-mc","STO"],
+];
+
+/* ================= 布局 ================= */
+(function(){
+  const W=1480, H=1380, CX=740, CY=770;
+  const rad = d => d*Math.PI/180;
+  const HUB = { llm:{a:-90, r:295}, esl:{a:52, r:295}, sto:{a:128, r:295} };
+  const RING = {
+    "llm-A":  { r:430, start:-152, step:25 },
+    "llm-B":  { r:565, start:-165, step:25 },
+    "llm-C":  { r:695, start:-162, step:24 },
+    "esl-S1": { r:450, start:18,  step:19 },
+    "esl-S2": { r:575, start:25,  step:24 },
+    "sto-S1": { r:450, start:105, step:19 },
+    "sto-S2": { r:575, start:107, step:24 },
+  };
+
+  NODES.forEach(n => {
+    n.h = 34;
+    n.w = Math.max(90, measure(n.label) + (n.hub ? 40 : 24));
+    let cx, cy;
+    if (n.core) {
+      const i = NODES.filter(m=>m.core).indexOf(n);
+      cx = CX + (i%2===0 ? -118 : 118);
+      cy = CY + (Math.floor(i/2)-1)*54;
+    } else if (n.hub) {
+      const h = HUB[n.hub];
+      cx = CX + h.r*Math.cos(rad(h.a)); cy = CY + h.r*Math.sin(rad(h.a));
+    } else {
+      const cfg = RING[n.sector+"-"+n.ring];
+      const a = rad(cfg.start + cfg.step*n.slot);
+      cx = CX + cfg.r*Math.cos(a); cy = CY + cfg.r*Math.sin(a);
+    }
+    n.x = cx - n.w/2; n.y = cy - n.h/2; n.cx = cx; n.cy = cy;
+  });
+
+  const svg = document.getElementById("g");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  el("ellipse", {cx:CX, cy:CY, rx:265, ry:128, class:"corering"}, svg);
+  el("text", {x:CX, y:CY-143, "text-anchor":"middle", class:"ringlab"}, svg).textContent = "内环 · 三方向共有";
+
+  const path = (A,B) => {
+    const mx=(A.cx+B.cx)/2, my=(A.cy+B.cy)/2;
+    const qx = mx + (CX-mx)*0.12, qy = my + (CY-my)*0.12;
+    return `M${A.cx},${A.cy} Q${qx},${qy} ${B.cx},${B.cy}`;
+  };
+  buildGraph(svg, NODES, EDGES, path);
+})();
 </script>
 </body>
 </html>

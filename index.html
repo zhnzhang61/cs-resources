@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Knowledge Graph</title>
+<style>
+  :root {
+    --bg: #fafafa; --fg: #1f2328; --muted: #656d76;
+    --node-fill: #ffffff; --node-stroke: #d0d7de; --edge: #d0d7de;
+    --anc: #2563eb; --anc-bg: #dbeafe;   /* 前序 蓝 */
+    --desc: #d97706; --desc-bg: #fef3c7; /* 后续 橙 */
+    --hover-bg: #1f2328; --hover-fg: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #8b949e;
+      --node-fill: #161b22; --node-stroke: #30363d; --edge: #30363d;
+      --anc: #58a6ff; --anc-bg: #0d2a52; --desc: #e3b341; --desc-bg: #3a2d10;
+      --hover-bg: #e6edf3; --hover-fg: #0d1117;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  header { max-width: 1000px; margin: 0 auto; padding: 24px 16px 0; }
+  h1 { font-size: 20px; margin: 0 0 6px; }
+  .hint { color: var(--muted); font-size: 13px; }
+  .legend { display: flex; gap: 16px; margin-top: 10px; font-size: 12px; color: var(--muted); }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px;
+                         border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .legend .l-anc::before  { background: var(--anc); }
+  .legend .l-desc::before { background: var(--desc); }
+  .legend .l-cur::before  { background: var(--hover-bg); }
+  #wrap { max-width: 1000px; margin: 0 auto; padding: 8px 8px 40px; overflow-x: auto; }
+  svg { display: block; width: 100%; height: auto; }
+
+  .edge { stroke: var(--edge); stroke-width: 1.5; fill: none; transition: all .15s; }
+  .node rect { fill: var(--node-fill); stroke: var(--node-stroke); stroke-width: 1.2;
+               rx: 8; transition: all .15s; cursor: pointer; }
+  .node text { font-size: 13px; fill: var(--fg); pointer-events: none; transition: all .15s; }
+  .layerlab { font-size: 11px; fill: var(--muted); }
+
+  /* highlight states */
+  .dim { opacity: .12; }
+  .node.cur rect  { fill: var(--hover-bg); stroke: var(--hover-bg); }
+  .node.cur text  { fill: var(--hover-fg); font-weight: 600; }
+  .node.anc rect  { fill: var(--anc-bg); stroke: var(--anc); stroke-width: 2; }
+  .node.desc rect { fill: var(--desc-bg); stroke: var(--desc); stroke-width: 2; }
+  .edge.anc  { stroke: var(--anc); stroke-width: 2.5; }
+  .edge.desc { stroke: var(--desc); stroke-width: 2.5; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Knowledge Graph <span style="font-weight:400;color:var(--muted)">· demo</span></h1>
+  <div class="hint">鼠标悬停（或点击固定）任意知识点：蓝色 = 它的前序知识，橙色 = 它支撑的后续知识。</div>
+  <div class="legend"><span class="l-cur">当前</span><span class="l-anc">前序（它依赖谁）</span><span class="l-desc">后续（谁依赖它）</span></div>
+</header>
+<div id="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg></div>
+
+<script>
+/* ---------- 数据：以后只改这两个数组 ---------- */
+/* layer 0 在最上（基础），数字越大越靠下（目的地） */
+const NODES = [
+  { id:"linalg",   label:"线代 · 矩阵乘/分块",      layer:0 },
+  { id:"prob",     label:"概率 · softmax/采样",     layer:0 },
+  { id:"chain",    label:"微积分 · 链式法则",       layer:0 },
+  { id:"numeric",  label:"数值 · fp16/int8 精度",   layer:0 },
+  { id:"ds",       label:"数据结构 · hash/堆/队列", layer:0 },
+
+  { id:"paging",   label:"OS · 分页/虚拟内存",      layer:1 },
+  { id:"gpu",      label:"OS · GPU 存储层次",       layer:1 },
+  { id:"sched",    label:"OS · 调度/抢占",          layer:1 },
+  { id:"attn",     label:"ML · Attention 算子",     layer:1 },
+  { id:"backprop", label:"ML · Backprop",           layer:1 },
+
+  { id:"flash",    label:"FlashAttention",          layer:2 },
+  { id:"quant",    label:"量化 PTQ/QAT",            layer:2 },
+  { id:"paged",    label:"PagedAttention",          layer:2 },
+
+  { id:"p4",       label:"P4 Serving 推理引擎",     layer:3 },
+  { id:"p5",       label:"P5 Agent Runtime",        layer:3 },
+];
+/* [前序, 后续] */
+const EDGES = [
+  ["linalg","attn"], ["linalg","flash"],
+  ["prob","attn"],   ["prob","p4"],
+  ["chain","backprop"],
+  ["numeric","quant"],
+  ["ds","sched"],    ["ds","p5"],
+  ["paging","paged"],
+  ["gpu","flash"],   ["gpu","quant"],
+  ["sched","p4"],
+  ["attn","flash"],  ["attn","paged"],
+  ["backprop","p4"],
+  ["flash","p4"],
+  ["quant","p4"],
+  ["paged","p4"],
+  ["p4","p5"],
+];
+const LAYER_LABELS = ["基础层", "柱子层", "算子 / kernel 层", "主攻带"];
+
+/* ---------- 布局与渲染（不用改） ---------- */
+const W = 1000, ROW = 130, PAD_Y = 40, NODE_H = 34;
+const layers = [...new Set(NODES.map(n=>n.layer))].sort((a,b)=>a-b);
+const H = PAD_Y*2 + (layers.length-1)*ROW + NODE_H;
+const byId = Object.fromEntries(NODES.map(n=>[n.id,n]));
+
+NODES.forEach(n => { n.w = Math.max(90, measure(n.label) + 26); n.h = NODE_H; });
+layers.forEach(L => {
+  const row = NODES.filter(n=>n.layer===L);
+  const total = row.reduce((s,n)=>s+n.w,0), gap = (W-80-total)/(row.length+1);
+  let x = 60 + gap;
+  row.forEach(n => { n.x = x; n.y = PAD_Y + L*ROW; x += n.w + gap; });
+});
+function measure(s){ let w=0; for (const c of s) w += c.charCodeAt(0)>255 ? 13.5 : 7.5; return w; }
+
+const fwd = {}, rev = {};
+EDGES.forEach(([a,b]) => { (fwd[a]=fwd[a]||[]).push(b); (rev[b]=rev[b]||[]).push(a); });
+function reach(id, adj){ const seen=new Set(), st=[id];
+  while(st.length){ const n=st.pop(); for(const m of (adj[n]||[])) if(!seen.has(m)){seen.add(m); st.push(m);} }
+  return seen; }
+
+const svg = document.getElementById("g");
+svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag);
+  for(const k in attrs) e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
+
+LAYER_LABELS.forEach((t,i)=> el("text",{x:8,y:PAD_Y+i*ROW+NODE_H/2+4,class:"layerlab"}).textContent=t);
+
+const edgeEls = EDGES.map(([a,b]) => {
+  const A=byId[a], B=byId[b];
+  const x1=A.x+A.w/2, y1=A.y+A.h, x2=B.x+B.w/2, y2=B.y, my=(y1+y2)/2;
+  return { a, b, el: el("path",{d:`M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`,class:"edge"}) };
+});
+
+const nodeEls = NODES.map(n => {
+  const g = el("g",{class:"node"});
+  el("rect",{x:n.x, y:n.y, width:n.w, height:n.h, rx:8}, g);
+  const t = el("text",{x:n.x+n.w/2, y:n.y+n.h/2+4.5,"text-anchor":"middle"}, g);
+  t.textContent = n.label;
+  g.addEventListener("mouseenter", ()=>{ if(!pinned) show(n.id); });
+  g.addEventListener("mouseleave", ()=>{ if(!pinned) clear(); });
+  g.addEventListener("click", e=>{ e.stopPropagation();
+    if(pinned===n.id){ pinned=null; clear(); } else { pinned=n.id; show(n.id); } });
+  return { id:n.id, el:g };
+});
+let pinned = null;
+document.addEventListener("click", ()=>{ pinned=null; clear(); });
+
+function show(id){
+  const anc = reach(id, rev), desc = reach(id, fwd);
+  nodeEls.forEach(n => n.el.setAttribute("class",
+    "node " + (n.id===id ? "cur" : anc.has(n.id) ? "anc" : desc.has(n.id) ? "desc" : "dim")));
+  edgeEls.forEach(e => {
+    const isAnc  = anc.has(e.a) && (e.b===id || anc.has(e.b));
+    const isDesc = desc.has(e.b) && (e.a===id || desc.has(e.a));
+    e.el.setAttribute("class", "edge " + (isAnc ? "anc" : isDesc ? "desc" : "dim"));
+  });
+}
+function clear(){
+  nodeEls.forEach(n => n.el.setAttribute("class","node"));
+  edgeEls.forEach(e => e.el.setAttribute("class","edge"));
+}
+</script>
+</body>
+</html>

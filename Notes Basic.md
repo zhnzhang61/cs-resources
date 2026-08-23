@@ -40,6 +40,11 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 ## 2. Linear algebra: matmul · projection · eigendecomposition / SVD
 
 1. `[C]` Give three views of matrix multiplication: rows-times-columns, linear combination of columns, and sum of outer products. Why does the outer-product view matter for blocked computation?
+
+   **A**: If you want to multiply two matrices, you can do it row-times-column element by element, or block by block — the block version is the same formula with blocks playing the role of elements. The block version is legal and gives the exact same answer, because each entry of C is a sum over the shared dimension (C_ij = Σ_l a_il·b_lj) — and a sum can be computed in batches: cut the shared dimension into chunks, compute partial products, accumulate. Batching a sum changes nothing.
+
+   And the block version is faster. Why? If your fast memory can fit either two 1×64 vectors or two 8×8 matrices — same 128 numbers — it's better to load the two 8×8 tiles and finish off all the calculations between these two tiles at once (~1,024 FLOPs, every number reused 8 times), rather than load a long vector, use each number once (~128 FLOPs), kick it out, and load it back again later — because over the whole computation the same data gets re-shipped many times, and the transportation is what's slow. Same total FLOPs either way — the win is memory traffic.
+
 2. `[C]` Count the FLOPs of an (m×k)(k×n) matmul. Why is matmul the dominant cost in both OLS (∼np²) and transformer inference?
 3. `[C]` Derive the orthogonal projection of y onto the column space of full-rank X: ŷ = X(XᵀX)⁻¹Xᵀy. What geometric property characterizes the residual y − ŷ?
 4. `[ML]` OLS as projection: connect β̂ = (XᵀX)⁻¹Xᵀy to the previous question. What are the normal equations geometrically?

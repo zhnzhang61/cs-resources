@@ -46,6 +46,13 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
    And the block version is faster. Why? If your fast memory can fit either two 1×64 vectors or two 8×8 matrices — same 128 numbers — it's better to load the two 8×8 tiles and finish off all the calculations between these two tiles at once (~1,024 FLOPs, every number reused 8 times), rather than load a long vector, use each number once (~128 FLOPs), kick it out, and load it back again later — because over the whole computation the same data gets re-shipped many times, and the transportation is what's slow. Same total FLOPs either way — the win is memory traffic.
 
 2. `[C]` Count the FLOPs of an (m×k)(k×n) matmul. Why is matmul the dominant cost in both OLS (∼np²) and transformer inference?
+
+   **A**: An (n×k)(k×m) matmul produces an n×m result; each entry is a length-k dot product — k multiplications and k−1 additions ≈ 2k FLOPs — done n·m times, so total ≈ **2knm**. No dimension is squared per se; a square shows up only when the same size occupies two of the three slots.
+
+   **OLS**: forming XᵀX is (p×n)(n×p) → **2np²** — quadratic in the number of features p, linear in samples n. This dominates when n ≫ p; solving the resulting p×p system adds O(p³).
+
+   **Transformer attention**: the score matmul QKᵀ is (n×d)(d×n) → **2n²d**, quadratic in context length n (and the subsequent scores·V is another 2n²d). The MLP blocks are (n×d)(d×4d)-type → ~8nd², linear in n but quadratic in d. So for long context the n² attention term takes over — the arithmetic root of why long context is hard.
+
 3. `[C]` Derive the orthogonal projection of y onto the column space of full-rank X: ŷ = X(XᵀX)⁻¹Xᵀy. What geometric property characterizes the residual y − ŷ?
 4. `[ML]` OLS as projection: connect β̂ = (XᵀX)⁻¹Xᵀy to the previous question. What are the normal equations geometrically?
 5. `[C]` Define eigenvalues/eigenvectors; compute them for a 2×2 symmetric matrix. State the spectral theorem for symmetric matrices.

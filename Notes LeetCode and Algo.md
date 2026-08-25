@@ -17,31 +17,34 @@
 4. 2-d array和stream：2d array可以放bfs/dfs上去，也可以dp上去，所以特意把它跟图类数据结构凑到一起。stream可以union find做，也可以queue/heap做，所以也放到图和everything的交界处。
 
 ![Algorithm Venn — 三个算法家族 × 它们能跑的地形](images/algo-venn.svg)
+
+> **盘点标记（2026-08）**：✅ = 已亲手做过；加粗 = 优先做。本轮新增编入：**1584** MST（greedy 图格——「支配成立但便条爆炸」的 greedy-only 象限首题）· **46** 全排列（Backtracking 树格，与 78 互为对照：排列输出有序 → seen 检查；子集无序 → start 指针）· 212（×Trie，79→208 的桥）· 300 tails（greedy×二分双料）· 72（DP 二维便条）。**54**✅ 挂 Two pointers 行（边界四游标收缩，游标家族在 2-d 的孤例）。
+
 | Everything algo | 1-d | stream（数据不一次给全，来一个处理一个） | 2-d | 树 | 图 | 区间 |
 |---|---|---|---|---|---|---|
-| DP | **121 · 322**（70%） | — | **62 · 64**（15%） | —（5%） | —（5%） | —（5%） |
-| Binary search / sort | **875 · 704**（80%） | — | —（5%） | — | —（5%） | **56**（10%） |
-| Greedy | **55**（70%） | — | —（5%） | —（5%） | **743** Dijkstra（5%） | **435 · 452**（15%） |
+| DP | **121**✅ · **322**✅ · 72（70%） | — | **62**✅ · **64**（15%） | —（5%） | —（5%） | —（5%） |
+| Binary search / sort | **875**✅ · **704**（80%） | — | —（5%） | — | —（5%） | **56**✅（10%） |
+| Greedy | **55** · 300 tails（×二分双料）（70%） | — | —（5%） | —（5%） | **743** Dijkstra · **1584** MST（5%） | **435**✅ · **452**✅（15%） |
 | Bit mask | **136**（80%） | — | —（10%） | — | —（10%） | — |
 | Prefix sum | **560**（80%） | — | —（10%） | —（5%） | — | —（5% 差分） |
-| Stack (LIFO: nesting / undo / defer) | **394**（85%） | — | — | 94 迭代遍历（15%） | — | — |
-| Queue (FIFO: arrival order / sliding counts) | **622** · 933（95%） | **346**° | — | —（102 记在 Graph 圈当 frontier） | — | — |
-| Heap (priority: extremum anytime) | **215** · **23**（70%） | **295** · 703 | — | — | **743**（10%，与 greedy 行同题双料） | 253°（20%，会议室族） |
-| TreeMap (total order: neighbor / rank) | — | **352**（60%） | — | — | — | 729 · 715°（40%，日历/区间簿） |
+| Stack (LIFO: nesting / undo / defer) | **394**✅（85%） | — | — | 94 迭代遍历（15%） | — | — |
+| Queue (FIFO: arrival order / sliding counts) | **622** · 933（95%） | **346**°✅ | — | —（102 记在 Graph 圈当 frontier） | — | — |
+| Heap (priority: extremum anytime) | **215** · **23**（70%） | **295**✅ · 703✅ | — | — | **743**（10%，与 greedy 行同题双料） | 253°✅（20%，会议室族） |
+| TreeMap (total order: neighbor / rank) | — | **352**（60%，已判定跳过） | — | — | — | 729 · 715°（40%，日历/区间簿） |
 
 | 1-d algo (moves) | 1-d · string | 链表 | 区间 |
 |---|---|---|---|
-| Sliding window | **3**（基本）· **239**（×单调队列）· **480**（×双堆） | — | — |
-| Two pointers (incl. expand-center) | **167 · 5** | — | — |
-| Fast–slow pointers | **287**（数组当链表） | 141 / 142 | — |
-| Monotonic stack / deque | **739** | — | — |
+| Sliding window | **3**✅（基本）· **239**✅（×单调队列）· **480**✅（×双堆） | — | — |
+| Two pointers (incl. expand-center / 边界收缩) | **167** · **5**✅ · **54**✅（2-d 边界四游标） | — | — |
+| Fast–slow pointers | **287**（数组当链表；另有值域二分解法，双大陆题） | 141 / 142 | — |
+| Monotonic stack / deque | **739**（弹出执照=支配，239 的姐妹） | — | — |
 
 | Graph algo (moves) | 2d（图眼镜） | 树 | 图 | stream |
 |---|---|---|---|---|
-| BFS / DFS | **1091 · 200** | **102** | — | — |
-| Backtracking | **79** | **78**（输入 1-d，决策树自造） | — | — |
+| BFS / DFS | **1091** · **200**✅ | **102** | — | — |
+| Backtracking | **79**✅ · 212（×Trie） | **78**✅（输入 1-d，决策树自造）· **46** 排列（seen 检查，对照 78 的 start 指针） | — | — |
 | Union-Find | **200** 用 UF 重做 | — | — | **305**°（陆地一格格到来，增量数岛） |
-| Topological sort | — | — | **207** | — |
+| Topological sort | — | — | **207**（verify 动词标本；Kahn = 入度上的 BFS） | — |
 
 ### Design（第四类）：从工业 infra 反推的练题单
 

@@ -7,8 +7,8 @@
 
 <text x="160" y="100" text-anchor="middle" font-size="14" font-weight="600" fill="#0F6E56">1-d algo</text>
 <text x="150" y="130" text-anchor="middle" font-size="12" fill="#5F5E5A">Sliding window<tspan fill="#1D9E75" font-weight="700"> ✓</tspan> · 2 pointers<tspan fill="#1D9E75" font-weight="700"> ✓</tspan></text>
-<text x="150" y="152" text-anchor="middle" font-size="12" fill="#5F5E5A">fast–slow<tspan fill="#C24A22" font-weight="700"> ○</tspan></text>
-<text x="150" y="174" text-anchor="middle" font-size="12" fill="#5F5E5A">Mono queue<tspan fill="#1D9E75" font-weight="700"> ✓</tspan> / stack<tspan fill="#C24A22" font-weight="700"> ○</tspan></text>
+<text x="150" y="152" text-anchor="middle" font-size="12" fill="#5F5E5A">fast–slow<tspan fill="#1D9E75" font-weight="700"> ✓</tspan></text>
+<text x="150" y="174" text-anchor="middle" font-size="12" fill="#5F5E5A">Mono stack / queue<tspan fill="#1D9E75" font-weight="700"> ✓</tspan></text>
 
 <text x="160" y="360" text-anchor="middle" font-size="14" font-weight="600" fill="#3B6D11">Graph algo</text>
 <text x="150" y="385" text-anchor="middle" font-size="12" fill="#5F5E5A">BFS / DFS<tspan fill="#1D9E75" font-weight="700"> ✓</tspan> · Backtracking<tspan fill="#1D9E75" font-weight="700"> ✓</tspan></text>
@@ -29,7 +29,7 @@
 <text x="415" y="176" font-size="12" fill="#5F5E5A">Binary search / sort<tspan fill="#1D9E75" font-weight="700"> ✓</tspan></text>
 <text x="415" y="202" font-size="12" fill="#5F5E5A">Greedy<tspan fill="#1D9E75" font-weight="700"> ✓</tspan></text>
 <text x="415" y="228" font-size="12" fill="#5F5E5A">Bitmask<tspan fill="#C24A22" font-weight="700"> ○</tspan></text>
-<text x="415" y="254" font-size="12" fill="#5F5E5A">Prefix sum<tspan fill="#C24A22" font-weight="700"> ○</tspan></text>
+<text x="415" y="254" font-size="12" fill="#5F5E5A">Prefix sum<tspan fill="#1D9E75" font-weight="700"> ✓</tspan></text>
 <text x="415" y="280" font-size="12" fill="#5F5E5A">Stack / queue / heap<tspan fill="#1D9E75" font-weight="700"> ✓</tspan></text>
 <text x="415" y="306" font-size="12" fill="#5F5E5A">TreeMap<tspan fill="#C24A22" font-weight="700"> ○</tspan></text>
 

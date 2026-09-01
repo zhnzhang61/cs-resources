@@ -1,6 +1,6 @@
 # LC Coverage Framework
 
-两套框架：**Framework 1**（算法三圈 × 五地形，盘点/查漏用）+ **Framework 0**（题干 → 数据结构 → 算法，面试路由用）。
+三套框架：**Framework 2**（四线任务嗅觉图，交互版 → [lc-framework2.html](https://zhnzhang61.github.io/cs-resources/lc-framework2.html)，主图）+ **Framework 1**（算法三圈 × 五地形，盘点/查漏用）+ **Framework 0**（题干 → 数据结构 → 算法，面试路由用）。
 
 > **目标函数**：在面试白板前，30 秒内把陌生题从题干归到方法，对应一道代表题。
 >

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Framework 2 — Four Lines</title>
+<style>
+  :root {
+    --bg: #fafafa; --fg: #1f2328; --muted: #656d76;
+    --node-fill: #ffffff; --node-stroke: #d0d7de; --edge: #d0d7de;
+    --red: #dc2626; --green: #16a34a; --yellow: #d97706; --blue: #2563eb;
+    --hover-bg: #1f2328; --hover-fg: #ffffff;
+    --d1:#2563eb; --d1-bg:#dbeafe;
+    --d2:#0d9488; --d2-bg:#ccfbf1;
+    --d3:#ca8a04; --d3-bg:#fef9c3;
+    --d4:#ea580c; --d4-bg:#ffedd5;
+    --d5:#8b8f96; --d5-bg:#eceef1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #8b949e;
+      --node-fill: #161b22; --node-stroke: #30363d; --edge: #30363d;
+      --red: #f87171; --green: #4ade80; --yellow: #fbbf24; --blue: #60a5fa;
+      --hover-bg: #e6edf3; --hover-fg: #0d1117;
+      --d1:#58a6ff; --d1-bg:#0d2a52;
+      --d2:#2dd4bf; --d2-bg:#053331;
+      --d3:#facc15; --d3-bg:#3a3305;
+      --d4:#fb923c; --d4-bg:#431a07;
+      --d5:#6e7681; --d5-bg:#21262d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  header { max-width: 1150px; margin: 0 auto; padding: 24px 16px 0; }
+  h1 { font-size: 20px; margin: 0 0 6px; }
+  .hint { color: var(--muted); font-size: 13px; }
+  .legend { display: flex; gap: 16px; margin-top: 10px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px;
+                         border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .legend .l-cur::before { background: var(--hover-bg); }
+  .legend .l-red::before { background: var(--red); }
+  .legend .l-green::before { background: var(--green); }
+  .legend .l-yellow::before { background: var(--yellow); }
+  .legend .l-ter::before { background: var(--node-fill); border: 2px solid var(--fg); }
+  .legend .l-d1::before { background: var(--d1); }
+  .legend .l-d3::before { background: var(--d3); }
+  .wrap { max-width: 1150px; margin: 0 auto; padding: 8px 8px 40px; overflow-x: auto; }
+  svg { display: block; width: 100%; height: auto; min-width: 980px; }
+
+  .edge { stroke: var(--edge); stroke-width: 1.4; fill: none; transition: all .15s; }
+  .edge.er { stroke: var(--red); opacity: .45; }
+  .edge.eg { stroke: var(--green); opacity: .45; }
+  .edge.ey { stroke: var(--yellow); opacity: .5; }
+  .edge.eb { stroke: var(--blue); opacity: .5; }
+  .edge.dash { stroke-dasharray: 6 5; }
+  .edge.xb { stroke-width: 3; opacity: .75; }
+  .node rect { fill: var(--node-fill); stroke: var(--node-stroke); stroke-width: 1.2;
+               rx: 8; transition: all .15s; cursor: pointer; }
+  .node text { font-size: 13.5px; fill: var(--fg); pointer-events: none; transition: all .15s; }
+  .node text.probs { font-size: 10px; fill: var(--muted); }
+  .node.cur text.probs { fill: var(--hover-fg); opacity: .8; }
+  .node.rl rect { stroke: var(--red); }
+  .node.gl rect { stroke: var(--green); }
+  .node.yl rect { stroke: var(--yellow); }
+  .node.bl rect { stroke: var(--blue); }
+  .node.terrain rect { stroke: var(--fg); stroke-width: 2; }
+  .node.terrain text { font-weight: 600; }
+  .seclab { font-size: 13px; font-weight: 700; letter-spacing: 2px; }
+  .dim { opacity: .1; }
+  .node.cur rect  { fill: var(--hover-bg); stroke: var(--hover-bg); }
+  .node.cur text  { fill: var(--hover-fg); font-weight: 600; }
+  .node.d1 rect { fill: var(--d1-bg); stroke: var(--d1); stroke-width: 2.2; }
+  .node.d2 rect { fill: var(--d2-bg); stroke: var(--d2); stroke-width: 2; }
+  .node.d3 rect { fill: var(--d3-bg); stroke: var(--d3); stroke-width: 1.8; }
+  .node.d4 rect { fill: var(--d4-bg); stroke: var(--d4); stroke-width: 1.6; }
+  .node.d5 rect { fill: var(--d5-bg); stroke: var(--d5); stroke-width: 1.4; opacity: .8; }
+  .edge.d1 { stroke: var(--d1); stroke-width: 2.6; opacity: 1; }
+  .edge.d2 { stroke: var(--d2); stroke-width: 2.2; opacity: 1; }
+  .edge.d3 { stroke: var(--d3); stroke-width: 1.9; opacity: 1; }
+  .edge.d4 { stroke: var(--d4); stroke-width: 1.6; opacity: 1; }
+  .edge.d5 { stroke: var(--d5); stroke-width: 1.3; opacity: .7; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Framework 2 — Four Lines</h1>
+  <div class="hint"><b>Black boxes = input terrains</b> (shared ground). Four lines by task smell:
+    <b style="color:var(--red)">RED walk / connect</b> &middot; <b style="color:var(--green)">GREEN order &amp; rank (+nesting)</b> &middot; <b style="color:var(--yellow)">YELLOW count / assemble</b> &middot; <b style="color:var(--blue)">BLUE pure implementation</b>.
+    <b>Thick edges = cross-line borrows</b> (the confusable spots). Numbers on nodes (&check; = done); hover for the story, click to pin.</div>
+  <div class="legend"><span class="l-cur">current</span><span class="l-ter">terrain (input)</span><span class="l-red">traversal</span><span class="l-green">order &amp; rank</span><span class="l-yellow">combinatorial</span><span style="color:var(--blue)">&#9632; implementation</span><span style="--x:0"><span></span></span><span class="l-d1">1 hop</span><span class="l-d3">3 hops</span></div>
+</header>
+<div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg></div>
+
+<script>
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag);
+  for(const k in attrs) e.setAttribute(k,attrs[k]); parent.appendChild(e); return e; }
+function measure(s){ let w=0; for (const c of s) w += c.charCodeAt(0)>255 ? 13.5 : 7.5; return w; }
+
+function buildGraph(svg, nodes, edges, edgePath){
+  const byId = Object.fromEntries(nodes.map(n=>[n.id,n]));
+  const fwd = {}, rev = {};
+  edges.forEach(([a,b]) => { (fwd[a]=fwd[a]||[]).push(b); (rev[b]=rev[b]||[]).push(a); });
+  const distVia = (id, adj) => { const d = {}; d[id] = 0; const q = [id];
+    while(q.length){ const n = q.shift();
+      for(const m of (adj[n]||[])) if(!(m in d)){ d[m] = d[n]+1; q.push(m); } }
+    return d; };
+
+  const edgeEls = edges.map(([a,b,tip,cls]) => {
+    const base = "edge" + (cls ? " "+cls : "");
+    const p = el("path",{d: edgePath(byId[a], byId[b]), class: base}, svg);
+    if(tip){ const t=document.createElementNS(NS,"title"); t.textContent=`${byId[a].label} → ${byId[b].label}: ${tip}`; p.appendChild(t); }
+    return { a, b, base, el: p };
+  });
+  let pinned = null;
+  const nodeEls = nodes.map(n => {
+    const base = "node" + (n.cls ? " "+n.cls : "");
+    const g = el("g",{class: base}, svg);
+    el("rect",{x:n.x, y:n.y, width:n.w, height:n.h, rx:8}, g);
+    el("text",{x:n.x+n.w/2, y:n.y+(n.sub?15:n.h/2+4.5),"text-anchor":"middle"}, g).textContent = n.label;
+    if(n.sub) el("text",{x:n.x+n.w/2, y:n.y+33,"text-anchor":"middle",class:"probs"}, g).textContent = n.sub;
+    if(n.tip){ const t=document.createElementNS(NS,"title"); t.textContent=n.tip; g.appendChild(t); }
+    g.addEventListener("mouseenter", ()=>{ if(!pinned) show(n.id); });
+    g.addEventListener("mouseleave", ()=>{ if(!pinned) clear(); });
+    g.addEventListener("click", e=>{ e.stopPropagation();
+      if(pinned===n.id){ pinned=null; clear(); } else { pinned=n.id; show(n.id); } });
+    return { id:n.id, base, el:g };
+  });
+  svg.addEventListener("click", ()=>{ pinned=null; clear(); });
+
+  function show(id){
+    const up = distVia(id, rev), down = distVia(id, fwd);
+    nodeEls.forEach(n => {
+      let s;
+      if (n.id === id) s = "cur";
+      else if (n.id in up)   s = "d" + Math.min(up[n.id], 5);
+      else if (n.id in down) s = "d" + Math.min(down[n.id], 5);
+      else s = "dim";
+      n.el.setAttribute("class", n.base + " " + s);
+    });
+    edgeEls.forEach(e => {
+      const isAnc  = (e.a in up) && (e.b === id || e.b in up);
+      const isDesc = (e.b in down) && (e.a === id || e.a in down);
+      let s = "dim";
+      if (isAnc)       s = "d" + Math.min(up[e.a], 5);
+      else if (isDesc) s = "d" + Math.min(down[e.b], 5);
+      e.el.setAttribute("class", e.base + " " + s);
+    });
+  }
+  function clear(){
+    nodeEls.forEach(n => n.el.setAttribute("class", n.base));
+    edgeEls.forEach(e => e.el.setAttribute("class", e.base));
+  }
+}
+
+/* ---- nodes: id, label, cx, cy, class, tooltip ---- */
+const RAW = [
+ ["Array","Array",620,80,"terrain","","The mother terrain — all four lines start here."],
+ ["P2","2 pointers (walk)",200,240,"rl","141 142 287\u2713 202","Walk by pointers; fast–slow. (Sorted converging pointers 167 → green Sort lineage.)"],
+ ["LL","Linked List",200,430,"terrain","206 234 876 \u00b7 148 23","Terrain. Red walks live here; 148/23 are green tasks hosted on it (thick edges)."],
+ ["Tree","Tree",560,700,"terrain","102 104 226 94","94 iterative traversal borrows green's stack; BST = green's ordered tree."],
+ ["Graph","Graph",800,760,"terrain","200\u2713 1971 547 743 1584","743 Dijkstra borrows green heap + yellow dominance; 1584 MST likewise."],
+ ["A2D","2-D Array",1060,760,"terrain","79\u2713 1091 62\u2713 64\u2713","Weighted path → yellow DP (64); uniform steps → red BFS (1091)."],
+ ["UF","Union-Find",930,850,"rl","547 305 721","Connectivity without walking — a merge ledger."],
+ ["Topo","Topo sort",700,860,"rl","207 210","Kahn = BFS on in-degrees. 207 = the sink: needs 547 + 287-cycles + 79-rope + 322-memo."],
+ ["Trie","Trie",460,850,"rl","208 211 648","Prefix-keyed specialized tree. (212 lives on yellow backtracking; Trie is its pruning luggage.)"],
+ ["KMP","KMP / automaton",270,850,"rl","3023 28","Failure links = fallback edges; matching = walking an automaton built from the pattern."],
+ ["Sort","Sort",470,250,"gl","912 75 179 \u00b7 56\u2713","Impose order first; sort → only neighbors matter."],
+ ["BinS","Binary Search",470,345,"gl","704 875\u2713 33 \u00b7 300alt","Order enables halving; answer-space 875; value-range 287-alt; 300's tails solution."],
+ ["Heap","Heap",470,450,"gl","215 23 253\u2713 295\u2713 703\u2713","Half-order is enough; push/pop with extremum on call."],
+ ["SlidW","sliding window",630,398,"gl","3\u2713 5\u2713 239\u2713 480\u2713","Window superlatives; base window's hashmap is luggage."],
+ ["Seg","Segment / Interval",805,450,"terrain","56\u2713 435\u2713 452\u2713 253\u2713","Shared ground: green machinery hosts yellow choices (435/452)."],
+ ["Stream","Stream",805,545,"terrain","346\u2713 295\u2713 480\u2713 352","One pass, bounded memory; query picks the container."],
+ ["TMap","TreeMap",640,610,"gl","352 729 715","Sorted container: neighbor / rank queries, updatable. (Python: SortedList)"],
+ ["stack","Stack",700,250,"gl","739\u2713 394\u2713 20 445","Monotonic (rank) vs nesting (parse) — one container, two disciplines."],
+ ["Queue","Queue",700,350,"gl","622 933 346\u2713","Arrival order; BFS carries one as luggage (line removed — remember it)."],
+ ["Set","Set",1040,180,"yl","217 \u00b7 visited","Have I seen this? Dedup / membership; every visited-set."],
+ ["bitm","Bitmask",1190,225,"yl","78alt","Bits AS SET ENCODING only; bit arithmetic lives on blue."],
+ ["hmap","Hashmap",1040,275,"yl","1 3\u2713 560\u2713 memo","File it under a key. Locate with no order → memory (1); with order → green (167)."],
+ ["PSum","Prefix Sum",1040,370,"yl","560\u2713 325 304","Census of running sums; 304 = the 2-D case."],
+ ["BIT","BIT / seg-tree",1040,465,"yl","307 308\u2713 315","Prefix sums that accept updates; query smell is green's (315 count-smaller = rank)."],
+ ["LRU","LRU (weld)",1250,300,"yl","146 460","hashmap (find by key) \u00d7 doubly-linked list (evict by recency), all O(1). No heap involved."],
+ ["Greedy","Greedy",960,560,"yl","55 435\u2713 452\u2713 300","Commit when a move provably never loses (exchange argument); no lookback."],
+ ["DP","DP",1160,560,"yl","322\u2713 62\u2713 64\u2713 72 121\u2713","No sure-win move → try all, but pay each situation once (memo)."],
+ ["Back","Backtracking",1270,560,"yl","78\u2713 79\u2713 46 212","Third rung: even the memo explodes → enumerate with undo."],
+ ["StrB","String / Bits",1345,120,"bl","136 371 190","Pure engineering: no trick, all edge cases."],
+ ["Sim","Simulation",1345,700,"bl","54\u2713 48 289","Rule-driven walking; potential fourth family, parked on blue."],
+];
+
+const EDGES = [
+ /* red — walk / connect */
+ ["Array","P2","walk the structure by pointers","er"],
+ ["P2","LL","fast–slow: cycles (141/142) and middles (876)","er"],
+ ["LL","Tree","one next-pointer → many child-pointers","er"],
+ ["Tree","Graph","BFS/DFS: children → neighbors (+ visited)","er"],
+ ["Graph","A2D","grid glasses: cell = node, 4 edges","er"],
+ ["Graph","UF","connectivity without walking","er"],
+ ["Graph","Topo","Kahn = BFS on in-degrees","er"],
+ ["Tree","Trie","prefix-keyed specialized tree","er"],
+ ["Trie","KMP","failure links = fallback edges","er"],
+ /* green — order & rank */
+ ["Array","Sort","impose order first","eg"],
+ ["Sort","BinS","order enables halving","eg"],
+ ["BinS","Heap","full sort is overkill → half-order","eg"],
+ ["Heap","SlidW","window superlatives (239 / 480)","eg"],
+ ["Heap","Seg","the interval toolkit","eg"],
+ ["Heap","Stream","the stream toolkit","eg"],
+ ["Heap","TMap","need full order + updates","eg"],
+ ["TMap","Stream","352 · sorted window","eg"],
+ ["Heap","Tree","BST / heapify = ordered trees","eg"],
+ ["Array","stack","order disciplines","eg"],
+ ["stack","Queue","LIFO → FIFO","eg"],
+ /* yellow — count / assemble */
+ ["Array","Set","remember what you saw","ey"],
+ ["Set","hmap","…filed under a key","ey"],
+ ["hmap","PSum","census of running sums (560)","ey"],
+ ["PSum","BIT","prefix sums that accept updates","ey"],
+ ["Set","bitm","a set squeezed into an integer","ey"],
+ ["hmap","LRU","weld with a linked list (146)","ey"],
+ ["Greedy","DP","the gamble fails → try all with memo (322)","ey dash"],
+ ["DP","Back","the memo explodes → enumerate with undo (79)","ey dash"],
+ ["DP","A2D","grid notes: 62 / 64","ey"],
+ ["Back","A2D","79: the rope on the grid","ey"],
+ /* blue — pure implementation */
+ ["Array","StrB","no trick, all edge cases (136/371/190)","eb"],
+ ["StrB","Sim","same craft, more moving parts","eb"],
+ ["Sim","A2D","54 spiral · 48 rotate · 289 life","eb"],
+ /* thick cross-line borrows — the confusable spots */
+ ["Sort","LL","148: no random access — merge sort only","eg xb"],
+ ["Heap","LL","23: k-way merge, heap of list heads","eg xb"],
+ ["Greedy","Seg","435/452 commit licenses on interval ground","ey xb"],
+];
+
+(function(){
+  const W=1400, H=960;
+  const svg = document.getElementById("g");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  el("text",{x:60,y:170,class:"seclab",fill:"var(--red)"},svg).textContent="TRAVERSAL BY EDGES";
+  el("text",{x:330,y:180,class:"seclab",fill:"var(--green)"},svg).textContent="ORDER & RANK";
+  el("text",{x:1000,y:120,class:"seclab",fill:"var(--yellow)"},svg).textContent="COMBINATORIAL";
+  el("text",{x:1390,y:60,class:"seclab",fill:"var(--blue)","text-anchor":"end"},svg).textContent="IMPLEMENTATION";
+  const NODES = RAW.map(([id,label,cx,cy,cls,sub,tip])=>{
+    const w = Math.max(70, measure(label)+26, sub? measure(sub)*0.78+26 : 0);
+    const h = sub ? 44 : 32;
+    return {id, label, cls, sub, tip, w, h, x:cx-w/2, y:cy-h/2, cx, cy};
+  });
+  const path = (A,B) => {
+    const mx=(A.cx+B.cx)/2, my=(A.cy+B.cy)/2;
+    const qx = mx + (W/2-mx)*0.06, qy = my + (H/2-my)*0.06;
+    return `M${A.cx},${A.cy} Q${qx},${qy} ${B.cx},${B.cy}`;
+  };
+  buildGraph(svg, NODES, EDGES, path);
+})();
+</script>
+</body>
+</html>

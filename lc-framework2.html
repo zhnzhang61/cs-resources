@@ -157,7 +157,7 @@ function buildGraph(svg, nodes, edges, edgePath){
 /* ---- nodes: id, label, cx, cy, class, tooltip ---- */
 const RAW = [
  ["Array","Array",620,80,"terrain","","The mother terrain — all four lines start here."],
- ["P2","2 pointers (walk)",200,240,"rl","141\u2713 142 287 202","Walk by pointers; fast–slow. (Sorted converging pointers 167 → green Sort lineage.)"],
+ ["P2","2 pointers (walk)",200,240,"rl","141\u2713 142\u2713 287 202","Walk by pointers; fast–slow. 142 solved both ways: set (first revisit = entrance, free) and Floyd (O(1)). (Sorted converging 167 → green Sort lineage.)"],
  ["LL","Linked List",200,430,"terrain","206 234 876 \u00b7 148 23","Terrain. Red walks live here; 148/23 are green tasks hosted on it (thick edges)."],
  ["Tree","Tree",560,700,"terrain","102 104 226 94","94 iterative traversal borrows green's stack; BST = green's ordered tree."],
  ["Graph","Graph",800,760,"terrain","200 1971 547 743 1584","743 Dijkstra borrows green heap + yellow dominance; 1584 MST likewise."],

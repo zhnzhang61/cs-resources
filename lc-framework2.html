@@ -80,6 +80,15 @@
   .edge.d3 { stroke: var(--d3); stroke-width: 1.9; opacity: 1; }
   .edge.d4 { stroke: var(--d4); stroke-width: 1.6; opacity: 1; }
   .edge.d5 { stroke: var(--d5); stroke-width: 1.3; opacity: .7; }
+  .wrap { position: relative; }
+  #bubble { position: absolute; display: none; background: var(--node-fill);
+            border: 1px solid var(--node-stroke); border-radius: 10px;
+            padding: 10px 12px 8px; font-size: 12.5px; max-width: 280px; z-index: 9;
+            box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+  #bubble h4 { margin: 0 0 6px; font-size: 13px; color: var(--fg); }
+  #bubble a { display: block; color: var(--d1); text-decoration: none; padding: 1.5px 0; }
+  #bubble a:hover { text-decoration: underline; }
+  #bubble .note { color: var(--muted); margin-top: 6px; font-size: 11.5px; line-height: 1.45; }
 </style>
 </head>
 <body>
@@ -90,13 +99,125 @@
     <b>Thick edges = cross-line borrows</b> (the confusable spots). Numbers on nodes (&check; = done); hover for the story, click to pin.</div>
   <div class="legend"><span class="l-cur">current</span><span class="l-ter">terrain (input)</span><span class="l-red">traversal</span><span class="l-green">order &amp; rank</span><span class="l-yellow">combinatorial</span><span style="color:var(--blue)">&#9632; implementation</span><span style="--x:0"><span></span></span><span class="l-d1">1 hop</span><span class="l-d3">3 hops</span></div>
 </header>
-<div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg><div id="bubble"></div></div>
 
 <script>
 const NS = "http://www.w3.org/2000/svg";
 function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag);
   for(const k in attrs) e.setAttribute(k,attrs[k]); parent.appendChild(e); return e; }
 function measure(s){ let w=0; for (const c of s) w += c.charCodeAt(0)>255 ? 13.5 : 7.5; return w; }
+
+const LC = {
+ 1:["two-sum","Two Sum"],
+ 3:["longest-substring-without-repeating-characters","Longest Substring Without Repeating Characters"],
+ 5:["longest-palindromic-substring","Longest Palindromic Substring"],
+ 20:["valid-parentheses","Valid Parentheses"],
+ 23:["merge-k-sorted-lists","Merge k Sorted Lists"],
+ 28:["find-the-index-of-the-first-occurrence-in-a-string","Find the Index of the First Occurrence in a String"],
+ 33:["search-in-rotated-sorted-array","Search in Rotated Sorted Array"],
+ 46:["permutations","Permutations"],
+ 48:["rotate-image","Rotate Image"],
+ 54:["spiral-matrix","Spiral Matrix"],
+ 55:["jump-game","Jump Game"],
+ 56:["merge-intervals","Merge Intervals"],
+ 62:["unique-paths","Unique Paths"],
+ 64:["minimum-path-sum","Minimum Path Sum"],
+ 72:["edit-distance","Edit Distance"],
+ 75:["sort-colors","Sort Colors"],
+ 78:["subsets","Subsets"],
+ 79:["word-search","Word Search"],
+ 94:["binary-tree-inorder-traversal","Binary Tree Inorder Traversal"],
+ 102:["binary-tree-level-order-traversal","Binary Tree Level Order Traversal"],
+ 104:["maximum-depth-of-binary-tree","Maximum Depth of Binary Tree"],
+ 121:["best-time-to-buy-and-sell-stock","Best Time to Buy and Sell Stock"],
+ 136:["single-number","Single Number"],
+ 141:["linked-list-cycle","Linked List Cycle"],
+ 142:["linked-list-cycle-ii","Linked List Cycle II"],
+ 146:["lru-cache","LRU Cache"],
+ 148:["sort-list","Sort List"],
+ 167:["two-sum-ii-input-array-is-sorted","Two Sum II - Input Array Is Sorted"],
+ 179:["largest-number","Largest Number"],
+ 190:["reverse-bits","Reverse Bits"],
+ 200:["number-of-islands","Number of Islands"],
+ 202:["happy-number","Happy Number"],
+ 206:["reverse-linked-list","Reverse Linked List"],
+ 207:["course-schedule","Course Schedule"],
+ 208:["implement-trie-prefix-tree","Implement Trie (Prefix Tree)"],
+ 210:["course-schedule-ii","Course Schedule II"],
+ 211:["design-add-and-search-words-data-structure","Design Add and Search Words Data Structure"],
+ 212:["word-search-ii","Word Search II"],
+ 215:["kth-largest-element-in-an-array","Kth Largest Element in an Array"],
+ 217:["contains-duplicate","Contains Duplicate"],
+ 226:["invert-binary-tree","Invert Binary Tree"],
+ 234:["palindrome-linked-list","Palindrome Linked List"],
+ 239:["sliding-window-maximum","Sliding Window Maximum"],
+ 253:["meeting-rooms-ii","Meeting Rooms II"],
+ 287:["find-the-duplicate-number","Find the Duplicate Number"],
+ 289:["game-of-life","Game of Life"],
+ 295:["find-median-from-data-stream","Find Median from Data Stream"],
+ 300:["longest-increasing-subsequence","Longest Increasing Subsequence"],
+ 304:["range-sum-query-2d-immutable","Range Sum Query 2D - Immutable"],
+ 305:["number-of-islands-ii","Number of Islands II"],
+ 307:["range-sum-query-mutable","Range Sum Query - Mutable"],
+ 308:["range-sum-query-2d-mutable","Range Sum Query 2D - Mutable"],
+ 315:["count-of-smaller-numbers-after-self","Count of Smaller Numbers After Self"],
+ 322:["coin-change","Coin Change"],
+ 325:["maximum-size-subarray-sum-equals-k","Maximum Size Subarray Sum Equals k"],
+ 346:["moving-average-from-data-stream","Moving Average from Data Stream"],
+ 352:["data-stream-as-disjoint-intervals","Data Stream as Disjoint Intervals"],
+ 371:["sum-of-two-integers","Sum of Two Integers"],
+ 394:["decode-string","Decode String"],
+ 435:["non-overlapping-intervals","Non-overlapping Intervals"],
+ 445:["add-two-numbers-ii","Add Two Numbers II"],
+ 452:["minimum-number-of-arrows-to-burst-balloons","Minimum Number of Arrows to Burst Balloons"],
+ 460:["lfu-cache","LFU Cache"],
+ 480:["sliding-window-median","Sliding Window Median"],
+ 547:["number-of-provinces","Number of Provinces"],
+ 560:["subarray-sum-equals-k","Subarray Sum Equals K"],
+ 622:["design-circular-queue","Design Circular Queue"],
+ 648:["replace-words","Replace Words"],
+ 703:["kth-largest-element-in-a-stream","Kth Largest Element in a Stream"],
+ 704:["binary-search","Binary Search"],
+ 715:["range-module","Range Module"],
+ 721:["accounts-merge","Accounts Merge"],
+ 729:["my-calendar-i","My Calendar I"],
+ 739:["daily-temperatures","Daily Temperatures"],
+ 743:["network-delay-time","Network Delay Time"],
+ 875:["koko-eating-bananas","Koko Eating Bananas"],
+ 876:["middle-of-the-linked-list","Middle of the Linked List"],
+ 912:["sort-an-array","Sort an Array"],
+ 933:["number-of-recent-calls","Number of Recent Calls"],
+ 1091:["shortest-path-in-binary-matrix","Shortest Path in Binary Matrix"],
+ 1584:["min-cost-to-connect-all-points","Min Cost to Connect All Points"],
+ 1971:["find-if-path-exists-in-graph","Find if Path Exists in Graph"],
+ 3023:["find-pattern-in-infinite-stream-i","Find Pattern in Infinite Stream I"]
+};
+
+const bubble = document.getElementById("bubble");
+let bubbleTimer = null;
+function bubbleHide(){ bubble.style.display = "none"; }
+function bubbleHideSoon(){ bubbleTimer = setTimeout(bubbleHide, 260); }
+bubble.addEventListener("mouseenter", ()=>{ if(bubbleTimer) clearTimeout(bubbleTimer); });
+bubble.addEventListener("mouseleave", ()=>{ bubbleHideSoon(); });
+function bubbleShow(n, g){
+  if(bubbleTimer) clearTimeout(bubbleTimer);
+  const nums = [...new Set((n.sub||"").match(/\d+/g) || [])];
+  let html = `<h4>${n.label}</h4>`;
+  nums.forEach(k=>{
+    const e = LC[k];
+    if(e) html += `<a href="https://leetcode.com/problems/${e[0]}/" target="_blank" rel="noopener">${k} · ${e[1]} ↗</a>`;
+    else  html += `<div>${k}</div>`;
+  });
+  if(n.tip) html += `<div class="note">${n.tip}</div>`;
+  bubble.innerHTML = html;
+  const wrap = bubble.parentElement;
+  const wr = wrap.getBoundingClientRect(), gr = g.getBoundingClientRect();
+  bubble.style.display = "block";
+  let x = gr.left - wr.left, y = gr.bottom - wr.top + 6;
+  const bw = bubble.offsetWidth;
+  if (x + bw > wrap.clientWidth - 8) x = wrap.clientWidth - bw - 8;
+  bubble.style.left = x + "px"; bubble.style.top = y + "px";
+}
 
 function buildGraph(svg, nodes, edges, edgePath){
   const byId = Object.fromEntries(nodes.map(n=>[n.id,n]));
@@ -120,14 +241,14 @@ function buildGraph(svg, nodes, edges, edgePath){
     el("rect",{x:n.x, y:n.y, width:n.w, height:n.h, rx:8}, g);
     el("text",{x:n.x+n.w/2, y:n.y+(n.sub?15:n.h/2+4.5),"text-anchor":"middle"}, g).textContent = n.label;
     if(n.sub) el("text",{x:n.x+n.w/2, y:n.y+33,"text-anchor":"middle",class:"probs"}, g).textContent = n.sub;
-    if(n.tip){ const t=document.createElementNS(NS,"title"); t.textContent=n.tip; g.appendChild(t); }
-    g.addEventListener("mouseenter", ()=>{ if(!pinned) show(n.id); });
-    g.addEventListener("mouseleave", ()=>{ if(!pinned) clear(); });
+    g.addEventListener("mouseenter", ()=>{ if(!pinned){ show(n.id); bubbleShow(n, g); } });
+    g.addEventListener("mouseleave", ()=>{ if(!pinned){ clear(); bubbleHideSoon(); } });
     g.addEventListener("click", e=>{ e.stopPropagation();
-      if(pinned===n.id){ pinned=null; clear(); } else { pinned=n.id; show(n.id); } });
+      if(pinned===n.id){ pinned=null; clear(); bubbleHide(); }
+      else { pinned=n.id; show(n.id); bubbleShow(n, g); } });
     return { id:n.id, base, el:g };
   });
-  svg.addEventListener("click", ()=>{ pinned=null; clear(); });
+  svg.addEventListener("click", ()=>{ pinned=null; clear(); bubbleHide(); });
 
   function show(id){
     const up = distVia(id, rev), down = distVia(id, fwd);

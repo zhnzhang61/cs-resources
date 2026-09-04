@@ -14,7 +14,7 @@
     --d2:#0d9488; --d2-bg:#ccfbf1;
     --d3:#ca8a04; --d3-bg:#fef9c3;
     --d4:#ea580c; --d4-bg:#ffedd5;
-    --d5:#8b8f96; --d5-bg:#eceef1;
+    --d5:#8b8f96; --d5-bg:#eceef1; --tbl:#8b95a0;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -26,7 +26,7 @@
       --d2:#2dd4bf; --d2-bg:#053331;
       --d3:#facc15; --d3-bg:#3a3305;
       --d4:#fb923c; --d4-bg:#431a07;
-      --d5:#6e7681; --d5-bg:#21262d;
+      --d5:#6e7681; --d5-bg:#21262d; --tbl:#525a64;
     }
   }
   * { box-sizing: border-box; }
@@ -89,6 +89,28 @@
   #bubble a { display: block; color: var(--d1); text-decoration: none; padding: 1.5px 0; }
   #bubble a:hover { text-decoration: underline; }
   #bubble .note { color: var(--muted); margin-top: 6px; font-size: 11.5px; line-height: 1.45; }
+  .logwrap { max-width: 1450px; margin: 0 auto; padding: 0 8px 60px; }
+  .logwrap h2 { font-size: 15px; margin: 22px 0 10px; }
+  .logsub { font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+  .logscroll { overflow-x: scroll; border: 1.5px solid var(--tbl); border-radius: 10px; scrollbar-width: auto; scrollbar-color: var(--tbl) var(--d5-bg); }
+  .logscroll::-webkit-scrollbar { height: 15px; }
+  .logscroll::-webkit-scrollbar-track { background: var(--d5-bg); border-radius: 8px; }
+  .logscroll::-webkit-scrollbar-thumb { background: var(--tbl); border-radius: 8px; border: 3px solid var(--d5-bg); }
+  .logscroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+  table.log { border-collapse: collapse; font-size: 10px; }
+  table.log th, table.log td { border: 1px solid var(--tbl); vertical-align: top; padding: 7px 9px; text-align: left; }
+  table.log th { background: var(--d5-bg); color: var(--fg); font-weight: 600; position: sticky; top: 0; white-space: nowrap; }
+  td.cdate { white-space: nowrap; color: var(--muted); position: sticky; left: 0; background: var(--bg); z-index: 2; }
+  td.cnode { white-space: nowrap; font-weight: 600; position: sticky; left: 84px; background: var(--bg); z-index: 2; }
+  th:nth-child(1) { position: sticky; left: 0; z-index: 3; }
+  th:nth-child(2) { position: sticky; left: 84px; z-index: 3; }
+  td.pcell { min-width: 240px; }
+  td.empty { color: var(--muted); text-align: center; }
+  .ptitle { margin-bottom: 6px; }
+  .ptitle a { color: var(--d1); text-decoration: none; font-weight: 600; font-size: 11px; }
+  .ptitle a:hover { text-decoration: underline; }
+  table.log pre { margin: 0; background: var(--d5-bg); border-radius: 6px; padding: 7px 9px; overflow-x: visible; }
+  table.log code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; line-height: 1.45; color: var(--fg); white-space: pre; }
 </style>
 </head>
 <body>
@@ -100,6 +122,84 @@
   <div class="legend"><span class="l-cur">current</span><span class="l-ter">terrain (input)</span><span class="l-red">traversal</span><span class="l-green">order &amp; rank</span><span class="l-yellow">combinatorial</span><span style="color:var(--blue)">&#9632; implementation</span><span style="--x:0"><span></span></span><span class="l-d1">1 hop</span><span class="l-d3">3 hops</span></div>
 </header>
 <div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg><div id="bubble"></div></div>
+<section class="logwrap">
+  <h2>做题记录 · Round 2 <span class="logsub">证据 = 跑过测试的提交代码；按 node 首次动工顺序排</span></h2>
+  <div class="logscroll"><table class="log"><tr><th>更新</th><th>node</th><th>题 1</th><th>题 2</th><th>题 3</th></tr><tr><td class="cdate">2026-09-02</td><td class="cnode">2 pointers (walk)</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="noopener">141 · Linked List Cycle &#8599;</a></div><pre><code>class Solution:
+    def hasCycle(self, head: Optional[ListNode]) -&gt; bool:
+        slow = fast = head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if fast == slow:
+                return True
+        return False</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank" rel="noopener">142 · Linked List Cycle II &#8599;</a></div><pre><code>class Solution:
+    def detectCycle(self, head: Optional[ListNode]) -&gt; Optional[ListNode]:
+        slow = fast = head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                slow = head
+                while slow != fast:
+                    slow = slow.next
+                    fast = fast.next
+                return slow
+        return None</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-03</td><td class="cnode">Set</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener">217 · Contains Duplicate &#8599;</a></div><pre><code>class Solution:
+    def containsDuplicate(self, nums: List[int]) -&gt; bool:
+        visited = set()
+        for num in nums:
+            if num in visited:
+                return True
+            else:
+                visited.add(num)
+        return False</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/find-the-duplicate-number/" target="_blank" rel="noopener">287 · Find the Duplicate Number &#8599;</a></div><pre><code>class Solution:
+    def findDuplicate(self, nums: List[int]) -&gt; int:
+        slow = fast = 0
+        while nums[fast] and nums[nums[fast]]:
+            slow = nums[slow]
+            fast = nums[nums[fast]]
+            if nums[slow] == nums[fast]:
+                slow = 0
+                while nums[slow] != nums[fast]:
+                    slow = nums[slow]
+                    fast = nums[fast]
+                return nums[slow]</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/happy-number/" target="_blank" rel="noopener">202 · Happy Number &#8599;</a></div><pre><code>class Solution:
+    def isHappy(self, n: int) -&gt; bool:
+        def process(n):
+            s = 0
+            while n:
+                n, d = divmod(n, 10)
+                s += d * d
+            return s
+        seen = set()
+        while True:
+            n = process(n)
+            if n == 1:
+                return True
+            elif n in seen:
+                return False
+            else:
+                seen.add(n)</code></pre></td></tr><tr><td class="cdate">2026-09-04</td><td class="cnode">Sort</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">912 · Sort an Array &#8599;</a></div><pre><code>class Solution:
+    def sortArray(self, nums: List[int]) -&gt; List[int]:
+        def mergeSort(arr):
+            if len(arr) &lt;= 1:
+                return arr
+            mid = len(arr) // 2
+            left = mergeSort(arr[:mid])
+            right = mergeSort(arr[mid:])
+            out, i, j = [], 0, 0
+            while i &lt; len(left) and j &lt; len(right):
+                if left[i] &lt;= right[j]:
+                    out.append(left[i])
+                    i += 1
+                else:
+                    out.append(right[j])
+                    j += 1
+            out.extend(left[i:])
+            out.extend(right[j:])
+            return out
+        return mergeSort(nums)</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr></table></div>
+</section>
 
 <script>
 const NS = "http://www.w3.org/2000/svg";

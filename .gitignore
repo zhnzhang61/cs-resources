@@ -3,8 +3,10 @@
 *.o
 *.dSYM/
 
-# LaTeX build artifacts (the built resume PDF is committed on purpose)
-resume/build/
+# Resume — private, never goes to GitHub
+resume/
+
+# LaTeX build artifacts
 *.aux
 *.log
 *.fls

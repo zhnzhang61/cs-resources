@@ -1,0 +1,55 @@
+% Placeholder skeleton — replace wholesale with your own resume.
+% Build:  make        (from this directory)
+%         make watch  (rebuild on save)
+% Engine: pdflatex. If you switch to system fonts (fontspec), set $pdf_mode = 5
+% in .latexmkrc to use xelatex.
+
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage[margin=0.6in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tabularx}
+
+% Tight section headings with a rule underneath.
+\titleformat{\section}{\large\bfseries\scshape}{}{0em}{}[\vspace{-0.6em}\rule{\linewidth}{0.6pt}]
+\titlespacing{\section}{0pt}{1.0em}{0.5em}
+
+\setlist[itemize]{leftmargin=1.2em, topsep=0.2em, itemsep=0.15em, parsep=0pt}
+\pagestyle{empty}
+
+% \entry{role}{org}{location}{dates}
+\newcommand{\entry}[4]{%
+  \noindent\textbf{#1} \hfill \textbf{#4}\\
+  \textit{#2} \hfill \textit{#3}\vspace{0.2em}%
+}
+
+\begin{document}
+
+\begin{center}
+  {\LARGE\bfseries YOUR NAME}\\[0.3em]
+  New York, NY $\cdot$ email@example.com $\cdot$ linkedin.com/in/you
+\end{center}
+
+\section{Experience}
+
+\entry{Title}{Organization}{New York, NY}{Mon YYYY -- Present}
+\begin{itemize}
+  \item Placeholder bullet. Lead with the result, then the method.
+  \item Placeholder bullet.
+\end{itemize}
+
+\section{Education}
+
+\entry{Degree}{Institution}{City, ST}{YYYY}
+
+\section{Skills}
+
+\noindent
+\textbf{Languages:} Python, C++ \\
+\textbf{Quantitative:} placeholder \\
+\textbf{Tools:} placeholder
+
+\end{document}

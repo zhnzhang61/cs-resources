@@ -2,3 +2,15 @@
 *.out
 *.o
 *.dSYM/
+
+# LaTeX build artifacts (the built resume PDF is committed on purpose)
+resume/build/
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc
+*.bbl
+*.blg
+*.run.xml

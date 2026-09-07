@@ -24,6 +24,28 @@
                 "isDefault": true
             },
             "detail": "compiler: /usr/bin/clang++"
+        },
+        {
+            "type": "shell",
+            "label": "LaTeX: build resume",
+            "command": "make",
+            "options": {
+                "cwd": "${workspaceFolder}/resume"
+            },
+            "problemMatcher": [],
+            "group": "build",
+            "detail": "latexmk via resume/Makefile -> resume/resume.pdf"
+        },
+        {
+            "type": "shell",
+            "label": "LaTeX: watch resume",
+            "command": "make watch",
+            "options": {
+                "cwd": "${workspaceFolder}/resume"
+            },
+            "problemMatcher": [],
+            "isBackground": true,
+            "detail": "rebuild resume.pdf on every save (Ctrl-C to stop)"
         }
     ]
 }

@@ -198,7 +198,19 @@
             out.extend(left[i:])
             out.extend(right[j:])
             return out
-        return mergeSort(nums)</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr></table></div>
+        return mergeSort(nums)</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-08</td><td class="cnode">sliding window</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener">3 · Longest Substring Without Repeating Characters &#8599;</a></div><pre><code>class Solution:
+    def lengthOfLongestSubstring(self, s: str) -&gt; int:
+        if not s:
+            return 0
+        seen = {}
+        left = 0
+        res = 0
+        for right, ch in enumerate(s):
+            if ch in seen:
+                left = max(left, seen[ch] + 1)
+            seen[ch] = right
+            res = max(res, right - left  + 1)
+        return res</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr></table></div>
 </section>
 
 <script>
@@ -390,7 +402,7 @@ const RAW = [
  ["Sort","Sort",470,250,"gl","912\u2713 75 179 \u00b7 56","Impose order first; sort → only neighbors matter."],
  ["BinS","Binary Search",470,345,"gl","704 875 33 \u00b7 300alt","Order enables halving; answer-space 875; value-range 287-alt; 300's tails solution."],
  ["Heap","Heap",470,450,"gl","215 23 253 295 703","Half-order is enough; push/pop with extremum on call."],
- ["SlidW","sliding window",630,398,"gl","3 5 239 480","Window superlatives; base window's hashmap is luggage."],
+ ["SlidW","sliding window",630,398,"gl","3\u2713 5 239 480","Window superlatives; base window's hashmap is luggage."],
  ["Seg","Segment / Interval",805,450,"terrain","56 435 452 253","Shared ground: green machinery hosts yellow choices (435/452)."],
  ["Stream","Stream",805,545,"terrain","346 295 480 352","One pass, bounded memory; query picks the container."],
  ["TMap","TreeMap",640,610,"gl","352 729 715","Sorted container: neighbor / rank queries, updatable. (Python: SortedList)"],

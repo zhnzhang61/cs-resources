@@ -179,7 +179,7 @@
             elif n in seen:
                 return False
             else:
-                seen.add(n)</code></pre></td></tr><tr><td class="cdate">2026-09-04</td><td class="cnode">Sort</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">912 · Sort an Array &#8599;</a></div><pre><code>class Solution:
+                seen.add(n)</code></pre></td></tr><tr><td class="cdate">2026-09-09</td><td class="cnode">Sort</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">912 · Sort an Array &#8599;</a></div><pre><code>class Solution:
     def sortArray(self, nums: List[int]) -&gt; List[int]:
         def mergeSort(arr):
             if len(arr) &lt;= 1:
@@ -198,7 +198,12 @@
             out.extend(left[i:])
             out.extend(right[j:])
             return out
-        return mergeSort(nums)</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-08</td><td class="cnode">sliding window</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener">3 · Longest Substring Without Repeating Characters &#8599;</a></div><pre><code>class Solution:
+        return mergeSort(nums)</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/largest-number/" target="_blank" rel="noopener">179 · Largest Number &#8599;</a></div><pre><code>class Solution:
+    def largestNumber(self, nums: List[int]) -&gt; str:
+        arr = sorted(map(str, nums), key = lambda x: x * 100, reverse=True)
+        if arr[0] == &quot;0&quot;:
+            return &quot;0&quot;
+        return &quot;&quot;.join(arr)</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-08</td><td class="cnode">sliding window</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener">3 · Longest Substring Without Repeating Characters &#8599;</a></div><pre><code>class Solution:
     def lengthOfLongestSubstring(self, s: str) -&gt; int:
         if not s:
             return 0
@@ -399,7 +404,7 @@ const RAW = [
  ["Topo","Topo sort",700,860,"rl","207 210","Kahn = BFS on in-degrees. 207 = the sink: needs 547 + 287-cycles + 79-rope + 322-memo."],
  ["Trie","Trie",460,850,"rl","208 211 648","Prefix-keyed specialized tree. (212 lives on yellow backtracking; Trie is its pruning luggage.)"],
  ["KMP","KMP / automaton",270,850,"rl","3023 28","Failure links = fallback edges; matching = walking an automaton built from the pattern."],
- ["Sort","Sort",470,250,"gl","912\u2713 75 179 \u00b7 56","Impose order first; sort → only neighbors matter."],
+ ["Sort","Sort",470,250,"gl","912\u2713 75 179\u2713 \u00b7 56","Impose order first; sort → only neighbors matter."],
  ["BinS","Binary Search",470,345,"gl","704 875 33 \u00b7 300alt","Order enables halving; answer-space 875; value-range 287-alt; 300's tails solution."],
  ["Heap","Heap",470,450,"gl","215 23 253 295 703","Half-order is enough; push/pop with extremum on call."],
  ["SlidW","sliding window",630,398,"gl","3\u2713 5 239 480","Window superlatives; base window's hashmap is luggage."],

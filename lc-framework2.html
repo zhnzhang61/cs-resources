@@ -111,6 +111,7 @@
   .ptitle a:hover { text-decoration: underline; }
   table.log pre { margin: 0; background: var(--d5-bg); border-radius: 6px; padding: 7px 9px; overflow-x: visible; }
   table.log code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; line-height: 1.45; color: var(--fg); white-space: pre; }
+  .times { display: inline-block; margin-left: 6px; font-size: 10px; color: var(--muted); border: 1px solid var(--tbl); border-radius: 10px; padding: 0 6px; vertical-align: 1px; }
 </style>
 </head>
 <body>
@@ -124,7 +125,7 @@
 <div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg><div id="bubble"></div></div>
 <section class="logwrap">
   <h2>做题记录 · Round 2 <span class="logsub">证据 = 跑过测试的提交代码；按 node 首次动工顺序排</span></h2>
-  <div class="logscroll"><table class="log"><tr><th>更新</th><th>node</th><th>题 1</th><th>题 2</th><th>题 3</th></tr><tr><td class="cdate">2026-09-02</td><td class="cnode">2 pointers (walk)</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="noopener">141 · Linked List Cycle &#8599;</a></div><pre><code>class Solution:
+  <div class="logscroll"><table class="log"><tr><th>更新</th><th>node</th><th>题 1</th><th>题 2</th><th>题 3</th></tr><tr><td class="cdate">2026-09-02</td><td class="cnode">2 pointers (walk)</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="noopener">141 · Linked List Cycle &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def hasCycle(self, head: Optional[ListNode]) -&gt; bool:
         slow = fast = head
         while fast and fast.next:
@@ -132,7 +133,7 @@
             fast = fast.next.next
             if fast == slow:
                 return True
-        return False</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank" rel="noopener">142 · Linked List Cycle II &#8599;</a></div><pre><code>class Solution:
+        return False</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank" rel="noopener">142 · Linked List Cycle II &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def detectCycle(self, head: Optional[ListNode]) -&gt; Optional[ListNode]:
         slow = fast = head
         while fast and fast.next:
@@ -144,7 +145,7 @@
                     slow = slow.next
                     fast = fast.next
                 return slow
-        return None</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-03</td><td class="cnode">Set</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener">217 · Contains Duplicate &#8599;</a></div><pre><code>class Solution:
+        return None</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-03</td><td class="cnode">Set</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener">217 · Contains Duplicate &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def containsDuplicate(self, nums: List[int]) -&gt; bool:
         visited = set()
         for num in nums:
@@ -152,7 +153,7 @@
                 return True
             else:
                 visited.add(num)
-        return False</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/find-the-duplicate-number/" target="_blank" rel="noopener">287 · Find the Duplicate Number &#8599;</a></div><pre><code>class Solution:
+        return False</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/find-the-duplicate-number/" target="_blank" rel="noopener">287 · Find the Duplicate Number &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def findDuplicate(self, nums: List[int]) -&gt; int:
         slow = fast = 0
         while nums[fast] and nums[nums[fast]]:
@@ -163,7 +164,7 @@
                 while nums[slow] != nums[fast]:
                     slow = nums[slow]
                     fast = nums[fast]
-                return nums[slow]</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/happy-number/" target="_blank" rel="noopener">202 · Happy Number &#8599;</a></div><pre><code>class Solution:
+                return nums[slow]</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/happy-number/" target="_blank" rel="noopener">202 · Happy Number &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def isHappy(self, n: int) -&gt; bool:
         def process(n):
             s = 0
@@ -179,7 +180,7 @@
             elif n in seen:
                 return False
             else:
-                seen.add(n)</code></pre></td></tr><tr><td class="cdate">2026-09-09</td><td class="cnode">Sort</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">912 · Sort an Array &#8599;</a></div><pre><code>class Solution:
+                seen.add(n)</code></pre></td></tr><tr><td class="cdate">2026-09-12</td><td class="cnode">Sort</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">912 · Sort an Array &#8599;</a><span class="times">×2</span></div><pre><code>class Solution:
     def sortArray(self, nums: List[int]) -&gt; List[int]:
         def mergeSort(arr):
             if len(arr) &lt;= 1:
@@ -187,23 +188,23 @@
             mid = len(arr) // 2
             left = mergeSort(arr[:mid])
             right = mergeSort(arr[mid:])
-            out, i, j = [], 0, 0
+            i, j, res = 0, 0, []
             while i &lt; len(left) and j &lt; len(right):
-                if left[i] &lt;= right[j]:
-                    out.append(left[i])
+                if left[i] &lt; right[j]:
+                    res.append(left[i])
                     i += 1
                 else:
-                    out.append(right[j])
+                    res.append(right[j])
                     j += 1
-            out.extend(left[i:])
-            out.extend(right[j:])
-            return out
-        return mergeSort(nums)</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/largest-number/" target="_blank" rel="noopener">179 · Largest Number &#8599;</a></div><pre><code>class Solution:
+            res.extend(left[i:])
+            res.extend(right[j:])
+            return res
+        return mergeSort(nums)</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/largest-number/" target="_blank" rel="noopener">179 · Largest Number &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def largestNumber(self, nums: List[int]) -&gt; str:
         arr = sorted(map(str, nums), key = lambda x: x * 100, reverse=True)
         if arr[0] == &quot;0&quot;:
             return &quot;0&quot;
-        return &quot;&quot;.join(arr)</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-08</td><td class="cnode">sliding window</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener">3 · Longest Substring Without Repeating Characters &#8599;</a></div><pre><code>class Solution:
+        return &quot;&quot;.join(arr)</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-08</td><td class="cnode">sliding window</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener">3 · Longest Substring Without Repeating Characters &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def lengthOfLongestSubstring(self, s: str) -&gt; int:
         if not s:
             return 0
@@ -215,7 +216,7 @@
                 left = max(left, seen[ch] + 1)
             seen[ch] = right
             res = max(res, right - left  + 1)
-        return res</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-09</td><td class="cnode">Segment / Interval</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/merge-intervals/" target="_blank" rel="noopener">56 · Merge Intervals &#8599;</a></div><pre><code>class Solution:
+        return res</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-09</td><td class="cnode">Segment / Interval</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/merge-intervals/" target="_blank" rel="noopener">56 · Merge Intervals &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def merge(self, intervals: List[List[int]]) -&gt; List[List[int]]:
         intervals.sort(key = lambda x: x[0])
         res = []

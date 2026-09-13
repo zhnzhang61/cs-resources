@@ -425,7 +425,7 @@ function buildGraph(svg, nodes, edges, edgePath){
 /* ---- nodes: id, label, cx, cy, class, tooltip ---- */
 const RAW = [
  ["Array","Array",620,80,"terrain","","The mother terrain — all four lines start here."],
- ["P2","2 pointers (walk)",200,240,"rl","141\u2713 142\u2713","Walk by pointers; fast–slow. 142 solved both ways: set (first revisit = entrance, free) and Floyd (O(1)). 287/202 filed under Set (intuition first) — Floyd is what the interviewer is fishing for. (Sorted converging 167 → green Sort lineage.)"],
+ ["P2","2 pointers (walk)",170,240,"rl","141\u2713 142\u2713","Walk by pointers; fast–slow. 142 solved both ways: set (first revisit = entrance, free) and Floyd (O(1)). 287/202 filed under Set (intuition first) — Floyd is what the interviewer is fishing for. (Sorted converging 167 → green Sort lineage.)"],
  ["LL","Linked List",200,430,"terrain","206 234 876 \u00b7 148 23","Terrain. Red walks live here; 148/23 are green tasks hosted on it (thick edges)."],
  ["Tree","Tree",560,700,"terrain","102 104 226 94","94 iterative traversal borrows green's stack; BST = green's ordered tree."],
  ["Graph","Graph",800,760,"terrain","200 1971 547 743 1584","743 Dijkstra borrows green heap + yellow dominance; 1584 MST likewise."],
@@ -437,7 +437,7 @@ const RAW = [
  ["Sort","Sort",470,250,"gl","912\u2713 75 179\u2713","Impose order first; sort → only neighbors matter."],
  ["BinS","Binary Search",470,345,"gl","704 875 33 \u00b7 300alt","Order enables halving; answer-space 875; value-range 287-alt; 300's tails solution."],
  ["Heap","Heap",470,450,"gl","215 23 253 295 703 480","Half-order is enough; push/pop with the extremum on call. 480: two heaps + lazy delete (needs a hash ledger for stale entries)."],
- ["SlidW","sliding window",565,400,"gl","209 643 713 1004 346 \u00b7 5*","Same-direction two pointers: left chases right, both only move forward. Bare form (scalar luggage): 209 643 1004 346. 713 smells yellow — a count, cousin of 560 (all-positive keeps the window monotone). 5* = expand-center cousin, not a slider (also has a DP solution)."],
+ ["SlidW","sliding window",332,245,"gl","209 643 713 1004 346","Not a structure, not an algorithm — a cursor discipline: two pointers moving the same direction, left chasing right. Bare windows (scalar luggage): 209 643 1004 346. 713 smells yellow (a count, cousin of 560). Windows that need a counter live under Hashmap; windows that need an extremum live under Deque / Heap."],
  ["Seg","Segment / Interval",805,450,"terrain","56\u2713 435 452 253","Shared ground: green machinery hosts yellow choices (435/452)."],
  ["Stream","Stream",805,545,"terrain","346 295 480 352","One pass, bounded memory; query picks the container."],
  ["TMap","TreeMap",640,610,"gl","352 729 715","Sorted container: neighbor / rank queries, updatable. (Python: SortedList)"],
@@ -451,7 +451,7 @@ const RAW = [
  ["BIT","BIT / seg-tree",1040,465,"yl","307 308 315","Prefix sums that accept updates; query smell is green's (315 count-smaller = rank)."],
  ["LRU","LRU (weld)",1250,300,"yl","146 460","hashmap (find by key) \u00d7 doubly-linked list (evict by recency), all O(1). No heap involved."],
  ["Greedy","Greedy",960,560,"yl","55 435 452 300","Commit when a move provably never loses (exchange argument); no lookback."],
- ["DP","DP",1140,560,"yl","322 62 64 72 121","No sure-win move → try all, but pay each situation once (memo)."],
+ ["DP","DP",1140,560,"yl","322 62 64 72 121 5","No sure-win move → try all, but pay each situation once (memo). 5 parked here to be re-attacked from the DP angle (dp[i][j] = s[i]==s[j] and dp[i+1][j-1]); expand-center is the other route."],
  ["Back","Backtracking",1270,560,"yl","78 79 46 212","Third rung: even the memo explodes → enumerate with undo."],
  ["StrB","String / Bits",1345,120,"bl","136 371 190","Pure engineering: no trick, all edge cases."],
  ["Sim","Simulation",1345,700,"bl","54 48 289","Rule-driven walking; potential fourth family, parked on blue."],
@@ -469,10 +469,10 @@ const EDGES = [
  ["Tree","Trie","prefix-keyed specialized tree","er"],
  ["Trie","KMP","failure links = fallback edges","er"],
  /* green — order & rank */
+ ["P2","SlidW","cousin of the walk: two cursors, both moving forward","eg dash"],
  ["Array","Sort","impose order first","eg"],
  ["Sort","BinS","order enables halving","eg"],
  ["BinS","Heap","full sort is overkill → half-order","eg"],
- ["Heap","SlidW","window superlatives (239 / 480)","eg"],
  ["Heap","Seg","the interval toolkit","eg"],
  ["Heap","Stream","the stream toolkit","eg"],
  ["Heap","TMap","need full order + updates","eg"],

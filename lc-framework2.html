@@ -233,7 +233,19 @@
                 left = max(left, seen[value] + 1)
             seen[value] = right
             res = max(res, right - left + 1)
-        return res</code></pre></td><td class="empty">—</td></tr></table></div>
+        return res</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-13</td><td class="cnode">Stack</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/daily-temperatures/" target="_blank" rel="noopener">739 · Daily Temperatures &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
+    def dailyTemperatures(self, temperatures: List[int]) -&gt; List[int]:
+        res = [0] * len(temperatures)
+        stack = []
+        pair = (temperatures[0], 0)
+        stack.append(pair)
+
+        for i in range(1, len(temperatures)):
+            while stack and stack[-1][0] &lt; temperatures[i]:
+                popped = stack.pop()
+                res[popped[1]] = i - popped[1]
+            stack.append((temperatures[i], i))
+        return res</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr></table></div>
 </section>
 
 <script>
@@ -441,7 +453,7 @@ const RAW = [
  ["Seg","Segment / Interval",805,450,"terrain","56\u2713 435 452 253","Shared ground: green machinery hosts yellow choices (435/452)."],
  ["Stream","Stream",805,545,"terrain","346 295 480 352","One pass, bounded memory; query picks the container."],
  ["TMap","TreeMap",640,610,"gl","352 729 715","Sorted container: neighbor / rank queries, updatable. (Python: SortedList)"],
- ["stack","Stack",700,250,"gl","739 394 20 445","Monotonic (rank) vs nesting (parse) — one container, two disciplines."],
+ ["stack","Stack",700,250,"gl","739\u2713 394 20 445","Monotonic (rank) vs nesting (parse) — one container, two disciplines."],
  ["Queue","Queue",700,350,"gl","622 933 346","Arrival order; BFS carries one as luggage (line removed — remember it)."],
  ["Deque","Deque",600,400,"gl","239 1438 862","Both ends open = Stack ∪ Queue. Monotonic deque: the front expires by time (queue half), the back pops by dominance (stack half — 739's move). For window extremes it beats the heap whenever departures are FIFO; the heap is needed for median / kth or arbitrary departures."],
  ["Set","Set",1040,180,"yl","217\u2713 287\u2713 202\u2713 \u00b7 visited","Have I seen this? Dedup / membership; every visited-set. 287/202 live here by intuition (set first); Floyd fast-slow is the interview follow-up — see 2 pointers."],

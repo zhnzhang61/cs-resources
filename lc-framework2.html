@@ -125,7 +125,7 @@
 <div class="wrap"><svg id="g" xmlns="http://www.w3.org/2000/svg"></svg><div id="bubble"></div></div>
 <section class="logwrap">
   <h2>做题记录 · Round 2 <span class="logsub">证据 = 跑过测试的提交代码；按 node 首次动工顺序排</span></h2>
-  <div class="logscroll"><table class="log"><tr><th>更新</th><th>node</th><th>题 1</th><th>题 2</th><th>题 3</th></tr><tr><td class="cdate">2026-09-12</td><td class="cnode">2 pointers (walk)</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="noopener">141 · Linked List Cycle &#8599;</a><span class="times">×2</span></div><pre><code>class Solution:
+  <div class="logscroll"><table class="log"><tr><th>更新</th><th>node</th><th>题 1</th><th>题 2</th><th>题 3</th><th>题 4</th></tr><tr><td class="cdate">2026-09-12</td><td class="cnode">2 pointers (walk)</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="noopener">141 · Linked List Cycle &#8599;</a><span class="times">×2</span></div><pre><code>class Solution:
     def hasCycle(self, head: Optional[ListNode]) -&gt; bool:
         slow = fast = head
         while fast and fast.next:
@@ -145,7 +145,7 @@
                     slow = slow.next
                     fast = fast.next
                 return slow
-        return None</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-03</td><td class="cnode">Set</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener">217 · Contains Duplicate &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
+        return None</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-03</td><td class="cnode">Set</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener">217 · Contains Duplicate &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def containsDuplicate(self, nums: List[int]) -&gt; bool:
         visited = set()
         for num in nums:
@@ -180,7 +180,7 @@
             elif n in seen:
                 return False
             else:
-                seen.add(n)</code></pre></td></tr><tr><td class="cdate">2026-09-12</td><td class="cnode">Sort</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">912 · Sort an Array &#8599;</a><span class="times">×2</span></div><pre><code>class Solution:
+                seen.add(n)</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-12</td><td class="cnode">Sort</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">912 · Sort an Array &#8599;</a><span class="times">×2</span></div><pre><code>class Solution:
     def sortArray(self, nums: List[int]) -&gt; List[int]:
         def mergeSort(arr):
             if len(arr) &lt;= 1:
@@ -239,7 +239,7 @@ class Solution:
             nums[i] = 1
         for i in range(count[0] + count[1], count[0] + count[1] + count[2]):
             nums[i] = 2
-        return nums</code></pre></td></tr><tr><td class="cdate">2026-09-09</td><td class="cnode">Segment / Interval</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/merge-intervals/" target="_blank" rel="noopener">56 · Merge Intervals &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
+        return nums</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-09</td><td class="cnode">Segment / Interval</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/merge-intervals/" target="_blank" rel="noopener">56 · Merge Intervals &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def merge(self, intervals: List[List[int]]) -&gt; List[List[int]]:
         intervals.sort(key = lambda x: x[0])
         res = []
@@ -250,7 +250,7 @@ class Solution:
                 res[-1] = new_interval
             else:
                 res.append(interval)
-        return res</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-13</td><td class="cnode">Hashmap</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/two-sum/" target="_blank" rel="noopener">1 · Two Sum &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
+        return res</code></pre></td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-13</td><td class="cnode">Hashmap</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/two-sum/" target="_blank" rel="noopener">1 · Two Sum &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def twoSum(self, nums: List[int], target: int) -&gt; List[int]:
         seen = {}
         for index, num in enumerate(nums):
@@ -268,7 +268,7 @@ class Solution:
                 left = max(left, seen[value] + 1)
             seen[value] = right
             res = max(res, right - left + 1)
-        return res</code></pre></td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-13</td><td class="cnode">Stack</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/daily-temperatures/" target="_blank" rel="noopener">739 · Daily Temperatures &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
+        return res</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-13</td><td class="cnode">Stack</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/daily-temperatures/" target="_blank" rel="noopener">739 · Daily Temperatures &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def dailyTemperatures(self, temperatures: List[int]) -&gt; List[int]:
         res = [0] * len(temperatures)
         stack = []
@@ -277,7 +277,7 @@ class Solution:
                 popped = stack.pop()
                 res[popped[1]] = i - popped[1]
             stack.append((temperatures[i], i))
-        return res</code></pre></td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-14</td><td class="cnode">sliding window</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/minimum-size-subarray-sum/" target="_blank" rel="noopener">209 · Minimum Size Subarray Sum &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
+        return res</code></pre></td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td></tr><tr><td class="cdate">2026-09-14</td><td class="cnode">sliding window</td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/minimum-size-subarray-sum/" target="_blank" rel="noopener">209 · Minimum Size Subarray Sum &#8599;</a><span class="times">×1</span></div><pre><code>class Solution:
     def minSubArrayLen(self, target: int, nums: List[int]) -&gt; int:
         left = 0
         res = float(&#x27;inf&#x27;)
@@ -313,7 +313,24 @@ class Solution:
                     zero_count -= 1
                 left += 1
             res = max(res, right - left + 1)
-        return res</code></pre></td></tr></table></div>
+        return res</code></pre></td><td class="pcell"><div class="ptitle"><a href="https://leetcode.com/problems/moving-average-from-data-stream/" target="_blank" rel="noopener">346 · Moving Average from Data Stream &#8599;</a><span class="times">×1</span></div><pre><code>from collections import deque
+class MovingAverage:
+
+    def __init__(self, size: int):
+        self.cur_size = 0
+        self.max_size = size
+        self.holder = deque(maxlen=size)
+        self.cur_sum = 0
+
+    def next(self, val: int) -&gt; float:        
+        self.cur_size += 1
+        divisor = min(self.cur_size, self.max_size)
+        if len(self.holder) == self.max_size:
+            evicted = self.holder[0]
+            self.cur_sum -= evicted            
+        self.holder.append(val)
+        self.cur_sum += val
+        return self.cur_sum / divisor</code></pre></td></tr></table></div>
 </section>
 
 <script>
@@ -517,7 +534,7 @@ const RAW = [
  ["Sort","Sort",470,250,"gl","912\u2713 75\u2713 179\u2713","Impose order first; sort → only neighbors matter."],
  ["BinS","Binary Search",470,345,"gl","704 875 33 \u00b7 300alt","Order enables halving; answer-space 875; value-range 287-alt; 300's tails solution."],
  ["Heap","Heap",470,450,"gl","215 23 253 703 480","Half-order is enough; push/pop with the extremum on call. 480: two heaps + lazy delete (needs a hash ledger for stale entries)."],
- ["SlidW","sliding window",332,245,"gl","209\u2713 643\u2713 713 1004\u2713 346","Not a structure, not an algorithm — a cursor discipline: two pointers moving the same direction, left chasing right. Bare windows (scalar luggage): 209 643 1004 346. 713 smells yellow (a count, cousin of 560). Windows that need a counter live under Hashmap; windows that need an extremum live under Deque / Heap."],
+ ["SlidW","sliding window",332,245,"gl","209\u2713 643\u2713 713 1004\u2713 346\u2713","Not a structure, not an algorithm — a cursor discipline: two pointers moving the same direction, left chasing right. Bare windows (scalar luggage): 209 643 1004 346. 713 smells yellow (a count, cousin of 560). Windows that need a counter live under Hashmap; windows that need an extremum live under Deque / Heap."],
  ["Seg","Segment / Interval",805,450,"terrain","56\u2713 435 452 253","Shared ground: green machinery hosts yellow choices (435/452)."],
  ["Stream","Stream",805,545,"terrain","346 295 352","One pass, bounded memory; query picks the container."],
  ["TMap","TreeMap",640,610,"gl","352 729 715","Sorted container: neighbor / rank queries, updatable. (Python: SortedList)"],

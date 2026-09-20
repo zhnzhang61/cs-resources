@@ -58,6 +58,18 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 8. `[SC]` What does "conditioning on the filtration F_t" mean? Give the information interpretation, and explain why E[X_T | F_t] is "the best forecast given what is known at time t."
 9. `[LLM]` Write the autoregressive factorization p(x_1,…,x_n) = Π_t p(x_t | x_{<t}). Why does every joint distribution admit this factorization with no modeling assumption? Where does the modeling assumption actually enter in an LLM?
 10. `[SC]` Risk-neutral pricing states V_t = E^Q[e^{−r(T−t)} · payoff | F_t]. Unpack this as a conditional expectation statement: what is being conditioned on, and why?
+
+    **A**: recap the story first. 1654: two players, 32 pistoles each in the pot, first to win 3 rounds takes all 64. The game is interrupted with A leading 2:1 - Pascal split the pot by averaging the payoff over the remaining futures given the score: 48 to A, 16 to B. **The mid-game fair price is a conditional expectation.**
+
+    V_t = E^Q[e^{−r(T−t)} · payoff | F_t] is the same move with three patches:
+
+    - **What is being conditioned on**: F_t is the scoreboard - Pascal's was one number ("A leads 2:1"), a market's is the whole path so far, and it grows with time. That's the filtration. **Why condition at all**: the game isn't over, and the contract must be repriced as information arrives - the conditional expectation IS the mid-game price: average the payoff over the futures still compatible with the scoreboard.
+
+    - **e^{−r(T−t)}**: Pascal's game settled the same evening; an option pays months later, and future money is worth less - discount before averaging. (One line is enough, every interviewer knows what I mean.)
+
+    - **Q**: Pascal got his weights for free - nobody argues with a fair coin's 50/50. Q is **not** anyone's guess of the true odds: it's a doctored set of weights, constructed so that "price = weighted average" admits no free lunch - the risk premium is baked into the weights instead of added on top. (How the doctoring actually works - separate discussion, later.)
+
+    One line to close: Pacioli priced by the past and got it wrong; Pascal priced the futures given the score; finance prices the futures given the path, in discounted money, under doctored weights. Same recipe since 1654.
 11. `[ML]` The Bayes classifier: what is the optimal prediction in terms of p(y|x)? Show that 0-1 loss leads to the conditional mode and squared loss to the conditional mean.
 12. `[LLM]` Show that minimizing average cross-entropy over a corpus is estimating the conditional distributions p(x_t|x_{<t}). With an unrestricted model family and infinite data, what would the model converge to?
 13. `[C]` Regression to the mean: using E[Y|X] for jointly distributed (X, Y) with correlation < 1, explain why extreme observations tend to be followed by less extreme ones (fathers' vs sons' heights).

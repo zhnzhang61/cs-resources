@@ -22,6 +22,17 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 ## 1. Conditional expectation / conditional distribution E[Y|X]
 
 1. `[C]` Define E[Y|X=x] for discrete random variables. Compute a concrete example: roll two dice, find E[sum | first die = 3].
+
+   **A**: definition first - E[Y|X=x] is just the average of Y computed inside the world where X=x already happened. Shrink the sample space to that slice, reweight, take the mean: E[Y|X=x] = Σ y·P(Y=y|X=x).
+
+   Now the dice. Once we condition on first die = 3, we live inside that slice - how likely the slice itself was (the 1/6) doesn't matter anymore, that number only shows up later when we glue slices back together (that's the tower property, next question).
+
+   Expectation is linear, so don't build the distribution of the sum - split first: E[die1 + die2 | die1=3] = 3 + E[die2 | die1=3]. The 3 comes out because inside the slice it's not random anymore, it's just a known number.
+
+   Then E[die2 | die1=3] = E[die2] = 3.5, because the two dice are independent (no reason to believe one depends on the other - and if they did, THIS is exactly the step that breaks, and we'd have to go back into the slice and average honestly). So 3 + 3.5 = **6.5**.
+
+   Sanity check the heavy way: inside the slice, sum is 4,...,9 with prob 1/6 each, average = 39/6 = 6.5. Same number - but notice we never needed this distribution. For ten dice with the first = 3, the sum's distribution is a mess, but linearity gives 3 + 9×3.5 = 34.5 instantly. That's why the habit is: if you only need the mean, don't build the distribution.
+
 2. `[C]` State the tower property (law of total expectation) E[E[Y|X]] = E[Y]. Verify it on the dice example above.
 3. `[C]` E[Y|X=x] is a number; E[Y|X] is a random variable (a function of X). Explain the distinction and why it matters.
 4. `[C]` Show that the function g minimizing E[(Y − g(X))²] is g(X) = E[Y|X]. (The L² projection property — the single most reused fact in all three directions.)

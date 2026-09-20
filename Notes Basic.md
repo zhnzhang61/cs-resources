@@ -34,6 +34,13 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
    Sanity check the heavy way: inside the slice, sum is 4,...,9 with prob 1/6 each, average = 39/6 = 6.5. Same number - but notice we never needed this distribution. For ten dice with the first = 3, the sum's distribution is a mess, but linearity gives 3 + 9×3.5 = 34.5 instantly. That's why the habit is: if you only need the mean, don't build the distribution.
 
 2. `[C]` State the tower property (law of total expectation) E[E[Y|X]] = E[Y]. Verify it on the dice example above.
+
+   **A**: statement first - the tower property says the overall average is the slice averages glued back together, weighted by how likely each slice is: E[E[Y|X]] = E[Y].
+
+   For the dice, E[E[Y|X]] is the expectation over the slice averages E[Y|X=1], E[Y|X=2], E[Y|X=3], ..., which respectively are 3.5+1, 3.5+2, 3.5+3, ... - and more importantly, all 6 expressions are equally weighted 1/6, because prob of x=1 is the same as x=2, x=3... (this is where the 1/6 from Q1 finally goes to work: useless inside a slice, it's the gluing weight across slices; load the die and the slice averages x+3.5 don't move, but these weights all change). The expectation is then 3.5+3.5 = **7**.
+
+   Verify the other side directly: E[sum] = E[die1] + E[die2] = 3.5 + 3.5 = 7. Both sides agree.
+
 3. `[C]` E[Y|X=x] is a number; E[Y|X] is a random variable (a function of X). Explain the distinction and why it matters.
 4. `[C]` Show that the function g minimizing E[(Y − g(X))²] is g(X) = E[Y|X]. (The L² projection property — the single most reused fact in all three directions.)
 5. `[C]` State and prove the conditional variance decomposition Var(Y) = E[Var(Y|X)] + Var(E[Y|X]). Interpret both terms.

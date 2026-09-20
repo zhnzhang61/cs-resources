@@ -23,15 +23,11 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 
 1. `[C]` Define E[Y|X=x] for discrete random variables. Compute a concrete example: roll two dice, find E[sum | first die = 3].
 
-   **A**: definition first - E[Y|X=x] is just the average of Y computed inside the world where X=x already happened. Shrink the sample space to that slice, reweight, take the mean: E[Y|X=x] = Σ y·P(Y=y|X=x).
+   **A**: E[Y|X=x] comes from an effort to calculate the fair price of an unfinished game. The game was: two teams play, whoever scores 60 wins - now the score is 50 to 20 and the game stops, how to split the payout. People eventually realized the split should be based on **the futures from the current score - the past matters only through where it left the score, nothing else** (the first printed answer, Pacioli 1494, split by points already scored - backward-looking - and at a score of 1:0 his rule hands the leader the entire pot. Absurd.)
 
-   Now the dice. Once we condition on first die = 3, we live inside that slice - how likely the slice itself was (the 1/6) doesn't matter anymore, that number only shows up later when we glue slices back together (that's the tower property, next question).
+   Written as a recipe, that's the definition: keep only the futures compatible with X=x, reweight, average the payoff column: E[Y|X=x] = Σ y·P(Y=y|X=x).
 
-   Expectation is linear, so don't build the distribution of the sum - split first: E[die1 + die2 | die1=3] = 3 + E[die2 | die1=3]. The 3 comes out because inside the slice it's not random anymore, it's just a known number.
-
-   Then E[die2 | die1=3] = E[die2] = 3.5, because the two dice are independent (no reason to believe one depends on the other - and if they did, THIS is exactly the step that breaks, and we'd have to go back into the slice and average honestly). So 3 + 3.5 = **6.5**.
-
-   Sanity check the heavy way: inside the slice, sum is 4,...,9 with prob 1/6 each, average = 39/6 = 6.5. Same number - but notice we never needed this distribution. For ten dice with the first = 3, the sum's distribution is a mess, but linearity gives 3 + 9×3.5 = 34.5 instantly. That's why the habit is: if you only need the mean, don't build the distribution.
+   So back to this question: first die = 3 is the "current score", and we look into the future from here. The remaining future is the second die, whose average payoff is 3.5 (equal weighting, 1/6 each). Because Y = X1 + X2, the average of Y is 3 + 3.5 = **6.5**.
 
 2. `[C]` State the tower property (law of total expectation) E[E[Y|X]] = E[Y]. Verify it on the dice example above.
 

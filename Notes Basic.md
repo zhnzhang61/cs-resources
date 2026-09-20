@@ -31,11 +31,11 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 
 2. `[C]` State the tower property (law of total expectation) E[E[Y|X]] = E[Y]. Verify it on the dice example above.
 
-   **A**: statement first - the tower property says the overall average is the slice averages glued back together, weighted by how likely each slice is: E[E[Y|X]] = E[Y].
+   **A**: the story first. Two players each put 32 pistoles in, whoever wins 3 rounds takes all 64 (each round 50/50, rounds independent). The game stops in the middle - how to split the 64? Say player A leads 2:1. The next round must land on either 3:1 or 2:2. So A **is entitled to 32 no matter what** - even losing puts him at 2:2, worth 32 by symmetry - and the other 32 rides on a 50/50 round. Fair split at 2:1: A takes (64+32)/2 = 48, B takes (0+32)/2 = 16.
 
-   For the dice, E[E[Y|X]] is the expectation over the slice averages E[Y|X=1], E[Y|X=2], E[Y|X=3], ..., which respectively are 3.5+1, 3.5+2, 3.5+3, ... - and more importantly, all 6 expressions are equally weighted 1/6, because prob of x=1 is the same as x=2, x=3... (this is where the 1/6 from Q1 finally goes to work: useless inside a slice, it's the gluing weight across slices; load the die and the slice averages x+3.5 don't move, but these weights all change). The expectation is then 3.5+3.5 = **7**.
+   The tower property is this move written as a formula: the price of the game at any node = the probability-weighted average of the prices one round later: E[Y] = Σ_x P(X=x)·E[Y|X=x] = E[E[Y|X]]. Because the same rule holds at **every** node, Pascal could start from the finished positions and step backwards one round at a time - reusing 2:1's 48 inside 2:0, then 2:0's 56 inside 1:0 - instead of enumerating every remaining future like Fermat did. Recursion instead of enumeration: dynamic programming, born 1654.
 
-   Verify the other side directly: E[sum] = E[die1] + E[die2] = 3.5 + 3.5 = 7. Both sides agree.
+   Dice check: the pre-roll price of the "sum" game = the average of the slice prices E[Y|X=1], ..., E[Y|X=6], which are 4.5, 5.5, ..., 8.5 (that is, x + 3.5), each weighted 1/6 because the first die is fair (load the die and these weights all change - the slice prices don't move). That gives 3.5 + 3.5 = **7**. Direct computation of the other side: E[sum] = E[X1] + E[X2] = 7. Both sides agree.
 
 3. `[C]` E[Y|X=x] is a number; E[Y|X] is a random variable (a function of X). Explain the distinction and why it matters.
 

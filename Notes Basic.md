@@ -52,6 +52,75 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
    2. it's the object both worlds actually care about. In ML, the regression function is E[Y|X] **as a function** - the whole ridge line, not one slice's average; the entire book (ESL) is about approximating the schedule, not one number. In pricing, V_t = E^Q[payoff | F_t] is the mid-game price as information unfolds - the repricing schedule running forward in time is the price process. Confusing the number with the schedule is confusing one quote with the pricing rule.
 
 4. `[C]` Show that the function g minimizing E[(Y − g(X))²] is g(X) = E[Y|X]. (The L² projection property — the single most reused fact in all three directions.)
+
+   **A — the proof (Pythagoras in three lines)**: take any candidate g - a column that only reads X (the license to compete comes from Q3: E[Y|X] must itself be such a column). Add and subtract E[Y|X]:
+
+   ```
+   E[(Y−g(X))²] = E[(Y−E[Y|X])²] + E[(E[Y|X]−g(X))²] + 2·E[(Y−E[Y|X])(E[Y|X]−g(X))]
+   ```
+
+   The cross term dies by the tower property (Q2 enters here): condition on X first - inside a slice, E[Y|X]−g(X) is a known number and factors out, and E[Y−E[Y|X] | X] = 0 holds by definition: **the residual averages to zero in every slice**. So:
+
+   ```
+   E[(Y−g(X))²] = E[(Y−E[Y|X])²]  +  E[(E[Y|X]−g(X))²]
+                    ↑ noise floor, no g can touch it   ↑ ≥ 0, zero iff g = E[Y|X]
+   ```
+
+   Geometric reading: the residual Y−E[Y|X] is orthogonal to every column that only reads X, so E[Y|X] is the **orthogonal projection** of Y onto that subspace - the display above is the Pythagorean theorem, and the first term is Q5 waiting to happen. This is also why L1 has no comparable theory: no inner product → no "orthogonal" → no projection; the conditional median exists, but inherits none of this geometry.
+
+   ---
+
+   **Background I - 1809: a birth certificate issued backwards.** Gauss, in Theoria Motus, needed a justification for least squares. He was not a neutral explorer - he claimed he'd used least squares since 1795, Legendre had published the recipe four years earlier (with purely engineering reasons: easy to compute, unique solution), and a priority fight was brewing. Gauss wasn't looking for the answer; he was retrofitting a weighty birth certificate for an answer already in use. The road was built toward a chosen destination.
+
+   He had two materials. One borrowed: Laplace's inverse-probability machine - "the most probable value", the posterior mode under a flat prior (Laplace had run this machine for thirty years; the name "MLE" waits for Fisher, a century later). One believed: all of Europe averaged repeated measurements, and nobody asked why.
+
+   His move was to run the inference backwards: not "assume an error law → derive the best estimate", but "**take the mean as an axiom, and ask which error law can make it true**". The axiom deserves a slow reading, because its wording hides the engine of the whole argument. Setup: one unknown true value μ, one batch of measurements (y₁,…,yₙ), and two verdict procedures on the table:
+
+   ```
+   Procedure A (Europe's habit):    report the batch's own average ȳ
+   Procedure B (Laplace's machine): sweep candidate μ's, score each:
+       score(μ) = φ(y₁−μ)···φ(yₙ−μ), report the top-scoring candidate
+   ```
+
+   Both outputs travel with the batch: batch (10,12,17) has mean 13, batch (3,5) has mean 4; the score's peak moves too. The axiom = **the two procedures are the same function**: ∀ batch, argmax_μ score_batch(μ) = mean(batch). Not one fixed μ optimal for all batches - the peak travels with the batch; the axiom says every batch's peak lands on that batch's own mean, **batch after batch**. This is where the constraining power lives: there is only one φ, yet it must serve every batch's peak at once - only one candidate survives a demand that strict.
+
+   Five steps, with the quantifier cashed in at step ③:
+
+   ```
+   ① First-order condition (one batch): differentiate log score, set to zero
+      ⟹ Σ g(residualᵢ) = 0,  g = (log φ)'
+      - one batch gives one equation: almost no constraint on g
+   ② The mean's fingerprint: residuals always sum to zero; conversely,
+      any zero-sum tuple is some batch's residuals
+   ③ Cash the quantifier: "batch after batch" ⟹ g maps every zero-sum
+      tuple to a zero-sum tuple
+      n=2, (r,−r) → g is odd;  n=3, (r,s,−r−s) → g(r)+g(s)=g(r+s)
+      - Cauchy's functional equation + continuity ⟹ g linear: g(ε) = −2h²ε
+   ④ Integrate: log φ = −h²ε² + C ⟹ φ ∝ exp(−h²ε²)   ← the square is born here
+   ⑤ Multi-observation likelihood ∝ exp(−h²Σεᵢ²)
+      ⟹ maximizing likelihood = minimizing Σεᵢ² ⟹ least squares
+   ```
+
+   Watch step ④: the square in the exponent wasn't chosen - it was lifted there by integration. "Residuals sum to zero" is linear; "batch after batch" forces the score function to be linear; integrating a linear function once gives a quadratic. **The square is the integral of the mean.** The normal distribution is born - not observed in any data, but reverse-engineered as the mean's only legal guarantor (a characterization: normal ⟺ the mean is always the most probable value). The price is circularity: using "the mean is right" to prove "squares are right", when they are mechanically the same faith. Contemporaries saw through it.
+
+   **Background II - the aftermath, three acts.** 1810, Laplace launders the custom-made blessing with the CLT: errors are sums of many small effects, hence roughly normal anyway - the certificate turns legitimate. 1823, Gauss retreats and confesses: he defines squared error explicitly as a **loss** (jactura) for the first time, admitting the question has no truth in itself and the choice is guided by convenience - his rival being Laplace's 1774 absolute-value loss (optimum = the median; **L1 predates L2 as a loss by half a century**); he then proves Gauss-Markov, no normality needed. 1930s-40s, the late acquittal: the modern theorem (this question) assumes no distribution at all and moves the axiom into the loss - **the blessing migrates from the distribution into the loss function**; L²'s inner-product geometry retroactively shows the 1823 "arbitrary convenience" was one of a kind: the square is the only loss that grows a projection geometry. The normal's true role also settles: under normality, mean = median = mode, so L1, L2 and "most probable" all agree - **it is the distribution that silences all reasonable criteria**, not the reason the mean is right.
+
+   **Background III - from Gauss's ⑤ to this question's formula: two substitutions.** His Σεᵢ² and E[(Y−g(X))²] look like twins, separated by two moves:
+
+   **Substitution 1: parameters → functions.** His ε is "observation minus a model whose recipe is known and only has blanks to fill" - the thing subtracted is fixed by physical law, the only freedom is a few blanks; g(X) is a free function. The crossing runs through "g = one constant per slice", where his case is "the whole world is one slice" (repeated measurement of one quantity - μ is that lone slice's constant), or "the slice structure compressed by physics into a parameter family". Galton made this crossing in 1886: father/son heights come with no physical law to fill in, so he laid the data out as a cross-table and took each slice's center - **the target changed from a recipe to the slice-center function itself**; the slope-2/3 line was a finding, not an assumption.
+
+   **Substitution 2: sums → expectations.** His Σ is a finite sum over the batch at hand (sample SSE); E is an integral over the joint surface (population MSE) - which he could not even write down: his ontology had no surface. Kolmogorov made this crossing in 1933: the surface becomes a formal object, Radon-Nikodym makes zero-probability slices legal, and the L² projection theorem guarantees the minimizer exists and is unique; iid + LLN then connect the two levels: the batch sum is the plug-in approximation of the surface expectation.
+
+   ```
+   Gauss 1809:       min over parameters   Σ_batch (y − recipe(params))²
+   Galton 1886:      recipe → one constant per slice     (Substitution 1: functionalize)
+   Kolmogorov 1933:  batch sum → expectation over surface (Substitution 2: populationize)
+   ──────────────────────────────────────────────────────
+   Q4:               min over all g        E[(Y−g(X))²] → minimizer E[Y|X]
+   ```
+
+   One line to close: **in 1809 the mean reverse-engineered the normal (the square is the integral of the mean); in 1823 the inventor confessed the square was mere convenience; a century later, convenience turned out to be the only choice with a geometry - and Q4 took the blessing away from the distribution and deposited it in the loss, permanently.**
+
 5. `[C]` State and prove the conditional variance decomposition Var(Y) = E[Var(Y|X)] + Var(E[Y|X]). Interpret both terms.
 6. `[ML]` The regression function is f(x) = E[Y|X=x]. Why can't we compute it directly from finite data, and what does this force statistical learning to do instead?
 7. `[SC]` Define a discrete-time martingale. Show that a fair-coin random walk is a martingale using the tower property.

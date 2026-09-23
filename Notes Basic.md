@@ -137,6 +137,34 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 
 ### 5. `[C]` State and prove the conditional variance decomposition Var(Y) = E[Var(Y|X)] + Var(E[Y|X]). Interpret both terms.
 
+   **A — same school, second theorem.** Same setup as Q4: the whole school's heights, X = grade.
+
+   One-line version: the school's total height spread = (the within-grade spreads, averaged) + (the spread of the grade averages). Two accounts, and they add up exactly - nothing missing, nothing double-counted. R² is just the second account's share of the total.
+
+   Common sense first, two extremes: if every grade were internally uniform (everyone in a grade the same height), all spread would come from grade averages differing; if all grade averages were equal, all spread would be within-grade. Normally both are present. The only non-obvious claim the theorem adds: **the split is exactly additive - there is no third account.**
+
+   **The skipped step - why no third account.** Each student's deviation from the school average walks in two legs:
+
+   ```
+   (my height − school avg) = (my height − my grade's avg) + (my grade's avg − school avg)
+   ```
+
+   Square both sides, average over the whole school. The square expands into three terms: first leg², second leg², and 2 × (first leg × second leg). Textbooks jump straight to "the cross term is zero". The thought they skip: **fix one grade** - inside it, the second leg (grade avg − school avg) is the same number for every student, a constant, so it pulls out of the average; what's left is the average of the first leg within that grade - deviations around the grade's own average, which average to zero **by definition of an average**. So the cross term dies inside every grade, hence dies overall. What remains:
+
+   ```
+   avg[(Y − school avg)²] = avg[(Y − grade avg)²] + avg[(grade avg − school avg)²]
+         Var(Y)           =     E[Var(Y|X)]       +      Var(E[Y|X])
+   ```
+
+   Interpretation of the two terms:
+
+   - **E[Var(Y|X)]** - within-grade spread, averaged across grades (weighted by grade size). This is Q4's noise floor: the fine even the perfect guesser pays.
+   - **Var(E[Y|X])** - how much the grade averages themselves scatter. The part of height that knowing the grade explains. R² = this ÷ total.
+
+   Q4 and Q5 are the same picture read twice: Q4 says "report each grade's average" wins the guessing game; Q5 audits the books - total spread = what the winner still pays + what knowing the grade saved you. (Formally, Q5 is Q4's decomposition with the laziest competitor g = school average entered into the race.)
+
+   Background, two lines: Galton could see both spreads in his 1886 father-son table - the scatter inside each row and the climb of the row medians - but had no quantity that adds. Fisher coined the very word "variance" in 1918 **because** standard deviations don't add and squares do, then ran this identity as an accounting system on farm-trial data: ANOVA is literally this equation applied to yield numbers, and the F-test asks whether the between-group account is too large to be luck.
+
 ### 6. `[ML]` The regression function is f(x) = E[Y|X=x]. Why can't we compute it directly from finite data, and what does this force statistical learning to do instead?
 
 ### 7. `[SC]` Define a discrete-time martingale. Show that a fair-coin random walk is a martingale using the tower property.

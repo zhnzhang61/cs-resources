@@ -167,6 +167,16 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 
 ### 6. `[ML]` The regression function is f(x) = E[Y|X=x]. Why can't we compute it directly from finite data, and what does this force statistical learning to do instead?
 
+   **A**: first, one word needs straightening or the answer runs off track: "expression". The ground truth f(x) = E[Y|X=x] is **not a formula - it's an infinitely long table**: one number per x (that slice's center), assembled into the whole ridge line. It may have no closed form at all - the world is under no obligation to make the ridge look like √x or a polynomial. So the question isn't "why can't we find the formula"; it's more basic: **why can't finite data even pin down the number at each x**.
+
+   The school example shows where the difficulty lives. In Q4/Q5, "grade" had a dozen bins with hundreds of students each - reporting each bin's average was no problem. But real X is continuous. Replace "grade" with "father's height, to the millimeter":
+
+   - **Most slices are empty.** No student's X is exactly 175.382 cm - the slice average becomes 0/0; there is nothing to compute.
+   - **The non-empty slices are too thin.** Even with three or five students in a slice, the sample average ≠ the true average - off by noise of order 1/√n. What you computed is "the average of these few darts", not "the slice's true center".
+   - **Infinitely many numbers to pin down, finitely many darts.** An infinitely long table, filled with finite information - and with no assumptions, the entries where no dart landed can be anything at all: the data has no say there.
+
+   What this forces statistical learning to do instead: **borrow**. Your slice has no darts, so you need a license to borrow - from the neighbors (smoothness) or from the whole world (a drawing tool / parametric family). Borrow wide and you owe bias; borrow narrow and you pay variance. This is the page on which the entire book (ESL) opens for business.
+
 ### 7. `[SC]` Define a discrete-time martingale. Show that a fair-coin random walk is a martingale using the tower property.
 
 ### 8. `[SC]` What does "conditioning on the filtration F_t" mean? Give the information interpretation, and explain why E[X_T | F_t] is "the best forecast given what is known at time t."

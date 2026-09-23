@@ -199,6 +199,27 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 
 ### 11. `[ML]` The Bayes classifier: what is the optimal prediction in terms of p(y|x)? Show that 0-1 loss leads to the conditional mode and squared loss to the conditional mean.
 
+   **A — the mental model is a table.** Rows = heights (say the dataset only has 160, 165, 170), columns = grades (1-5), each cell = how many students have that height AND that grade. A row's sum = everyone at that height.
+
+   One-line version: told the height, report the grade with the **biggest cell in that row**. That rule is the Bayes classifier, and formally it reads argmax_k p(y=k|x).
+
+   The "show" part takes two lines. Play the guessing game with the new fine - wrong guess costs 1, right guess costs 0. If you report grade k in the 160 row, your average fine is the share of that row NOT in cell k: 1 − (cell k ÷ row sum). Minimizing the fine = maximizing cell k = picking the biggest cell = the conditional **mode**. Under squared loss the same game gave the conditional **mean** (Q4's parabola). The loss picks the summary statistic:
+
+   ```
+   squared fine (miss)²    →  report the slice mean      (Q4)
+   absolute fine |miss|    →  report the slice median    (Laplace 1774)
+   flat fine, wrong = 1    →  report the slice mode      (this question)
+   ```
+
+   Four readings of the same table:
+
+   1. **Argmax within a row = the Bayes classifier.** No normalization needed - every cell in the row is divided by the same row sum, so comparing counts and comparing conditional probabilities pick the same winner.
+   2. **Row-normalize = p(grade | height)**, the conditional distribution - the slice, classification flavor.
+   3. **Column-normalize = p(height | grade)**, the reverse conditional. And here Bayes' theorem collapses into bookkeeping: **the same cell, divided by the row sum or by the column sum** - the flip formula p(A|B) = p(B|A)p(A)/p(B) is just the recipe for rebuilding the row reading out of the column reading. The classifier carries the name Bayes because the classical presentation walks exactly that column-to-row route.
+   4. **Per-row, everyone outside the biggest cell gets misclassified.** Row error = (row sum − max cell) ÷ row sum; weight rows by their share and you have the Bayes error - the noise floor of classification, visible cell by cell. Slices where grades overlap heavily = tall floor (ESL ch2's two overlapping clouds: the overlap region is exactly this).
+
+   Two closing notes. First, this is literally Galton's father-son cross-table again: numeric Y, read each row by its **average** = regression; categorical Y, read each row by its **argmax** = classification. Same table, two summaries, chosen by the loss. Second, keep three name-sharers apart: the **Bayes classifier** is a target and a floor (unrunnable - needs the true row compositions); **Naive Bayes** is a runnable approximator of it (assumes features independent within each class to rebuild sparse cells cheaply); **Bayesian statistics** is a worldview about what probability means (beliefs updated prior → posterior). One surname, three jobs.
+
 ### 12. `[LLM]` Show that minimizing average cross-entropy over a corpus is estimating the conditional distributions p(x_t|x_{<t}). With an unrestricted model family and infinite data, what would the model converge to?
 
 ### 13. `[C]` Regression to the mean: using E[Y|X] for jointly distributed (X, Y) with correlation < 1, explain why extreme observations tend to be followed by less extreme ones (fathers' vs sons' heights).

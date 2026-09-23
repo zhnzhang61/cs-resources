@@ -53,20 +53,34 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 
 4. `[C]` Show that the function g minimizing E[(Y − g(X))²] is g(X) = E[Y|X]. (The L² projection property — the single most reused fact in all three directions.)
 
-   **A — the proof (Pythagoras in three lines)**: take any candidate g - a column that only reads X (the license to compete comes from Q3: E[Y|X] must itself be such a column). Add and subtract E[Y|X]:
+   **A — the guessing game**: I pick a random student from the whole school; you guess their height; a wrong guess costs you (miss)². Many rounds; minimize the average fine.
+
+   One-line version: told nothing, report the school average. Told the grade first, report **that grade's** average. "Whatever you're told, report the average within that range" - this strategy has no rival, and it IS the regression function E[Y|X].
+
+   **Skipped step 1 - why is the average the best single guess?** Textbooks wave this through with "obviously". Write it out: you report c, and the average fine is
 
    ```
-   E[(Y−g(X))²] = E[(Y−E[Y|X])²] + E[(E[Y|X]−g(X))²] + 2·E[(Y−E[Y|X])(E[Y|X]−g(X))]
+   avg[(height − c)²] = avg[height²] − 2c·avg[height] + c²
    ```
 
-   The cross term dies by the tower property (Q2 enters here): condition on X first - inside a slice, E[Y|X]−g(X) is a known number and factors out, and E[Y−E[Y|X] | X] = 0 holds by definition: **the residual averages to zero in every slice**. So:
+   Treat c as the variable: an upward-opening parabola. Differentiate, set to zero: −2·avg[height] + 2c = 0, so the bottom sits at c = avg[height]. Done - nothing but the distributive law and one derivative.
+
+   **Skipped step 2 - told the grade, why can you optimize grade by grade?** Your strategy is now a small table: "grade 1 → report this, grade 2 → report that, ..." - **this table is all that "a function g(X)" means**, nothing deeper. And the total fine splits by grade:
 
    ```
-   E[(Y−g(X))²] = E[(Y−E[Y|X])²]  +  E[(E[Y|X]−g(X))²]
-                    ↑ noise floor, no g can touch it   ↑ ≥ 0, zero iff g = E[Y|X]
+   total average fine = Σ (share of students in that grade) × (average fine inside that grade)
    ```
 
-   Geometric reading: the residual Y−E[Y|X] is orthogonal to every column that only reads X, so E[Y|X] is the **orthogonal projection** of Y onto that subspace - the display above is the Pythagorean theorem, and the first term is Q5 waiting to happen. This is also why L1 has no comparable theory: no inner product → no "orthogonal" → no projection; the conditional median exists, but inherits none of this geometry.
+   The key: the number you pick for grade 3 appears only in grade 3's term - the grades' accounts don't touch each other. So minimizing grade by grade = minimizing the whole. Inside each grade you're just replaying skipped step 1 → each grade reports its own average. Assembled: the optimal g is "each grade reports its grade average", i.e. E[Y|X].
+
+   **Skipped step 3 - the winner still pays.** Even with the perfect strategy, students inside one grade differ in height - that part of the fine (the within-grade spread) nobody can dodge: the noise floor. Lowering it takes more information, not a better guesser: told the sex as well, the slices get finer and the floor drops - but there is always a floor. (And Q5 is already visible from here: the winner's fine + your excess over the winner = the total spread - exactly Q5's two accounts.)
+
+   One-line close:
+
+   ```
+   among all guessing rules g:  avg[(Y − g(X))²] is minimized by
+   "each slice reports its own average" = E[Y|X]
+   ```
 
    ---
 

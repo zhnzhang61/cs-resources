@@ -224,6 +224,45 @@ Note: #5 and #6 are a pair — #5 is how to convert between distributions (likel
 
 ### 13. `[C]` Regression to the mean: using E[Y|X] for jointly distributed (X, Y) with correlation < 1, explain why extreme observations tend to be followed by less extreme ones (fathers' vs sons' heights).
 
+   **A - first, kill the wrong reading.** This is NOT about fixing x and drawing Y twice: repeated draws inside one slice are independent - the second draw doesn't know the first happened, and nothing compensates. "Last one was extreme, so the next will pull back", said of repeated draws in a fixed slice, is the gambler's fallacy, not regression to the mean.
+
+   The right reading: X itself is the first observation, Y the second - a correlated pair (father's height / son's height, first exam / second exam). The claim: given the first is extreme, the conditional average of the second is less extreme - **measured in each variable's own units of spread**. Standardize both and the whole theorem is one line:
+
+   ```
+   E[Y_std | X_std = x] = ρ·x,      |ρ| ≤ 1  always
+   ```
+
+   **The skipped step - why (luck doesn't renew).** Each score = level + luck. Now look only at people whose first score was extremely high: they were selected by "score extreme", and among extreme scorers the lucky outnumber the unlucky - level-high-plus-luck-good clears the bar more easily than level-high-plus-luck-bad. So conditioning on an extreme first observation quietly tilts the luck component upward. Second time around: the level carries over, the luck redraws fresh (mean zero) - so the expectation keeps only the level part, which is less than the first score. **Extreme observations carry an inflated share of luck, and luck doesn't renew.**
+
+   Three anchors:
+
+   1. It's a statement about the conditional **average**, not every individual - plenty of sons out-grow extreme fathers.
+   2. It's **symmetric in time**: extremely tall sons also have less-tall fathers on average. So it is not a force squeezing the world toward mediocrity (Galton's own first misreading) - the population spread stays constant generation after generation; only the ranking reshuffles. No causality anywhere, pure selection arithmetic.
+   3. **The slope caveat.** The raw regression slope β = Cov(X,Y)/Var(X) can exceed 1 - if the sons' spread were double the fathers' and ρ = 0.7, then β = 1.4: "every extra cm of father predicts 1.4 cm of son", which sounds anti-regression. But the theorem lives in standardized units: a +2 σ_X father predicts a +1.4 σ_Y son - less extreme **within his own generation**. Galton got lucky: the two generations' σ matched, so β ≈ ρ ≈ 2/3 and the raw-inch story worked without anyone noticing the assumption.
+
+   The classic trap (Kahneman's flight instructors): praise a great landing - the next one is usually worse; scold a terrible one - the next is usually better; the instructors concluded scolding works and praise backfires. Nothing worked either way: extremes carry inflated luck, and the luck redrew. Same arithmetic behind champion funds turning ordinary the next year and the magazine-cover jinx.
+
+   ---
+
+   **Aside - what does raw covariance even say?** (It entered through β = Cov/Var, and deserves its own paragraph.) The formula:
+
+   ```
+   Cov(X,Y) = avg[ (X − mean of X) × (Y − mean of Y) ]
+   ```
+
+   is a weighted vote: each observation votes **+** if its two deviations sit on the same side of their means, **−** if opposite sides, and the weight of a vote is the product of the two distances. Cov is the net margin. What's readable: **the sign**. What's not readable: **the magnitude**, twice over -
+
+   - Straight from the formula: replace X by 2X and every product doubles. The relationship didn't change; the number did. Magnitude carries units.
+   - Same Cov, different worlds: World A - 100 days, X and Y drift +1/−1 together every day, each vote = 1, Cov = 1. World B - 99 days both flat at their means (vote 0), one day both jump +10 (vote 100), Cov = 100/100 = 1. Daily lockstep and a single joint blow-up are indistinguishable to this number: the formula multiplies frequency-of-agreement by violence-of-agreement and averages them into one figure. (Also the root of why correlation-family models get blamed in crises - steady co-movement and tail co-explosion don't fit in one number.)
+
+   What the formula is actually for - look at its birthplace:
+
+   ```
+   Var(X+Y) = avg[((X−μx) + (Y−μy))²] = Var(X) + Var(Y) + 2·avg[(X−μx)(Y−μy)]
+   ```
+
+   **Covariance is the 2ab cross term of a squared sum.** It exists because expanding the square forces it into the books; it is what you must track for the variance of any sum - hence any portfolio - to add up. Its job is bookkeeping; the sign's descriptive power is a side effect. Two footnotes: Cov = 0 does not imply independence (X standard normal, Y = X²: Cov = 0, total dependence - covariance only detects the linear channel), and the addability is exactly why risk models store the covariance matrix: portfolio variance w'Σw needs entries you can weight and sum.
+
 ### 14. `[SC]` Doob martingale: for integrable Z and filtration F_t, show M_t = E[Z|F_t] is a martingale. Connect this to why discounted prices are Q-martingales.
 
 ### 15. `[C]` Capstone: "the regression function", "the discounted price process", and "the next-token head" — write each as a conditional expectation/distribution, then state exactly what differs across the three (conditioning variable, measure, estimation method).

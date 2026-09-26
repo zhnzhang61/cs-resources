@@ -112,6 +112,18 @@
   table.log pre { margin: 0; background: var(--d5-bg); border-radius: 6px; padding: 7px 9px; overflow-x: visible; }
   table.log code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; line-height: 1.45; color: var(--fg); white-space: pre; }
   .times { display: inline-block; margin-left: 6px; font-size: 10px; color: var(--muted); border: 1px solid var(--tbl); border-radius: 10px; padding: 0 6px; vertical-align: 1px; }
+  .dsbank .prob { border: 1.5px solid var(--tbl); border-radius: 10px; padding: 14px 16px 10px; margin: 14px 0; }
+  .dsbank h3 { font-size: 13.5px; margin: 0 0 8px; }
+  .dsbank h3.tier { font-size: 14px; margin: 26px 0 4px; }
+  .dsbank .parts { font-size: 12px; color: var(--muted); margin: 6px 0; line-height: 1.65; }
+  .dsbank p { font-size: 12.5px; line-height: 1.7; margin: 6px 0; }
+  .dsbank p a { color: var(--d1); text-decoration: none; }
+  .dsbank p a:hover { text-decoration: underline; }
+  .dsbank pre { background: var(--d5-bg); border-radius: 6px; padding: 8px 10px; overflow-x: auto; margin: 8px 0; }
+  .dsbank pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.55; color: var(--fg); white-space: pre; }
+  .dsbank p code, .dsbank h3 code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; }
+  .dsbank .chip { display: inline-block; font-size: 10.5px; font-weight: 400; border: 1px solid var(--tbl); border-radius: 10px; padding: 0 8px; margin-left: 8px; color: var(--muted); vertical-align: 2px; }
+  .dsbank .trap { color: var(--muted); font-size: 12px; }
 </style>
 </head>
 <body>
@@ -345,6 +357,135 @@ class MovingAverage:
                 seen[cur_sum] += 1
 
         return res</code></pre></td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td></tr></table></div>
+</section>
+
+<section class="logwrap dsbank">
+  <h2>Design Problem Bank <span class="logsub">The 4th category (design / welded structures) in practice: multi-part problems that build on each other. Method: write 2-3 asserts before implementing each part, rerun all earlier tests after every change, think out loud.</span></h2>
+
+  <h3 class="tier">Part 1 · Starter pool (do these three first)</h3>
+
+  <div class="prob">
+    <h3>1 · Word-Level Highlight — whole-word match + interval merge<span class="chip">cursor matching × interval merge (56)</span></h3>
+    <p>Given <code>text</code> and a list of source phrases (case-sensitive), find every <b>whole-word</b> occurrence of every source in <code>text</code> (a match may not start or end inside a word). Merge occurrences whose spans overlap, directly or transitively, into maximal regions; wrap each region in <code>&lt;hl&gt;…&lt;/hl&gt;</code> and return the new string. <code>text</code> contains only letters, digits, and single spaces.</p>
+    <div class="parts">① one source: whole-word match + wrap　② multiple sources　③ merge transitive overlaps into maximal regions</div>
+<pre><code>def highlight(text: str, sources: list[str]) -&gt; str: ...
+
+assert highlight("the quick brown fox", ["the quick", "quick brown"]) \
+       == "&lt;hl&gt;the quick brown&lt;/hl&gt; fox"          # overlapping matches merge
+assert highlight("aa aaab x", ["aa"]) == "&lt;hl&gt;aa&lt;/hl&gt; aaab x"   # whole-word: must NOT match inside "aaab"
+assert highlight("a b a", ["a"]) == "&lt;hl&gt;a&lt;/hl&gt; b &lt;hl&gt;a&lt;/hl&gt;"  # non-adjacent regions stay separate
+assert highlight("a b c", ["x"]) == "a b c"                   # no match: return unchanged</code></pre>
+    <p class="trap">Traps: word boundaries (tokenize into words and match word sequences — not substrings); transitive merge = sort occurrence intervals, one sweep.</p>
+  </div>
+
+  <div class="prob">
+    <h3>2 · Spreadsheet Formula Evaluator — formulas + cycle rejection<span class="chip">hash + dependency DAG + cycle check</span></h3>
+    <p>Input is a multi-line command script; output one result per command. <code>SET label value</code>: label is like <code>A1</code>/<code>B10</code> (uppercase letters + digits); value is a non-negative integer or an addition-only formula (<code>A1+A2+5</code>). If the assignment would create a dependency cycle → return <code>"ERROR"</code> and leave the sheet <b>unchanged</b>; otherwise <code>"OK"</code>. <code>GET label</code>: return the evaluated value as a string; <code>"ERROR"</code> if the cell is unset or any transitive dependency is unset. Lazy or eager evaluation is your choice — GET must always reflect the latest committed values.</p>
+    <div class="parts">① literals: set/get + parsing　② formula references + recursive evaluation (diamond dependencies are legal)　③ cycle detection: check before commit — rejection has zero side effects</div>
+<pre><code>def run(script: str) -&gt; list[str]: ...
+# common variant is a class API: set_cell(label, value) -&gt; bool · get_cell(label) -&gt; int | None
+
+assert run("SET A1 10\nGET A1\nSET A2 A1+20\nGET A2\nSET A3 A1+A2+5\nGET A3") \
+       == ["OK","10","OK","30","OK","45"]
+assert run("SET A1 10\nSET B1 A1+1\nSET A1 B1+1\nGET A1\nGET B1") \
+       == ["OK","OK","ERROR","10","11"]       # cycle rejected + rolled back: A1 keeps its old value
+assert run("SET A1 A1+1") == ["ERROR"]         # self-cycle
+assert run("SET A2 A1+1\nGET A2\nSET A1 1\nGET A2") \
+       == ["OK","ERROR","OK","2"]              # referencing an unset cell: SET is legal, GET errors until the dep exists
+assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
+       == ["OK","OK","OK","6"]                 # overwriting removes old edges — no cycle anymore</code></pre>
+    <p class="trap">Traps: rollback semantics (only write after the check passes); re-SET must rebuild the cell's outgoing edges; deep chains blow Python's recursion limit (raise it or go iterative — say this out loud).</p>
+  </div>
+
+  <div class="prob">
+    <h3>3 · Duplicate File Finder<span class="chip">parsing + hash grouping = LC 609</span></h3>
+    <p>Given directory info strings <code>"root/d1 f1.txt(content1) f2.txt(content2)"</code>, return all groups of files with identical content (each group ≥2, elements are full paths like <code>root/d1/f1.txt</code>). Practice directly as <a href="https://leetcode.com/problems/find-duplicate-file-in-system/" target="_blank" rel="noopener">LC 609 ↗</a>.</p>
+    <div class="parts">① parse the path strings　② group content → paths, keep groups ≥2　③ <b>follow-up discussion (memorize — the classic set)</b>: huge files → compare size first, then chunked hashing; hash collisions → byte-by-byte confirmation; real filesystem traversal → BFS/DFS + symlink-cycle protection; doesn't fit in memory → streaming / external grouping</div>
+    <p class="trap">✓ solved 2026-09-26 · all LC tests passed · follow-ups discussed</p>
+<pre><code>class Solution:
+    def findDuplicate(self, paths: list[str]) -&gt; list[list[str]]:
+        content_path_dict = {}
+        for i in range(len(paths)):
+            contents = paths[i].split(" ")
+            file_path = contents[0]
+            for j in range(1, len(contents)):
+                file_string = contents[j].split("(")
+                file_content = file_string[1].rstrip(")")
+                file_name = file_string[0]
+                complete_path = file_path + "/" + file_name
+                if file_content not in content_path_dict:
+                    content_path_dict[file_content] = [complete_path]
+                else:
+                    content_path_dict[file_content].append(complete_path)
+
+        res = []
+        for key, value in content_path_dict.items():
+            if len(value) &gt; 1:
+                res.append(value)
+        return res</code></pre>
+  </div>
+
+  <h3 class="tier">Part 2 · Advanced pool</h3>
+
+  <div class="prob">
+    <h3>4 · Highlight &amp; Rank Citations — problem 1, fully loaded<span class="chip">+ global-frequency ranking</span></h3>
+    <p>On top of problem 1, one more spec: after each merged region, append one <code>[i]</code> for every distinct source occurring in that region, ordered by that source's <b>total occurrence count across the whole text</b>, descending; break ties by smaller index. Tag is <code>&lt;yellow&gt;</code>. Bounds: text ≤ 1e5 chars · sources ≤ 2000 · total occurrences ≤ 2e5.</p>
+<pre><code>def highlight_and_rank(text: str, sources: list[str]) -&gt; str: ...
+
+assert highlight_and_rank("the quick brown fox", ["the quick","quick brown"]) \
+       == "&lt;yellow&gt;the quick brown&lt;/yellow&gt;[0][1] fox"
+assert highlight_and_rank("red blue green red blue red", ["red blue","blue green","red"]) \
+       == "&lt;yellow&gt;red blue green&lt;/yellow&gt;[2][0][1] &lt;yellow&gt;red blue&lt;/yellow&gt;[2][0] &lt;yellow&gt;red&lt;/yellow&gt;[2]"
+       # "red" occurs 3x globally → first in every region: ranking uses GLOBAL counts, not per-region
+assert highlight_and_rank("aa aaab x", ["aa","aaab","aa aaab"]) \
+       == "&lt;yellow&gt;aa aaab&lt;/yellow&gt;[0][1][2] x"   # all tied → by index</code></pre>
+    <p class="trap">Ask before coding: do adjacent-but-non-overlapping regions merge? exact tag format? case sensitivity?</p>
+  </div>
+
+  <div class="prob">
+    <h3>5 · In-Memory Vault — directory tree + duplicate-name suffix<span class="chip">hash directory tree + naming rule</span></h3>
+    <p>Execute two operation types in order. <code>add_file(path)</code>: store a file at an absolute path, auto-creating missing parent directories; on a name collision in the same directory, insert <code>(x)</code> <b>before the extension</b>, where x is the smallest unused positive integer. The extension is the text after the <b>last</b> period, and that period must not be the first or last character — otherwise the name has no valid extension and the suffix goes at the end. <code>get_files(dir)</code>: return the directory's <b>immediate</b> file names only (no subdirectory contents), sorted lexicographically; missing or empty directory → empty list. Bounds: ops ≤ 2e5, total path length ≤ 1e6.</p>
+    <div class="parts">① directory tree + add/get　② duplicate <code>(x)</code> suffix　③ extension edge rules (the last two asserts are the edges)</div>
+<pre><code>def run_vault(operations: list[str], paths: list[str]) -&gt; list[list[str]]: ...
+
+assert run_vault(["add_file","add_file","add_file","get_files"],
+                 ["/docs/report.txt","/docs/report.txt","/docs/image.png","/docs"]) \
+       == [["image.png","report(1).txt","report.txt"]]
+assert run_vault(["add_file","add_file","get_files","get_files"],
+                 ["/a/b/note","/a/c/note","/a/b","/a"]) \
+       == [["note"],[]]                        # immediate files only; /a holds only subdirectories → empty
+assert run_vault(["add_file","add_file","get_files"], ["/d/.cfg","/d/.cfg","/d"]) \
+       == [[".cfg",".cfg(1)"]]                 # leading period → no valid extension, suffix at the end
+assert run_vault(["add_file","add_file","get_files"], ["/d/a.b.txt","/d/a.b.txt","/d"]) \
+       == [["a.b(1).txt","a.b.txt"]]           # only the LAST period defines the extension</code></pre>
+  </div>
+
+  <div class="prob">
+    <h3>6 · Expression Map — problem 2 reskinned<span class="chip">same DAG, plus − × ÷</span></h3>
+    <p>Each definition is a string <code>name=expression</code>; expressions contain integers, symbol references, and <code>+ - * /</code>. Return <code>name=value</code> in input order; if any circular dependency exists, the entire output is <code>["CYCLE"]</code>. Size ≤ 1e5.</p>
+<pre><code>def evaluate(definitions: list[str]) -&gt; list[str]: ...
+
+assert evaluate(["a=1", "b=a+2", "c=b*3"]) == ["a=1", "b=3", "c=9"]
+assert evaluate(["a=b+1", "b=a+1"]) == ["CYCLE"]</code></pre>
+    <p class="trap">Ask before coding: division semantics (floor? truncate toward zero? divide by zero?). Note the spec makes the <b>whole</b> output CYCLE — not per-symbol errors.</p>
+  </div>
+
+  <div class="prob">
+    <h3>7 · Cursor Text Editor<span class="chip">two-stack gap buffer = LC 2296's cousin</span></h3>
+    <p>A text editor with a cursor: <code>addText / deleteText(k) / cursorLeft(k) / cursorRight(k)</code>; the cursor moves return up to 10 characters left of the cursor. Practice directly as <a href="https://leetcode.com/problems/design-a-text-editor/" target="_blank" rel="noopener">LC 2296 ↗</a>: two stacks, the cursor is the boundary between them.</p>
+  </div>
+
+  <div class="prob">
+    <h3>8 · Cosine Top-K Retrieval<span class="chip">dot product + heap (215's job)</span></h3>
+    <p>Given a query vector and a list of doc vectors, return the indices of the k docs with the highest cosine similarity (descending; ties → smaller index first). Part ③ often adds a mini evaluation: given a relevant-doc set, compute precision@k / recall@k.</p>
+<pre><code>def top_k(query: list[float], docs: list[list[float]], k: int) -&gt; list[int]: ...
+
+assert top_k([1,0], [[1,0],[0,1],[2,0]], 2) == [0,2]   # equal cosine → smaller index first
+assert top_k([1,1], [[1,0],[0,1]], 1) == [0]</code></pre>
+    <p class="trap">Traps: zero-vector division; confirm the tie rule before writing.</p>
+  </div>
+
+  <p class="trap" style="margin-top:16px">Variants seen in the same pool: versioned KV store with consistency checks, DB connection pool (concurrency), file system with capacity limits — same shape; recognition is enough.</p>
 </section>
 
 <script>

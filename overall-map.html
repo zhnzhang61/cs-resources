@@ -72,6 +72,25 @@
   .edge.d3 { stroke: var(--d3); stroke-width: 1.9; }
   .edge.d4 { stroke: var(--d4); stroke-width: 1.6; }
   .edge.d5 { stroke: var(--d5); stroke-width: 1.3; opacity: .7; }
+
+  .core { max-width: 1160px; margin: 10px auto 60px; padding: 0 16px; }
+  .core h2 { font-size: 18px; border-top: 2px solid var(--node-stroke); padding-top: 28px; margin-top: 30px; }
+  .coresub { font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 10px; }
+  .core h3.sub { font-size: 15px; margin: 24px 0 8px; }
+  .core details { margin: 12px 0; border: 1.5px solid var(--node-stroke); border-radius: 10px; padding: 10px 18px; }
+  .core summary { cursor: pointer; font-weight: 600; font-size: 13.5px; }
+  .core h4 { font-size: 13.5px; margin: 20px 0 6px; }
+  .core h4 .tag { color: var(--muted); font-size: 11px; font-weight: 400; margin-left: 8px; }
+  .core p { font-size: 12.5px; line-height: 1.8; margin: 8px 0; }
+  .core blockquote { margin: 8px 0; padding: 6px 14px; border-left: 3px solid var(--node-stroke); color: var(--muted); font-size: 12px; }
+  .core ol.qs { font-size: 12.5px; line-height: 1.7; padding-left: 22px; }
+  .core ol.qs li { margin: 7px 0; }
+  .core ol.qs code, .core p code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; }
+  .core pre { background: var(--node-fill); border: 1px solid var(--node-stroke); border-radius: 8px; padding: 9px 13px; overflow-x: auto; margin: 8px 0; }
+  .core pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; line-height: 1.55; white-space: pre; }
+  .core table.cmp { border-collapse: collapse; font-size: 12px; margin: 10px 0; }
+  .core table.cmp th, .core table.cmp td { border: 1px solid var(--node-stroke); padding: 6px 11px; text-align: left; vertical-align: top; line-height: 1.55; }
+  .core table.cmp th { background: var(--node-fill); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -287,5 +306,214 @@ const EDGES = [
   buildGraph(svg, NODES, EDGES, path);
 })();
 </script>
+<section class="core">
+<h2>Shared Core <span class="coresub">六大共享地基的正文区，图在上，文在下。每块三部分：思考题 · Article (EN) · 文章 (中文)。</span></h2>
+
+<h3 class="sub">§1 · Conditional Expectation</h3>
+
+<details>
+<summary>Part 1 · The 15 questions</summary>
+<ol class="qs">
+<li><code>[C]</code> Define E[Y|X=x] for discrete random variables. Compute a concrete example: roll two dice, find E[sum | first die = 3].</li>
+<li><code>[C]</code> State the tower property (law of total expectation) E[E[Y|X]] = E[Y]. Verify it on the dice example above.</li>
+<li><code>[C]</code> E[Y|X=x] is a number; E[Y|X] is a random variable (a function of X). Explain the distinction and why it matters.</li>
+<li><code>[C]</code> Show that the function g minimizing E[(Y − g(X))²] is g(X) = E[Y|X]. (The L² projection property — the single most reused fact in all three directions.)</li>
+<li><code>[C]</code> State and prove the conditional variance decomposition Var(Y) = E[Var(Y|X)] + Var(E[Y|X]). Interpret both terms.</li>
+<li><code>[ML]</code> The regression function is f(x) = E[Y|X=x]. Why can't we compute it directly from finite data, and what does this force statistical learning to do instead?</li>
+<li><code>[SC]</code> Define a discrete-time martingale. Show that a fair-coin random walk is a martingale using the tower property.</li>
+<li><code>[SC]</code> What does "conditioning on the filtration F_t" mean? Give the information interpretation, and explain why E[X_T | F_t] is "the best forecast given what is known at time t."</li>
+<li><code>[LLM]</code> Write the autoregressive factorization p(x_1,…,x_n) = Π_t p(x_t | x_{&lt;t}). Why does every joint distribution admit this factorization with no modeling assumption? Where does the modeling assumption actually enter in an LLM?</li>
+<li><code>[SC]</code> Risk-neutral pricing states V_t = E^Q[e^{−r(T−t)} · payoff | F_t]. Unpack this as a conditional expectation statement: what is being conditioned on, and why?</li>
+<li><code>[ML]</code> The Bayes classifier: what is the optimal prediction in terms of p(y|x)? Show that 0-1 loss leads to the conditional mode and squared loss to the conditional mean.</li>
+<li><code>[LLM]</code> Show that minimizing average cross-entropy over a corpus is estimating the conditional distributions p(x_t|x_{&lt;t}). With an unrestricted model family and infinite data, what would the model converge to?</li>
+<li><code>[C]</code> Regression to the mean: using E[Y|X] for jointly distributed (X, Y) with correlation &lt; 1, explain why extreme observations tend to be followed by less extreme ones (fathers' vs sons' heights).</li>
+<li><code>[SC]</code> Doob martingale: for integrable Z and filtration F_t, show M_t = E[Z|F_t] is a martingale. Connect this to why discounted prices are Q-martingales.</li>
+<li><code>[C]</code> Capstone: "the regression function", "the discounted price process", and "the next-token head" — write each as a conditional expectation/distribution, then state exactly what differs across the three (conditioning variable, measure, estimation method).</li>
+</ol>
+</details>
+
+<details>
+<summary>Part 2 · Article — Conditional Expectation: 370 Years, One Move (EN)</summary>
+
+<h4>Three formulas, one object</h4>
+<p>Pricing people write V = E^Q[payoff | F_t] all day. Machine-learning people write f(x) = E[Y|X=x] all day. LLM people compute p(next word | context) all day. Three industries, three notations — one mathematical object. This article tells its story in the order it was born.</p>
+
+<h4>1654: how to split an unfinished game <span class="tag">answers Q1</span></h4>
+<p>In 1494 the Venetian mathematician Pacioli recorded a real dispute in a merchant's handbook: two teams play a ball game, first to 60 points takes the whole stake; the game is interrupted at 50 to 20 — how should the money be split? Pacioli's answer: in proportion to points already scored. It sounds fair, and one counterexample kills it: interrupt the game at 1 to 0 and his rule hands the leader the entire pot, after one-sixtieth of a game. The root of the error: points already scored are not worth money by themselves; they are worth money only because they change who is likely to win the rest. Because the money is decided by the unplayed part, the split can only look forward — the past matters only through where it left the score.</p>
+<p>The dispute ran for 160 years. In 1654 Pascal and Fermat settled it by letter: list every way the game could still go, give each a probability, write next to each how much you would collect, then average with the probabilities. That average is the fair price of the unfinished game today. As a formula, "the conditional expectation of Y given X=x" is exactly this move:</p>
+<pre><code>E[Y|X=x] = Σ y · P(Y=y | X=x)</code></pre>
+<p>Keep only the futures compatible with what you know, reweight, average. Three years later Huygens put it in the first probability book under the name <i>expectation</i>, with a blunt definition: the expectation is the price at which you would sell your position in the game.</p>
+<p>Dice check (the computation half of Q1): X = first die, Y = sum, find E[Y|X=3]. "First die = 3" is the current score; the only remaining future is the second die. Because expectation is linear, no distribution of the sum is needed: E[Y|X=3] = 3 + E[second die] = 3 + 3.5 = 6.5. The 3 comes out because inside that slice it is no longer random; the second term needs no conditioning because the dice are independent.</p>
+<p>One detail worth keeping: the first expectation ever computed was already conditional — on the current score. The unconditional expectation that textbooks teach first is the special case at score 0:0.</p>
+
+<h4>The world is a table <span class="tag">answers Q3</span></h4>
+<p>To generalize the move you need one clean mental model: a table. List every possible outcome as a row, give each row a probability. A random variable is nothing more than a new column added to this table — one number per row; it was invented to give every outcome of a game a cash value so the game could be priced. A distribution is a weighted tally of one column.</p>
+<p>In this language E[Y|X=3] is a number: 6.5. But E[Y|X] is a whole new column: in each row, look up which slice its X falls in and fill in that slice's average. It is the full price schedule — one price per score. Because it assigns a number to every outcome, it is by definition itself a random variable: before the game starts you don't know which score will materialize, so you don't know which price will apply.</p>
+<p>The distinction earns its keep twice. First, the tower property below reads E[E[Y|X]] = E[Y]; the outer E needs a random variable to act on, and only because E[Y|X] is one does the formula parse. Second, all three industries care about the schedule, not one number: ML wants the whole regression function, pricing wants the whole price process. Confusing the number with the schedule is confusing one quote with the pricing rule.</p>
+
+<h4>Tower property: today's price is the average of tomorrow's prices <span class="tag">answers Q2</span></h4>
+<p>Pascal's original example: 32 pistoles each in the pot, first to three wins takes 64, interrupted at 2:1. His method: the next round lands on 3:1 (game over, 64) or 2:2 (symmetric, worth 32 each); because the round is 50/50, the value at 2:1 is (64+32)/2 = 48, and 16 for the other player.</p>
+<pre><code>E[Y] = Σ_x P(X=x) · E[Y|X=x] = E[ E[Y|X] ]</code></pre>
+<p>The overall average equals the slice averages re-averaged by slice probabilities. Because this rule holds at every node, you can start from the finished positions and step backwards, reusing computed values — 2:1's 48 feeds straight into 2:0's computation. That is dynamic programming, and the prototype of binomial-tree pricing; what it saves is enumerating every remaining future. Dice check: the six slice prices are x+3.5, each weighted 1/6, giving 7 — matching E[Y] = 3.5+3.5 computed directly.</p>
+
+<h4>Why report the average and nothing else <span class="tag">answers Q4</span></h4>
+<p>A new game to pin down optimality. I pick a random student from the whole school; you guess their height; a wrong guess costs (miss)²; minimize the average fine over many rounds.</p>
+<p>Step one: told nothing, you can only report one number c. The average fine expands to</p>
+<pre><code>avg[(height − c)²] = avg[height²] − 2c·avg[height] + c²</code></pre>
+<p>Treat c as the variable: an upward parabola; set the derivative to zero and the bottom is at c = the school average. Because a parabola has one lowest point, the average is the unique best report.</p>
+<p>Step two: told the grade first. Your strategy is now a small table — "grade 1: report this, grade 2: report that…" — and that table is all a "function g(X)" means. The total fine splits by grade: total = Σ (grade's share of students) × (average fine inside that grade). Because the number you pick for grade 3 appears only in grade 3's term, minimizing grade by grade minimizes the whole; because each grade replays step one internally, each grade reports its own average. Assembled: among all functions g, the minimizer of avg[(Y − g(X))²] is "each slice reports its own average", i.e. g = E[Y|X]. This is the L² projection property — the single most reused fact in the chapter.</p>
+<p>A historical footnote. When Legendre published least squares in 1805 it was a tool for reconciling contradictory observations; in 1809 Gauss justified it backwards, by taking "average the repeated measurements" as an axiom and reverse-engineering the one error law that makes the average optimal — that is where the normal distribution came from, its squared exponent being the integral of the mean's linearity. The modern proof above needs no distribution at all: the average is optimal because the loss is squared, in any world whatsoever.</p>
+
+<h4>Change the fine, change the answer <span class="tag">answers Q11</span></h4>
+<p>Swap the fine and the optimal summary swaps with it. Fine by |miss|: report the median. Flat fine — one coin for any wrong guess (classification): lay the data out as a height-by-grade count table; told the height, report the biggest cell in that row, because reporting class k costs 1 − (cell k ÷ row total) on average, and minimizing the fine means maximizing the cell. That rule is the Bayes classifier. It cannot be run (it needs the true composition of every slice); its uses are to be the target every classification algorithm approximates, and to set the floor — in each row, everyone outside the biggest cell is guessed wrong no matter what, and that unavoidable error rate is the Bayes error, classification's noise floor.</p>
+<pre><code>squared fine   → report the mean     (regression)
+absolute fine  → report the median
+flat fine      → report the mode     (classification)</code></pre>
+
+<h4>The winner still pays <span class="tag">answers Q5</span></h4>
+<p>Even with the champion strategy, students inside one grade still differ; that part of the fine cannot be dodged. Made precise, this is the variance decomposition:</p>
+<pre><code>Var(Y) = E[ Var(Y|X) ] + Var( E[Y|X] )
+total spread = average within-grade spread + spread of the grade averages</code></pre>
+<p>Why exactly additive, with no third term? Split each student's deviation into two legs: (me minus my grade's average) + (my grade's average minus the school average). Squaring produces a cross term. Fix one grade: the second leg is the same number for everyone in it — a constant, pull it out; the first leg then averages to zero inside the grade, because a grade average is defined as the number around which deviations sum to zero. So the cross term dies inside every grade, hence overall.</p>
+<p>The two accounts have names: the first is noise, the fine the winner still pays; the second is signal, the money knowing the grade saves you. R² is the second account's share of the total. Historical footnote: Fisher coined the very word "variance" in 1918 because standard deviations don't add and squares do; ANOVA is this identity run as an accounting system on experimental data.</p>
+
+<h4>Bad news: the table is infinitely long <span class="tag">answers Q6</span></h4>
+<p>Everything above assumed slices with enough people. Real X is often continuous; replace "grade" with "father's height, to the millimeter" and three problems arrive at once: most slices are empty (the slice average is 0/0 — nothing to compute); the non-empty slices are too thin (a three-person average misses the true slice center by noise of order 1/√n); and there are infinitely many entries to pin down with finitely many observations — where no data landed, the data has no say.</p>
+<p>So the true E[Y|X] cannot be computed, only approximated, and approximation must borrow data: either assume neighboring slices have similar averages and borrow locally (the kNN family), or assume the whole line follows a shape with a few parameters and borrow globally (the linear-regression family). Borrow wide and a wrong shape hurts you forever — bias; borrow narrow and each local answer wobbles — variance. The whole of ESL is about how to borrow and what it costs.</p>
+
+<h4>Anything left to guess: martingales <span class="tag">answers Q7 · Q8 · Q14</span></h4>
+<p>So far X was one-shot information. Let information accumulate over time and the third kind of question appears.</p>
+<p>First the scoreboard (Q8). F_t is everything you have seen up to time t: Pascal's scoreboard was one score, a market's is the whole price path so far, and it thickens with time. "Conditioning on F_t" means: use everything on the board, and nothing that isn't — using tomorrow's information is exactly the look-ahead cheat in backtesting. E[X_T | F_t] is called the best forecast at time t because Q4 proved it: under squared loss, the conditional average beats every other report.</p>
+<p>Now the martingale (Q7). Take a process M and ask daily: using everything I know today, is my best guess of tomorrow just today's value?</p>
+<pre><code>E[ M_{t+1} | F_t ] = M_t</code></pre>
+<p>If the answer is yes every day, M is a martingale — in plain words, everything guessable has been guessed out; what remains is pure luck. Check one example: the fair-coin walk S_{t+1} = S_t + X_{t+1}, X = ±1 with equal probability, independent of the past. Compute E[S_{t+1}|F_t]: S_t is already on the board, pull it out; X_{t+1} is independent of the board, so its conditional mean is its plain mean, zero. Hence E[S_{t+1}|F_t] = S_t: a martingale. The definition is not decoration for the trading industry: alpha research is the lifelong hunt for places where the best guess of tomorrow ≠ today — the gap is the predictable part nobody has eaten yet — and "markets are efficient" translates to "prices have been guessed clean".</p>
+<p>Finally the chapter quotes itself (Q14). Take any terminal quantity Z (say, a payoff at expiry) and define the live re-pricing sequence M_t = E[Z | F_t] — the best guess of the same Z, updated as the board thickens. This sequence is automatically a martingale, proof in one line of tower:</p>
+<pre><code>E[ M_{t+1} | F_t ] = E[ E[Z|F_{t+1}] | F_t ] = E[Z|F_t] = M_t</code></pre>
+<p>Guess with tomorrow's thicker board, then average back down to today's board — the tower property says fine-then-coarse equals coarse directly. This is the Doob martingale. Its link to finance: the discounted option price V_t is defined as E^Q[discounted payoff | F_t], which has exactly the Doob shape — so "discounted prices are Q-martingales" is not an extra theorem but a direct consequence of the pricing formula: in a fairly priced market, the price sequence is itself a guessed-clean process.</p>
+
+<h4>Regression to the mean <span class="tag">answers Q13</span></h4>
+<p>First kill the standard misreading: this is not "fix x, draw Y twice, and the second draw pulls back after an extreme first draw" — repeated draws inside one slice are independent and nothing compensates; that reading is the gambler's fallacy. The correct reading: X itself is the first observation and Y a correlated second one (father's height and son's height, first exam and second exam). Standardize both and the theorem is one line:</p>
+<pre><code>E[ Y_std | X_std = x ] = ρ·x ,    |ρ| ≤ 1</code></pre>
+<p>Because ρ &lt; 1, an extreme first observation predicts a less extreme second — measured in each variable's own units of spread. The mechanism: each score = level + luck; the people with an extreme first score were selected by "score extreme", and among extreme scorers the lucky outnumber the unlucky, so the selection quietly inflated the luck share; next time the level carries over and the luck redraws with mean zero. Extreme observations carry an inflated share of luck, and luck does not renew. (Kahneman's flight instructors concluded scolding works and praise backfires, because performance after an extreme landing drifted back either way. Nothing worked; the luck redrew.)</p>
+<p>Two footnotes. The raw regression slope β = Cov(X,Y)/Var(X) can exceed 1 — the theorem lives in standardized units and measures rank within one's own generation. And about Cov itself: the raw formula avg[(X−mean)(Y−mean)] is a distance-weighted vote — the sign is readable, the magnitude is not, because doubling a unit doubles the number and because steady small co-moves and one joint blow-up can produce the same figure. Its real job is bookkeeping: it is the 2ab cross term in Var(X+Y), the entry that makes portfolio variance add up.</p>
+
+<h4>Pricing: 1654 plus three patches <span class="tag">answers Q10</span></h4>
+<p>Risk-neutral pricing, V_t = E^Q[e^{−r(T−t)}·payoff | F_t], is Pascal's move with three patches. Patch one, the discount factor: Pascal's game settled the same evening; an option pays months later, and future money is worth less, so discount before averaging. Patch two, the measure Q: Pascal's weights were an undisputed 50/50; in markets nobody knows the true odds, and risk-averse people would not price by them anyway, so the weights are replaced by a manufactured set Q, built so that "price = weighted average" admits no free lunch — the risk premium is baked into the weights instead of added on top. Patch three, F_t: the scoreboard upgrades from one score to the whole thickening path. What is conditioned on, and why: the game isn't over, the contract must be repriced as information arrives, and the conditional expectation is that live fair price.</p>
+
+<h4>Guessing the next word <span class="tag">answers Q9 · Q12</span></h4>
+<p>One identity first (Q9). Rearranging the definition of conditional probability gives p(A and B) = p(A)·p(B|A); apply it repeatedly, peeling one word at a time:</p>
+<pre><code>p(x₁,…,x_n) = p(x₁) · p(x₂|x₁) · p(x₃|x₁,x₂) ··· p(x_n|x₁…x_{n−1})</code></pre>
+<p>Because every step is a definition rearranged, the factorization holds for any joint distribution, with zero assumptions. Its consequence: a joint over 100-word sentences from a 50,000-word vocabulary has 50000¹⁰⁰ entries — unlearnable directly; the identity says you never need that table, because a machine that does one thing well — given the context, output the distribution of the next word — owns the entire language distribution, losslessly. That is the license behind "training = next-token prediction". The modeling assumption is not in the factorization but in the filling: one shared-parameter transformer represents all the conditionals (plus a finite context window that truncates the past). The identity hands you infinitely many slices to fill; the transformer is the parametric tool chosen to fill them.</p>
+<p>And with what loss (Q12)? Training minimizes the corpus-average cross-entropy:</p>
+<pre><code>loss = − (1/N) Σ_t log q( true next word x_t | context x_{&lt;t} )</code></pre>
+<p>Split the account by context slice — the same move as splitting fines by grade in Q4. Inside one slice you report a distribution q while the true next word arrives by the true p; the average fine is −Σ p·log q, and this is minimized exactly at q = p (the excess over the minimum is the KL divergence, never negative). Because slice-by-slice minimization is overall minimization, an unrestricted model with infinite data converges to the true conditionals p(x_t|x_{&lt;t}) themselves. With finite data and a finite family we are back at Q6: the transformer borrows data across an infinitely long table. Cross-entropy is to distributions what squared loss is to means: the loss picks the target, and this time the target is the whole conditional distribution.</p>
+
+<h4>Three fields, one formula <span class="tag">answers Q15</span></h4>
+<table class="cmp">
+<tr><th></th><th>Regression</th><th>Pricing</th><th>LLM</th></tr>
+<tr><td>Object</td><td>E[Y | X]</td><td>E^Q[discounted payoff | F_t]</td><td>p(x_t | x_{&lt;t})</td></tr>
+<tr><td>Conditioned on</td><td>one-shot features X</td><td>a thickening path F_t</td><td>a lengthening context</td></tr>
+<tr><td>Under which measure</td><td>the real-world P</td><td>the manufactured no-free-lunch Q</td><td>the corpus distribution</td></tr>
+<tr><td>What is reported</td><td>the slice mean</td><td>the discounted slice mean</td><td>the whole slice distribution</td></tr>
+<tr><td>How it is obtained</td><td>borrowing across slices (Q6)</td><td>calibrating Q to market prices</td><td>cross-entropy training (Q12)</td></tr>
+</table>
+<p>One column, three industry names: the regression function, the price process, the next-token distribution.</p>
+
+<h4>Closing</h4>
+<p>What is conditional expectation? The live price of an unfinished game; the best guess given part of the information; the new column built on the big table by averaging within slices. Born in 1654 to split a pot, it now prices, regresses, and guesses the next word. Three industries later, the move is still the same one: keep only the futures compatible with what you know, weight them, average.</p>
+</details>
+
+<details open>
+<summary>Part 3 · 文章 — 条件期望：三百七十年，一个动作（中文）</summary>
+
+<h4>三个公式，一个东西</h4>
+<p>做定价的人天天写 V = E^Q[payoff | F_t]，做机器学习的人天天写 f(x) = E[Y|X=x]，做大模型的人天天算 p(下一个词 | 前文)。这三个式子来自三个行业，用三套记号，但它们是同一个数学对象。这篇文章按这个对象出生的顺序，把它讲成一个连贯的故事。</p>
+
+<h4>1654 年：没打完的赌局怎么分钱 <span class="tag">回答第 1 题</span></h4>
+<p>1494 年，威尼斯的数学家 Pacioli 在一本商人手册里记下一个真实纠纷：两队人打球赛，先到 60 分的拿走全部赌金，打到 50 比 20 时比赛被迫中断，钱怎么分。Pacioli 的答案是按已得分数的比例分。这个答案听着公道，但有一个反例能戳穿它：如果比赛 1 比 0 时中断，按这个规则领先方拿走全部赌金——比赛才进行了六十分之一，这显然荒唐。错误的根源是：已得的分数本身不值钱，它值钱只因为它改变了接下来谁更可能赢；因为决定钱归谁的是没打完的那部分，所以分钱只能看未来，过去只通过"把比分推到今天这个位置"起作用。</p>
+<p>这个问题吵了一百六十年。1654 年，Pascal 和 Fermat 通信解决了它，方法是：把比赛所有可能的走向一条条列出来，每条标上概率，每条写下"这样走我拿多少钱"，按概率加权平均。这个平均值，就是这份没打完的赌局今天的公平价格。写成公式，"给定当前信息 X=x 时 Y 的条件期望"就是这个动作：</p>
+<pre><code>E[Y|X=x] = Σ y · P(Y=y | X=x)</code></pre>
+<p>只保留和当前信息兼容的未来，重新加权，取平均。三年后 Huygens 把它写进第一本概率论著作，起名 expectation，定义方式很直白：期望就是你愿意把手上这个赌局卖出去的价格。</p>
+<p>拿两颗骰子验证一遍（第 1 题的计算部分）：X 是第一颗的点数，Y 是两颗的和，求 E[Y|X=3]。第一颗等于 3 就是"当前比分"，往未来看只剩第二颗。因为期望有线性（和的平均 = 平均的和），所以不用算 Y 的分布，直接拆：E[Y|X=3] = 3 + E[第二颗] = 3 + 3.5 = 6.5。其中 3 能提出来，是因为在"第一颗=3"的世界里它不再是随机的；E[第二颗] 不用带条件，是因为两颗骰子独立，条件加了也白加。</p>
+<p>一个容易忽略的细节：历史上第一个被算出来的期望，本身就带条件——条件在当前比分上。教科书先教的无条件期望，反而是比分 0 比 0 时的特例。</p>
+
+<h4>世界是一张表 <span class="tag">回答第 3 题</span></h4>
+<p>把上面的动作一般化，需要一个干净的心智模型：一张表。把实验所有可能的结果列成 rows，每个 row 标一个概率。随机变量就是往这张表上加的一根 column：每个 row 填一个数。它被发明出来的目的，就是给赌局的每种走向标一个现金值，好让人能加权平均出赌局的价格。分布则是对某一根 column 按概率做的汇总统计。</p>
+<p>在这套语言里，E[Y|X=3] 是一个数：6.5。但 E[Y|X] 是一整根新 column：每个 row，看它的 X 落在哪个切片，就填那个切片的平均值。它是"每种比分配一个价格"的整张报价表。因为它给每种结果都配了一个数，按随机变量自己的定义，它就是一个随机变量——开赛前你不知道会走到哪个比分，所以不知道哪个价格会生效。</p>
+<p>这个区分不是抠字眼，有两个用处。第一，下一节的塔性质写作 E[E[Y|X]] = E[Y]，外层那个 E 需要一个随机变量当作用对象，因为 E[Y|X] 是随机变量，这个式子才念得通。第二，三个行业真正关心的都是整张报价表而不是单个数：机器学习要的是整条回归函数，定价要的是随信息更新的整个价格过程。把数和表混为一谈，等于把一次报价和报价规则混为一谈。</p>
+
+<h4>塔性质：今天的价格是明天价格的平均 <span class="tag">回答第 2 题</span></h4>
+<p>Pascal 信里的原例：两人各押 32 个金币，先赢三局者通吃 64，打到 2 比 1 中断。他的算法：下一局只有两种结果，赢了变 3 比 1（终局，拿 64），输了变 2 比 2（对称，各值 32）；因为下一局五五开，所以 2 比 1 的价值 = (64+32)/2 = 48，另一方 16。</p>
+<pre><code>E[Y] = Σ_x P(X=x) · E[Y|X=x] = E[ E[Y|X] ]</code></pre>
+<p>全局平均等于各切片平均按切片概率再平均。因为这条规则在每个局面都成立，所以可以从终局一层层往回算，算过的存下来反复用——2 比 1 的 48 直接进入 2 比 0 的计算。这就是动态规划，也是二叉树定价的原型；它省掉的是把所有未来一条条列全的枚举。骰子上验证：E[Y] = 六个切片价格 (x+3.5) 各按 1/6 加权 = 7，和直接算 E[Y] = 3.5+3.5 = 7 一致。</p>
+
+<h4>为什么报平均，不报别的 <span class="tag">回答第 4 题</span></h4>
+<p>换一个游戏说清最优性。我从全校随机点一个学生，你猜他的身高，猜错按差距的平方罚款，玩很多轮，目标是平均罚款最少。</p>
+<p>第一步，什么都不知道、只能报一个数 c。平均罚款展开：</p>
+<pre><code>avg[(身高 − c)²] = avg[身高²] − 2c·avg[身高] + c²</code></pre>
+<p>把 c 看成自变量，这是开口向上的抛物线；求导等于零，解出 c = 全校平均。因为抛物线只有一个最低点，所以报平均是唯一最优。</p>
+<p>第二步，先告诉你年级再猜。这时你的策略是一张小表："一年级报几，二年级报几……"——所谓"选一个函数 g(X)"，全部含义就是填这张小表。总罚款按年级拆账：总平均罚款 = 各年级人数占比 × 各年级内部平均罚款，加起来。因为你给三年级填的数只出现在三年级那一项里，所以逐年级各自最小化就是整体最小化；因为每个年级内部就是第一步的游戏重玩一遍，所以每个年级报该年级的平均。拼起来：在所有函数 g 里，让 avg[(Y − g(X))²] 最小的就是"每片报每片平均"，即 g = E[Y|X]。这个结论叫 L² 投影性质，是全章被复用最多的一个事实。</p>
+<p>顺带记一段历史。最小二乘 1805 年由 Legendre 发表时只是调解矛盾观测方程的工具；1809 年 Gauss 给它找理由，方法是反着来的：把"重复测量取平均"设为公理，反推出唯一能让它成立的误差分布——正态分布就是这么被发明的，指数里的平方是"残差和为零"这个线性性质被积分抬上去的。而上面这个证明的现代意义在于：它不需要任何分布假设，平均的最优性来自损失函数是平方，对任何世界都成立。</p>
+
+<h4>换罚款规则，换最优答案 <span class="tag">回答第 11 题</span></h4>
+<p>罚款规则换了，最优统计量跟着换。按差距的绝对值罚，最优变成报中位数。猜错一律罚一块钱（分类问题），最优变成报人最多的那一档：把数据摆成"身高 × 年级"的计数表，给定身高，报本 row 里最大的格子——因为报第 k 档的平均罚款 = 1 − (第 k 格人数 ÷ row 总人数)，最小化罚款就是找最大的格子。这套报法叫 Bayes classifier。它跑不了（需要知道每个切片的真实构成），用途是当靶子和当地板：所有分类算法都在逼近它；而每个 row 里不在最大格的人注定被它猜错，这部分错误率叫 Bayes error，是分类版的噪声地板。</p>
+<pre><code>平方罚款     → 报平均       （回归）
+绝对值罚款   → 报中位数
+猜错罚一块   → 报人最多的   （分类）</code></pre>
+
+<h4>赢家也要交钱 <span class="tag">回答第 5 题</span></h4>
+<p>就算用了冠军策略，同一个年级里人和人的身高还是不一样，这部分罚款躲不掉。写精确就是方差分解：</p>
+<pre><code>Var(Y) = E[ Var(Y|X) ]  +  Var( E[Y|X] )
+全校参差 = 年级内参差的平均 + 年级平均之间的差距</code></pre>
+<p>为什么恰好相加、没有第三项？每个学生的偏差拆两段：(比本年级平均高多少) + (本年级平均比全校平均高多少)。两边平方后出现交叉项。固定一个年级看：第二段对年级内每个人是同一个数，是常数，提出来；剩下第一段在年级内求平均——因为年级平均本身就是按"偏差加起来为零"定义的，所以这个平均是零。交叉项在每个年级内为零，加总还是零。</p>
+<p>两笔账各有名字：第一笔是噪声，冠军也要交的罚款；第二笔是信号，知道年级省下的钱。R² 就是第二笔占总数的比例。历史注脚：variance 这个词是 Fisher 1918 年造的，造它就是因为标准差不能相加而平方能；ANOVA 就是把这条恒等式当会计制度用在试验数据上。</p>
+
+<h4>坏消息：表是无穷长的 <span class="tag">回答第 6 题</span></h4>
+<p>以上都假设切片里有足够的人。真实的 X 常常是连续的，把"年级"换成"父亲身高，精确到毫米"，麻烦就来了：绝大多数切片一个人都没有，切片平均变成零除以零；不空的切片人太少，三五个人的样本平均不等于真平均，差着量级为 1/√n 的噪声；要填的格子无穷多而数据有限，没有数据的格子填什么，数据管不着。</p>
+<p>所以真实的 E[Y|X] 算不出来，只能逼近，而逼近必须"借数据"：要么假设相邻切片的平均差不多，向邻居借（kNN 这一类）；要么假设整条线服从某个只有几个参数的形状，向全部数据借（线性回归这一类）。借得广，形状假设错了就一直错，这叫 bias；借得窄，每个局部数据太少答案晃，这叫 variance。ESL 整本书讲的就是怎么借、代价怎么算。</p>
+
+<h4>还有得猜吗：鞅 <span class="tag">回答第 7、8、14 题</span></h4>
+<p>到目前为止 X 都是一次性的信息。让信息随时间累积，就进入第三类问题。</p>
+<p>先说记分牌（第 8 题）。F_t 是"到 t 时刻为止你看到的一切"：Pascal 的记分牌是一个比分，市场的记分牌是到现在为止的整条行情路径，而且随时间越变越厚。"条件在 F_t 上"的意思就是：把牌面上已有的全用上，牌面上没有的一点不用——用了未来的信息，就是回测里的 look-ahead 作弊。E[X_T | F_t] 之所以叫"t 时刻的最佳预报"，因为第 4 题证过了：平方损失下，条件平均打败一切别的报法。</p>
+<p>再说鞅（第 7 题）。拿一个随时间走的量 M，每天问一句："把今天知道的全用上，猜明天——猜出来是不是就是今天的值？"如果每天答案都是"是"：</p>
+<pre><code>E[ M_{t+1} | F_t ] = M_t</code></pre>
+<p>这个过程就叫鞅（martingale）。它的白话含义：能猜的都被猜完了，剩下纯看运气。验证一个例子：公平硬币的游走，S_{t+1} = S_t + X_{t+1}，X 是 ±1 等概率、和过去独立。算 E[S_{t+1}|F_t]：S_t 在 t 时刻已经是牌面上的数，提出来；X_{t+1} 和过去独立，条件白加，E[X_{t+1}] = 0。所以 E[S_{t+1}|F_t] = S_t + 0 = S_t，是鞅。这个定义对量化行业不是摆设：做 alpha 的人一辈子在找的就是"猜明天不等于今天"的地方——差额就是还没被人吃掉的可预测成分；"市场有效"翻译成人话就是"价格已经被猜干净了"。</p>
+<p>最后是这一章最漂亮的自我引用（第 14 题）。任取一个终点量 Z（比如到期的赔付），定义"实时报价序列" M_t = E[Z | F_t]——随着牌面变厚，对同一个 Z 的最佳猜测不断更新。这个序列自动是鞅，证明就一行塔性质：</p>
+<pre><code>E[ M_{t+1} | F_t ] = E[ E[Z|F_{t+1}] | F_t ] = E[Z|F_t] = M_t</code></pre>
+<p>先用明天更厚的牌面猜，再退回今天的牌面平均——因为塔性质说"细猜完再粗猜等于直接粗猜"，所以两步合成一步。这就叫 Doob 鞅。它和定价的关系：折现后的期权价格 V_t 本身就是按 E^Q[折现赔付|F_t] 定义的，形状恰好是 Doob 鞅，所以"折现价格在 Q 下是鞅"不是额外定理，是定价公式的直接后果——公平定价的市场里，价格序列自己就是一个被猜干净的过程。</p>
+
+<h4>向均值回归 <span class="tag">回答第 13 题</span></h4>
+<p>先掐死一个常见误读：它不是说"固定 x，这次抽的 Y 极端，下次抽就会收敛"——同一切片内反复抽样互相独立，没有任何补偿机制，那个读法是赌徒谬误。正确的读法：X 本身是第一次观测，Y 是相关的第二次（父亲身高对儿子身高，第一次考试对第二次）。把两个变量各自标准化，定理是一行：</p>
+<pre><code>E[ Y_std | X_std = x ] = ρ·x ，   |ρ| ≤ 1</code></pre>
+<p>因为 ρ 小于 1，所以给定第一次极端，第二次的条件平均更靠近均值——用各自的尺度量，第二次没那么极端。机制：每次成绩 = 水平 + 运气；只看第一次考极端高分的人，这群人是被"分数极端"筛出来的，而极端分数里运气好的占多数，所以筛选悄悄抬高了运气成分；第二次水平带得走、运气重新抽（平均为零），于是期望只剩水平那部分。一句话：极端观测里掺的运气比例偏高，而运气不续期。（Kahneman 的飞行教练们由此坚信"批评有效、夸奖有害"——其实什么都没起作用，是运气重抽了。）</p>
+<p>两个防身注脚。第一，原始尺度的回归斜率 β = Cov(X,Y)/Var(X) 完全可以大于 1（比如儿子一代的散布是父亲一代的两倍），回归均值说的是标准化后的斜率 ρ，量的是"在自己那代人里的排名"。第二，顺着 Cov 说一句：协方差的原始公式是 avg[(X−X均值)(Y−Y均值)]，它是一场按距离加权的投票，正负号可读，大小不可读——因为换个单位数字就翻倍，因为"天天小幅同涨"和"平时无事、一起爆一次"可以给出同一个数。它真正的岗位是记账：它就是 Var(X+Y) 展开式里那个 2ab 交叉项，组合方差能加总全靠它。</p>
+
+<h4>定价：1654 加三块补丁 <span class="tag">回答第 10 题</span></h4>
+<p>风险中性定价公式 V_t = E^Q[e^{−r(T−t)}·payoff | F_t]，就是 Pascal 的动作加三块补丁。补丁一，折现因子：Pascal 的赌局当晚结清，期权几个月后才给钱，未来的钱比现在的便宜，所以先折现再平均。补丁二，测度 Q：Pascal 的权重是没人会争的五五开；市场里没人知道真概率，而且怕风险的人不按真概率出价，所以换用一组人造的权重 Q，造它的标准是让"价格 = 加权平均"这个菜谱不产生免费午餐——风险溢价被烤进权重里，而不是加在价格外面。补丁三，F_t：记分牌从一个比分升级成越变越厚的整条路径。条件在什么上、为什么条件——因为赌局没结束，合约必须随信息到来实时重新定价，而条件期望就是那个实时公平价。</p>
+
+<h4>猜下一个词 <span class="tag">回答第 9、12 题</span></h4>
+<p>大模型这边先看一条恒等式（第 9 题）。条件概率的定义移项，就是 p(A 和 B) = p(A)·p(B|A)；反复用它，一次剥一个词：</p>
+<pre><code>p(x₁,…,x_n) = p(x₁) · p(x₂|x₁) · p(x₃|x₁,x₂) ··· p(x_n|x₁…x_{n−1})</code></pre>
+<p>因为每一步只是定义移项，所以这个拆法对任何联合分布都成立，零假设。它的后果：词表 5 万、句长 100 的联合分布有 50000 的 100 次方个格子，直接学是死路；恒等式说你不需要那张表，只要一台机器能做好"给定前文，报出下一个词的分布"，整个语言的分布就被它无损地拥有了。这就是"训练 = 猜下一个词"的许可证。建模假设不在拆法里，在填法里：用一个共享参数的 transformer 表示所有条件分布（外加有限的 context window 截断前文）——恒等式给了无穷多个切片要填，transformer 是选定的那件参数化画具。</p>
+<p>那用什么损失去填（第 12 题）？训练的目标是最小化语料上的平均 cross-entropy：</p>
+<pre><code>loss = − (1/N) Σ_t log q(真实的下一个词 x_t | 前文 x_{&lt;t})</code></pre>
+<p>按前文切片拆账（和第 4 题按年级拆账同一个动作）：每个切片内，你报一个分布 q，真实下一个词按真分布 p 出现，平均罚款是 −Σ p·log q。能证明这个量当且仅当 q = p 时最小（两者的差就是 KL 散度，永远不小于零）。因为逐切片最小化就是整体最小化，所以模型族不设限、数据无限时，训练的收敛点就是每个前文切片的真实条件分布 p(x_t|x_{&lt;t}) 本身。现实里数据有限、模型族有限，于是回到第 6 题：transformer 在无穷长的表上借数据。cross-entropy 对分布，正如平方损失对平均：损失定靶子，这次的靶子是整个条件分布。</p>
+
+<h4>三个领域，一张公式 <span class="tag">回答第 15 题</span></h4>
+<table class="cmp">
+<tr><th></th><th>回归</th><th>定价</th><th>大模型</th></tr>
+<tr><td>对象</td><td>E[Y | X]</td><td>E^Q[折现 payoff | F_t]</td><td>p(x_t | x_{&lt;t})</td></tr>
+<tr><td>条件在什么上</td><td>一次性的特征 X</td><td>越变越厚的路径 F_t</td><td>越变越长的前文</td></tr>
+<tr><td>用什么测度</td><td>真实世界的 P</td><td>人造的无套利权重 Q</td><td>语料的经验分布</td></tr>
+<tr><td>报的是什么</td><td>切片的平均</td><td>切片的折现平均</td><td>整个切片分布</td></tr>
+<tr><td>怎么从数据得到</td><td>借数据逼近（第 6 题）</td><td>对市场价格校准 Q</td><td>cross-entropy 训练（第 12 题）</td></tr>
+</table>
+<p>同一根 column，三个行业给它起了三个名字：regression function、price process、next-token distribution。</p>
+
+<h4>收尾</h4>
+<p>条件期望是什么？它是没打完的赌局的实时价格，是知道一部分信息之后的最优猜测，是那张大表上"按切片取平均"造出来的新 column。1654 年它为分钱而生，今天它定价、回归、猜下一个词。行业换了三个，动作还是那一个：只留和已知信息兼容的未来，加权，取平均。</p>
+</details>
+
+</section>
 </body>
 </html>

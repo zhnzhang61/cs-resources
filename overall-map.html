@@ -514,6 +514,159 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <p>条件期望是什么？它是没打完的赌局的实时价格，是知道一部分信息之后的最优猜测，是那张大表上"按切片取平均"造出来的新 column。1654 年它为分钱而生，今天它定价、回归、猜下一个词。行业换了三个，动作还是那一个：只留和已知信息兼容的未来，加权，取平均。</p>
 </details>
 
+<h3 class="sub">§2 · Linear Algebra: matmul · projection · eigendecomposition / SVD</h3>
+
+<details>
+<summary>Part 1 · The 15 questions</summary>
+<ol class="qs">
+<li><code>[C]</code> Give three views of matrix multiplication: rows-times-columns, linear combination of columns, and sum of outer products. Why does the outer-product view matter for blocked computation?</li>
+<li><code>[C]</code> Count the FLOPs of an (m×k)(k×n) matmul. Why is matmul the dominant cost in both OLS (∼np²) and transformer inference?</li>
+<li><code>[C]</code> Derive the orthogonal projection of y onto the column space of full-rank X: ŷ = X(XᵀX)⁻¹Xᵀy. What geometric property characterizes the residual y − ŷ?</li>
+<li><code>[ML]</code> OLS as projection: connect β̂ = (XᵀX)⁻¹Xᵀy to the previous question. What are the normal equations geometrically?</li>
+<li><code>[C]</code> Define eigenvalues/eigenvectors; compute them for a 2×2 symmetric matrix. State the spectral theorem for symmetric matrices.</li>
+<li><code>[C]</code> Define positive semidefinite. Show every covariance matrix is PSD, and that PSD implies nonnegative eigenvalues.</li>
+<li><code>[C]</code> State the SVD A = UΣVᵀ. How does the SVD of X relate to the eigendecomposition of XᵀX? State the Eckart–Young low-rank approximation result.</li>
+<li><code>[ML]</code> Derive the first principal component as the maximum-variance direction (Rayleigh quotient → top eigenvector of the covariance). Why center first? Covariance-PCA vs correlation-PCA — when does the choice matter?</li>
+<li><code>[SC]</code> Cholesky factorization: what is it, and how do you use it to turn iid standard normals into correlated normals with a target covariance? (The workhorse of multi-asset Monte Carlo.)</li>
+<li><code>[SC]</code> PCA on yield curves: which matrix do you eigendecompose, and how do the classic level/slope/curvature factors appear in the loadings?</li>
+<li><code>[ML]</code> Ridge as spectral shrinkage: using the SVD of X, show ridge multiplies the component along each uᵢ by σᵢ²/(σᵢ² + λ). Why does damping small-singular-value directions fight collinearity and overfitting?</li>
+<li><code>[LLM]</code> Attention as matmuls: with softmax(z)ᵢ = e^{zᵢ}/Σⱼe^{zⱼ} (taken as given here), write attention(Q,K,V) = softmax(QKᵀ/√d_k)V with explicit shapes for sequence length n. Which computation is O(n²) in time and memory?</li>
+<li><code>[LLM]</code> Blocked matmul: explain how a large matmul is computed tile-by-tile so working blocks fit in fast memory, accumulating partial sums. Why does tiling reduce slow-memory traffic but not FLOPs? (The mechanical idea under FlashAttention.)</li>
+<li><code>[LLM]</code> Low-rank adaptation: why can a weight update ΔW (d×d) be usefully approximated as BA with B, A of rank r ≪ d? Connect to Eckart–Young, and compute the parameter savings.</li>
+<li><code>[C]</code> Capstone: one symmetric matrix, three hats — the return covariance (risk model), XᵀX (regression), and QKᵀ scores (attention). For each, state what its eigenstructure/conditioning means in practice and what goes wrong when it is ill-conditioned (unstable Cholesky / collinear β̂ / degenerate attention).</li>
+</ol>
+</details>
+
+<details>
+<summary>Part 2 · Article — Linear Algebra: One Multiply, Three Hats (EN)</summary>
+
+<h4>One machine, one question</h4>
+<p>Chapter 1 said the world is a table and a random variable is a column. Nail several columns side by side and you get a rectangular block of numbers — a matrix. This chapter has only one machine (multiply-and-add) and one deep question (in which directions does this block stretch things). The daily formulas of the three industries — portfolio variance wᵀΣw, the OLS projection, attention's QKᵀ — are all the same machine running.</p>
+
+<h4>Three readings of one multiplication, and why blocks are fast <span class="tag">answers Q1 · Q13</span></h4>
+<p>Every entry of C = AB is a sum over the shared dimension: C_ij = Σ_l a_il·b_lj. You can therefore read the product three ways — entry by entry (a row dotted with a column), column by column (each column of C is a weighted mix of A's columns), or as a sum of outer products (layer l contributes column l of A times row l of B, stacked over l). The third reading is what makes blocked computation legal: a sum can be computed in batches, so cut the shared dimension into chunks, compute partial products, accumulate — the block version is the same formula with blocks playing the role of entries, and it gives the exact same answer.</p>
+<p>Why bother? Because the block version is faster on real hardware. If fast memory fits either two 1×64 vectors or two 8×8 tiles — the same 128 numbers — it is better to load the two tiles and finish all the arithmetic between them at once (about 1,024 multiply-adds, every loaded number reused 8 times) than to load a long vector, use each number once (about 128 multiply-adds), evict it, and ship it in again later. The total arithmetic is identical either way; what shrinks is the traffic between slow and fast memory, and the traffic is what costs time. That is the entire mechanical idea under FlashAttention (Q13): compute attention tile by tile so the working set stays in fast memory, accumulate partial sums, never materialize the big intermediate — fewer trips, same FLOPs.</p>
+
+<h4>What a multiplication costs <span class="tag">answers Q2</span></h4>
+<p>An (m×k)(k×n) product has m·n entries, each a length-k dot product costing about 2k operations, so the total is about <b>2kmn</b>. No dimension is squared by nature; a square appears only when one size occupies two of the three slots. In OLS, forming XᵀX is (p×n)(n×p) → about 2np²: quadratic in the number of features, linear in the number of samples. In a transformer, the score product QKᵀ is (n×d)(d×n) → about 2n²d: quadratic in context length. Because that n² term dominates for long context, long context is expensive — the difficulty is arithmetic before it is anything else.</p>
+
+<h4>Projection: chapter 1's guessing game, finite-sample edition <span class="tag">answers Q3 · Q4</span></h4>
+<p>First, a word that trips people: "y is a vector in n-dimensional space" just means y is a list of n observations — y₂ is not one level more complex than y₁, it is just another sample. Read "dimension" as one more slot in a list and the mystery evaporates. The prediction ŷ must be a list of the same length, so that y − ŷ can be formed slot by slot; call it e, the error. Minimizing the length ‖e‖² = Σ(yᵢ−ŷᵢ)² optimizes all n observation errors in one shot — that is why the geometry pays.</p>
+<p>The matrix X is p columns, each a length-n list (all observations of one feature). Weighting the columns by p coefficients and adding produces every ŷ you are allowed to build; the set of all such ŷ is the column space, a p-dimensional flat inside the n-dimensional list space. The question "which allowed ŷ is closest to y" has a geometric answer: make the error e perpendicular to the flat — because if e leaned along any direction inside the flat, you could slide ŷ that way and shorten the distance. Perpendicular to every column means Xᵀe = 0; unpack e = y − Xβ̂ and you get the normal equations and their solution:</p>
+<pre><code>Xᵀ(y − Xβ̂) = 0   →   XᵀX β̂ = Xᵀy   →   β̂ = (XᵀX)⁻¹Xᵀy ,    ŷ = X β̂</code></pre>
+<p>Geometrically the normal equations say one sentence: <b>no column can see anything left in the residual</b>. β̂ is just the recipe of the landing point in terms of the p columns.</p>
+<p>Two cautions worth keeping. First, "close" means small distance, not similar direction: a ŷ pointing exactly along y at twice the length has correlation 1 and a large error — angle governs direction only, distance governs direction and scale, and OLS minimizes distance. (The angle earns its keep elsewhere: R² is cos² of the angle between centered y and centered ŷ.) Second, the perpendicularity of residuals is an in-sample property — it holds on the training data that built β̂, and not for new observations; that is exactly why in-sample fit is optimistic and out-of-sample validation exists.</p>
+
+<h4>Eigen-directions: where the block stretches <span class="tag">answers Q5</span></h4>
+<p>Multiply a vector by a square matrix and it generally gets both stretched and turned. An eigenvector is a direction the matrix does not turn — only stretches: Av = λv, and the stretch factor λ is its eigenvalue. To find them, note Av = λv means (A − λI)v = 0 has a nonzero solution, which requires det(A − λI) = 0. For a symmetric 2×2 matrix [[a, b], [b, c]] this determinant is a quadratic in λ, and the two roots are</p>
+<pre><code>λ = ( (a+c) ± √( (a−c)² + 4b² ) ) / 2</code></pre>
+<p>Both roots are real because the thing under the square root is a sum of two squares. That is the 2×2 shadow of the spectral theorem: <b>a symmetric matrix has a full set of real eigenvalues with mutually perpendicular eigenvectors</b>, so A = QΛQᵀ — rotate into the eigen-frame, stretch each axis by its λ, rotate back. A symmetric block of numbers is nothing but stretches along a hidden set of perpendicular axes.</p>
+
+<h4>Variance is never negative <span class="tag">answers Q6</span></h4>
+<p>A symmetric matrix A is positive semidefinite (PSD) if wᵀAw ≥ 0 for every w. Covariance matrices are PSD for a one-line reason: wᵀΣw is the variance of the portfolio wᵀr (weights w on returns r), and a variance is an average of squares, so it cannot be negative. And PSD forces nonnegative eigenvalues: plug an eigenvector into the definition, vᵀAv = λ·vᵀv = λ‖v‖², and since the left side is ≥ 0 and ‖v‖² &gt; 0, λ ≥ 0. A negative eigenvalue in an estimated covariance matrix is therefore a certificate of error — it claims some portfolio has negative variance.</p>
+
+<h4>SVD: the universal factorization of a rectangle <span class="tag">answers Q7</span></h4>
+<p>Square symmetric blocks are rotate-stretch-rotate-back. A general rectangular block A (m×n) has the same anatomy with two different frames: A = UΣVᵀ — rotate in the input space (Vᵀ), stretch along the axes by the singular values σ₁ ≥ σ₂ ≥ … on Σ's diagonal, rotate in the output space (U). The link to eigendecomposition is mechanical: XᵀX = VΣᵀΣVᵀ, so the eigenvalues of XᵀX are the squared singular values of X and the V-frame is shared. Eckart–Young says: if you must approximate A with a matrix of rank r, keep the r largest stretches and drop the rest — that truncation is the best rank-r approximation in the least-squares sense. Every low-rank trick in the pipeline (PCA, LoRA) is this theorem wearing work clothes.</p>
+
+<h4>PCA: the direction of maximum spread <span class="tag">answers Q8 · Q10</span></h4>
+<p>Ask: along which unit direction w is the data most spread out? The spread along w is the variance of the projected data, which is wᵀΣw. Maximize it subject to ‖w‖ = 1. The skipped step that makes the answer obvious: write Σ = QΛQᵀ and express w in the eigen-frame; then wᵀΣw becomes a weighted average of the eigenvalues, with weights that are squares summing to one. To maximize a weighted average of numbers, put all the weight on the largest number — so the best w is the top eigenvector, and the achieved spread is the top eigenvalue. That ratio wᵀΣw / wᵀw is the Rayleigh quotient.</p>
+<p>Center first, because without subtracting the mean the "maximum spread direction" points from the origin toward the data's center — you would be measuring where the cloud sits, not how it spreads. Covariance-PCA versus correlation-PCA: if features carry different units (dollars next to percentages), the big-unit feature hijacks the variance and the top component just says "the loud variable is loud"; standardizing to correlations gives every feature the same voice. When units are comparable, covariance-PCA keeps honest size information.</p>
+<p>The rates-desk classic (Q10): each day the whole yield curve moves; treat each day's move across maturities as one observation (one row, maturities as columns), and eigendecompose the covariance matrix of these daily moves. The top three loading patterns are famously interpretable — <b>level</b> (all maturities same sign: the whole curve shifts), <b>slope</b> (one end positive, the other negative: the curve tilts), <b>curvature</b> (ends one sign, middle the other: the curve bows) — and together they typically explain the large majority of the variance. Risk systems hedge these three numbers instead of thirty maturities.</p>
+
+<h4>Cholesky: wiring correlation into independent dice <span class="tag">answers Q9</span></h4>
+<p>Cholesky factorizes a PSD matrix as Σ = LLᵀ with L lower-triangular — a concrete square root. Its job in Monte Carlo: you can only generate independent standard normals z, but you need correlated returns with covariance Σ. Set x = Lz. Then the covariance of x is L·(covariance of z)·Lᵀ = L·I·Lᵀ = Σ, exactly the target. Reading L row by row: output 1 is a scaled copy of source 1; output 2 mixes sources 1 and 2; output k mixes the first k sources — a mixing board that feeds shared sources into later channels, which is precisely what correlation is. This is the workhorse of every multi-asset simulation.</p>
+
+<h4>Ridge: a per-direction discount <span class="tag">answers Q11</span></h4>
+<p>Write X = UΣVᵀ. OLS reconstructs y's projection using every direction uᵢ at full strength. Ridge replaces the strength 1 on direction uᵢ by</p>
+<pre><code>σᵢ² / (σᵢ² + λ)</code></pre>
+<p>(one line to see it: β̂_ridge = (XᵀX + λI)⁻¹Xᵀy, and in the SVD frame XᵀX + λI has eigenvalues σᵢ² + λ while Xᵀy delivers σᵢ per direction.) The factor is nearly 1 where σᵢ is large and nearly 0 where σᵢ is small. Why that is the right medicine: a small singular value means the data is thin along that direction, and OLS must divide by that near-zero thinness to pin the coefficient — collinearity is exactly a direction with σ ≈ 0, and dividing by almost-zero is why collinear β̂ explodes and why fits overreact to noise. Ridge presses the thin directions toward zero and barely touches the thick ones: chapter 1's borrowing trade-off (accept bias to kill variance), executed direction by direction.</p>
+
+<h4>Attention: a room of people scoring each other <span class="tag">answers Q12</span></h4>
+<p>Each of n tokens carries three vectors — a query, a key, a value — stacked into Q, K, V, all n×d. The score block QKᵀ is (n×d)(d×n) → n×n: every token dots its query against every token's key — a full pairwise scoring table. Divide by √d_k (a variance argument, chapter 4's business), then softmax each row into weights that are positive and sum to one. The output softmax(QKᵀ/√d_k)·V is (n×n)(n×d) → n×d: each token walks away with a weighted average of everyone's values. Notice what that is: a weighted average under weights that depend on the current context — chapter 1's move again, wearing a learned suit. The O(n²) parts, in both time and memory, are the two n×n matmuls (QKᵀ and scores·V) and the n×n score table itself — the object FlashAttention (Q13) refuses to materialize.</p>
+
+<h4>LoRA: learn only a thin correction <span class="tag">answers Q14</span></h4>
+<p>Fine-tuning wants to update a d×d weight block W by some ΔW — at d = 4096 that is 16.8 million numbers per block. LoRA's bet: the useful part of ΔW is concentrated in a few directions, so write it as B·A with B (d×r), A (r×d), r ≪ d — a rank-r correction. The parameter bill drops from d² to 2dr: at r = 8 and d = 4096, from 16,777,216 to 65,536 — a factor of 256. Eckart–Young is the license: if the true update really is dominated by its top r directions, the best rank-r object you can buy with that budget is exactly a truncated-SVD-shaped BA. Train the thin factors, freeze the big W, and add BA at inference.</p>
+
+<h4>One symmetric block, three hats <span class="tag">answers Q15</span></h4>
+<table class="cmp">
+<tr><th></th><th>Risk model</th><th>Regression</th><th>Attention</th></tr>
+<tr><td>The block</td><td>return covariance Σ</td><td>XᵀX</td><td>QKᵀ scores</td></tr>
+<tr><td>Eigenstructure means</td><td>risk factors (level/slope/curvature)</td><td>how thick the data is in each direction</td><td>score spread across the row (Q=K would make it a symmetric Gram block; in general it is the two-sided cousin)</td></tr>
+<tr><td>Ill-conditioned looks like</td><td>near-zero eigenvalues: fake "riskless" portfolios</td><td>collinear features, σ ≈ 0 directions</td><td>scores too spread after scaling</td></tr>
+<tr><td>What breaks</td><td>Cholesky unstable; optimizer piles money into the fake direction</td><td>β̂ explodes, fit overreacts to noise</td><td>softmax saturates: one-hot or uniform attention, gradients die</td></tr>
+<tr><td>The fix on duty</td><td>shrink the covariance / floor the eigenvalues</td><td>ridge (Q11)</td><td>the 1/√d_k scale (and friends)</td></tr>
+</table>
+<p>Same anatomy, three uniforms: a Gram-type block records how a set of vectors overlap; its eigen-directions are the block's real coordinate system; and its near-zero directions are where every industry's accidents happen.</p>
+
+<h4>Closing</h4>
+<p>One move — multiply and add. One anatomy — rotate, stretch, rotate back. The rectangular block that chapter 1's table becomes when you stack columns has exactly this much structure, and the three industries spend their days renting it: to add up portfolio risk, to drop a perpendicular onto a column space, to let a room of tokens score each other. Where the stretches are large, the data is speaking; where they are near zero, someone is about to divide by silence — and ridge, shrinkage, and 1/√d_k are the three uniforms of the same guard.</p>
+</details>
+
+<details open>
+<summary>Part 3 · 文章 — 线性代数：一台乘法机器，三顶帽子（中文）</summary>
+
+<h4>一台机器，一个问题</h4>
+<p>第一章说世界是一张表，随机变量是表上的一根 column。把几根 columns 并排钉在一起，得到一块矩形的数字，这就是矩阵。这一章只有一台机器（乘加）和一个深层问题（这块数字把东西往哪些方向拉伸）。三个行业的日常公式——组合方差 wᵀΣw、OLS 的投影、attention 的 QKᵀ——全是这一台机器在转。</p>
+
+<h4>乘法的三种读法，以及分块为什么快 <span class="tag">回答第 1、13 题</span></h4>
+<p>C = AB 的每个格子都是沿共享维度的求和：C_ij = Σ_l a_il·b_lj。因为是同一个求和，所以乘法可以三种读法：一格一格读（一 row 点乘一 column）；一根一根读（C 的每根 column 是 A 的各 columns 的加权混合）；一层一层读（第 l 层贡献 A 的第 l 根 column 乘 B 的第 l 个 row，逐层叠加）。第三种读法给分块计算发了许可证：求和可以分批算，所以把共享维度切成段，算部分积，累加——分块版是同一条公式，只是让小块顶替了数字的位置，答案一个字不差。</p>
+<p>为什么要分块？因为在真实硬件上分块快。如果快速内存装得下两条 1×64 的长条，或者两块 8×8 的方块——都是 128 个数——那么装两块方块更划算：两块之间的运算一口气做完（约 1024 次乘加，每个装进来的数被复用 8 次）；装长条则每个数只用一次（约 128 次乘加）就被踢出去，之后还要再运进来。两种方式的总运算量一样，省的是慢速内存和快速内存之间的运输量，而运输才是慢的那一环。这就是 FlashAttention 的全部机械原理（第 13 题）：attention 一块一块算，工作集始终待在快速内存里，部分和逐块累加，从不把巨大的中间矩阵完整摆出来——趟数变少，运算量不变。</p>
+
+<h4>乘法有多贵 <span class="tag">回答第 2 题</span></h4>
+<p>(m×k)(k×n) 的乘积有 m·n 个格子，每格是长度 k 的点乘，约 2k 次运算，所以总量约 <b>2kmn</b>。没有哪个维度天生带平方；平方只在同一个尺寸占了三个位置中的两个时出现。OLS 里，算 XᵀX 是 (p×n)(n×p)，约 2np²：对特征数是平方，对样本数是线性。Transformer 里，打分矩阵 QKᵀ 是 (n×d)(d×n)，约 2n²d：对上下文长度是平方。因为上下文一长这个 n² 项就吃掉一切，所以长上下文贵——这个困难首先是算术的。</p>
+
+<h4>投影：第一章的猜数游戏，有限样本版 <span class="tag">回答第 3、4 题</span></h4>
+<p>先拆一个绊倒人的词。"y 是 n 维空间里的向量"，这句话的全部意思是：y 是 n 个观测排成的一列——y₂ 并不比 y₁ 高级一层，它只是又一个样本。把 dimension 读成"清单上又多一格"，神秘感就没了。预测 ŷ 必须是同样长度的一列，因为只有同长才能逐格相减；差 e = y − ŷ 叫误差。最小化它的长度 ‖e‖² = Σ(yᵢ−ŷᵢ)²，就是一次性优化全部 n 个观测的误差——几何这套语言的报酬在这里。</p>
+<p>矩阵 X 是 p 根 columns，每根是某个特征的全部 n 个观测。用 p 个系数给这些 columns 加权再相加，能造出的所有 ŷ 组成 column space——n 维清单空间里的一块 p 维平面。"允许造的 ŷ 里哪个离 y 最近"有一个几何答案：让误差 e 垂直于这块平面——因为如果 e 还朝平面内某个方向斜着，就能沿那个方向把 ŷ 挪一点、把距离再缩短。垂直于每根 column 就是 Xᵀe = 0；把 e = y − Xβ̂ 代进去：</p>
+<pre><code>Xᵀ(y − Xβ̂) = 0   →   XᵀX β̂ = Xᵀy   →   β̂ = (XᵀX)⁻¹Xᵀy ，   ŷ = X β̂</code></pre>
+<p>Normal equations 的几何含义就一句话：<b>没有任何一根 column 还能在残差里看出东西</b>。β̂ 是落点 ŷ 用 p 根 columns 表达出来的配方。</p>
+<p>两个要小心的地方。第一，"近"是距离小，不是方向像：ŷ 沿着 y 的方向但长度翻倍，相关系数是 1，误差却很大——角度只管方向，距离管方向加尺度，OLS 最小化的是距离。（角度在别处领工资：R² 就是去均值后 y 和 ŷ 夹角的 cos²。）第二，残差的垂直性是 in-sample 性质——它只在造出 β̂ 的训练数据上成立，对新观测不成立；因为如此，样本内的拟合天生偏乐观，out-of-sample 验证才有存在的必要。</p>
+
+<h4>特征方向：这块数字往哪儿拉 <span class="tag">回答第 5 题</span></h4>
+<p>拿一个向量去乘一块方阵，向量一般既被拉伸又被转向。特征向量是不被转向、只被拉伸的方向：Av = λv，拉伸倍数 λ 叫特征值。求法：Av = λv 等价于 (A−λI)v = 0 有非零解，因为有非零解要求行列式为零，所以解 det(A−λI) = 0。对称的 2×2 矩阵 [[a,b],[b,c]]，这是一个关于 λ 的二次方程，两个根是</p>
+<pre><code>λ = ( (a+c) ± √( (a−c)² + 4b² ) ) / 2</code></pre>
+<p>根号底下是两个平方的和，永远不为负，所以两个根都是实数。这就是谱定理的 2×2 缩影：<b>对称矩阵有一整套实特征值，特征方向互相垂直</b>，于是 A = QΛQᵀ——转进特征坐标系，沿各轴按 λ 拉伸，再转回来。一块对称的数字，本质上只是沿一组藏起来的垂直轴做拉伸。</p>
+
+<h4>方差永不为负 <span class="tag">回答第 6 题</span></h4>
+<p>对称矩阵 A 叫半正定（PSD），如果对一切 w 都有 wᵀAw ≥ 0。协方差矩阵是 PSD，理由一行：wᵀΣw 就是组合 wᵀr 的方差（w 是权重，r 是各资产收益），而方差是平方的平均，平方不会为负。PSD 又逼出特征值非负：把特征向量代进定义，vᵀAv = λ·vᵀv = λ‖v‖²，左边不小于零、‖v‖² 大于零，所以 λ ≥ 0。因为如此，估出来的协方差矩阵若带负特征值，就等于宣称存在方差为负的组合——那是估计出错的铁证。</p>
+
+<h4>SVD：矩形块的万能拆法 <span class="tag">回答第 7 题</span></h4>
+<p>对称方阵是"转—拉—转回来"。一般的矩形块 A（m×n）有同样的解剖，只是进出用两套坐标：A = UΣVᵀ——在输入空间转（Vᵀ），沿轴按奇异值 σ₁ ≥ σ₂ ≥ … 拉伸（Σ 的对角线），在输出空间转（U）。它和特征分解的关系是机械的：XᵀX = VΣᵀΣVᵀ，所以 XᵀX 的特征值就是 X 的奇异值的平方，V 这套坐标两边共用。Eckart–Young 定理说：如果必须用秩为 r 的矩阵去近似 A，就留最大的 r 个拉伸、扔掉其余——这个截断是最小二乘意义下最好的秩 r 近似。后面所有的低秩把戏（PCA、LoRA）都是这条定理穿着工作服。</p>
+
+<h4>PCA：找散布最大的方向 <span class="tag">回答第 8、10 题</span></h4>
+<p>问：沿哪个单位方向 w，数据的散布最大？沿 w 的散布就是投影数据的方差，等于 wᵀΣw；在 ‖w‖=1 的约束下最大化它。课本常跳的一步在这里：把 Σ 写成 QΛQᵀ，再把 w 换到特征坐标下表示，wᵀΣw 就变成各特征值的加权平均，权重是一组平方、加起来等于 1。要让一堆数的加权平均最大，把全部权重押给最大的那个数——所以最优的 w 是最大特征值的特征向量，达到的散布就是那个特征值。wᵀΣw / wᵀw 这个比值有个名字，Rayleigh quotient。</p>
+<p>为什么先去均值：不减均值的话，"散布最大的方向"会指向数据的中心——你量出来的是这团云停在哪，不是它往哪儿散。covariance-PCA 和 correlation-PCA 的取舍：特征单位不一样时（美元和百分比并排），大单位的特征会霸占方差，第一主成分只是在说"嗓门大的嗓门大"，所以要标准化成 correlation，让每个特征一样大声；单位可比时，covariance 版保留真实的大小信息，更诚实。</p>
+<p>利率那边的经典应用（第 10 题）：每天整条收益率曲线一起动，把每天各期限的变动当作一个观测（一个 row，各期限是 columns），对这些日变动的协方差矩阵做特征分解。前三个 loading 的形状出了名地可读——<b>level</b>（各期限同号：整条曲线平移）、<b>slope</b>（一端正一端负：曲线翘）、<b>curvature</b>（两端同号中间反号：曲线弯）——三个合计通常吃掉绝大部分方差。因为如此，风险系统对冲这三个数，而不是三十个期限逐个对冲。</p>
+
+<h4>Cholesky：给独立的骰子装上相关性 <span class="tag">回答第 9 题</span></h4>
+<p>Cholesky 把 PSD 矩阵拆成 Σ = LLᵀ，L 是下三角——一个具体的"开平方"。它在 Monte Carlo 里的岗位：计算机只会生成互相独立的标准正态 z，但模拟需要协方差为 Σ 的相关收益。令 x = Lz，则 x 的协方差 = L·(z 的协方差)·Lᵀ = L·I·Lᵀ = Σ，正中目标。逐 row 读 L 能看见它在干什么：输出 1 是源 1 的缩放；输出 2 混入源 1 和源 2；输出 k 混前 k 个源——像调音台把共享的声源喂给后面的声道，而"共享声源"正是相关性的本体。多资产模拟天天用的就是它。</p>
+
+<h4>Ridge：按方向打折 <span class="tag">回答第 11 题</span></h4>
+<p>写 X = UΣVᵀ。OLS 重建 y 的投影时，每个方向 uᵢ 都按原强度 1 使用。Ridge 把方向 uᵢ 上的强度换成</p>
+<pre><code>σᵢ² / (σᵢ² + λ)</code></pre>
+<p>（一行看出来：β̂_ridge = (XᵀX+λI)⁻¹Xᵀy，在 SVD 坐标下 XᵀX+λI 的特征值是 σᵢ²+λ，而 Xᵀy 每个方向送来 σᵢ。）σ 大的方向这个折扣接近 1，σ 小的方向接近 0。为什么这是对症的药：奇异值小，意思是数据在那个方向上薄；OLS 定那个方向的系数时必须除以这个接近零的"薄度"——所谓 collinearity 就是存在 σ ≈ 0 的方向，除以接近零就是 collinear 时 β̂ 爆炸、拟合对噪声过度反应的原因。Ridge 把薄方向按下去、厚方向几乎不动：第一章"借数据"的 bias-variance 交易，逐方向执行。</p>
+
+<h4>Attention：一屋子人互相打分 <span class="tag">回答第 12 题</span></h4>
+<p>n 个词，每个带三个向量——query、key、value——叠成 Q、K、V，都是 n×d。打分块 QKᵀ 是 (n×d)(d×n) → n×n：每个词拿自己的 query 去点乘每个词的 key，得到一张两两互评的打分表。除以 √d_k（一个方差论证，第四章的业务），再对每个 row 做 softmax，变成一组为正、和为一的权重。输出 softmax(QKᵀ/√d_k)·V 是 (n×n)(n×d) → n×d：每个词领走一份"所有人的 value 的加权平均"。注意这是什么：权重随当前上下文变化的加权平均——第一章的动作又出现了，只是这次权重是学出来的。时间和内存上 O(n²) 的部分：两次 n×n 的矩阵乘（QKᵀ 和 打分·V），以及那张 n×n 的打分表本身——FlashAttention（第 13 题）拒绝完整摆出来的就是它。</p>
+
+<h4>LoRA：只学一块薄的修正 <span class="tag">回答第 14 题</span></h4>
+<p>微调想给一块 d×d 的权重 W 加一个修正 ΔW——d = 4096 时这一块就是一千六百多万个数。LoRA 的赌注：ΔW 里有用的部分集中在少数几个方向上，所以写成 B·A，B 是 d×r，A 是 r×d，r ≪ d——一个秩 r 的修正。参数账单从 d² 降到 2dr：r = 8、d = 4096 时，从 16,777,216 降到 65,536，约 256 分之一。Eckart–Young 是它的执照：如果真实的更新确实由前 r 个方向主导，那么同样预算下你能买到的最好近似，形状就是截断 SVD 那样的 BA。训练这两块薄的，冻住大的 W，推理时把 BA 加回去。</p>
+
+<h4>一块对称矩阵，三顶帽子 <span class="tag">回答第 15 题</span></h4>
+<table class="cmp">
+<tr><th></th><th>风险模型</th><th>回归</th><th>Attention</th></tr>
+<tr><td>那块矩阵</td><td>收益协方差 Σ</td><td>XᵀX</td><td>QKᵀ 打分</td></tr>
+<tr><td>特征结构的含义</td><td>风险因子（level/slope/curvature）</td><td>数据在各方向的厚度</td><td>打分沿 row 的分布（Q=K 时它就是严格对称的 Gram 块；一般情形是它的双边近亲）</td></tr>
+<tr><td>病态长什么样</td><td>接近零的特征值：假的"无风险"组合</td><td>特征共线，存在 σ ≈ 0 的方向</td><td>缩放后打分过散</td></tr>
+<tr><td>会坏什么</td><td>Cholesky 不稳定；优化器把钱全押进假方向</td><td>β̂ 爆炸，拟合对噪声过度反应</td><td>softmax 饱和：one-hot 或全平，梯度死掉</td></tr>
+<tr><td>值班的药</td><td>协方差收缩 / 给特征值设底</td><td>ridge（第 11 题）</td><td>1/√d_k 缩放（及同事们）</td></tr>
+</table>
+<p>同一副骨架，三套制服：Gram 类的块记录一组向量互相重叠的程度；它的特征方向是这块数字真正的坐标系；它接近零的方向，是三个行业各自出事故的地方。</p>
+
+<h4>收尾</h4>
+<p>一个动作——乘加。一副解剖——转、拉、转回来。第一章那张表把 columns 摞起来之后，结构就只有这么多，而三个行业天天来租用它：加总组合的风险，往 column space 上放垂线，让一屋子词互相打分。拉伸大的方向是数据在说话；拉伸接近零的方向，就要有人除以沉默了——ridge、协方差收缩、1/√d_k，是同一位保安的三套制服。</p>
+</details>
+
 </section>
 </body>
 </html>

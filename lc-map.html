@@ -126,6 +126,8 @@
   .dsbank p code, .dsbank h3 code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; }
   .dsbank .chip { display: inline-block; font-size: 10.5px; font-weight: 400; border: 1px solid var(--tbl); border-radius: 10px; padding: 0 8px; margin-left: 8px; color: var(--muted); vertical-align: 2px; }
   .dsbank .trap { color: var(--muted); font-size: 12px; }
+  .dsbank details { margin: 10px 0 4px; }
+  .dsbank details summary { cursor: pointer; font-size: 12.5px; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -425,6 +427,16 @@ assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
             if len(value) &gt; 1:
                 res.append(value)
         return res</code></pre>
+    <details>
+      <summary>Follow-up &#9312; — searching a real filesystem: DFS or BFS? (a short story)</summary>
+      <p>So — DFS or BFS? Honestly, either one visits every node exactly once. The more interesting question is what happens when you point a walker at a real disk. For the record: classic single-threaded tools like <code>find</code> and Python's <code>os.walk</code> run iterative DFS; modern parallel ones like <code>fd</code> and <code>ripgrep</code> run a work queue that's BFS-shaped. And note the filesystem itself doesn't search anything — all it gives you is <code>readdir</code>. Searching is the tool's job.</p>
+      <p>Say you write the obvious thing first: a recursive function — read a folder, recurse into each subfolder. The call stack can break. Recursion spends a resource you don't control: Python gives you about a thousand frames before RecursionError; a C thread gets ~8MB of stack, then a segfault. Practically, nobody nests folders a thousand deep — and you'd be right, human-made trees are shallow. Which is exactly the clue: when a walker dies of "depth" in the wild, it's almost never depth. It's a cycle wearing depth as a costume.</p>
+      <p>Where would a cycle even come from? <code>mkdir</code> can't make one — every directory has exactly one parent, so the tree really is a tree. The culprit is symlinks. One line — <code>ln -s / /home/me/loop</code> — and your walker strolls into <code>/home/me/loop/home/me/loop/…</code> forever. Here's the nasty part: every lap produces a brand-new path string, so a visited set keyed by path never fires. Paths are nicknames, and a file can have many. What it has exactly one of is its inode — the metadata record the filesystem keeps for it. Inode numbers repeat across disks, though, so the real identity is the pair <code>(st_dev, st_ino)</code>, both straight out of <code>os.stat()</code>. Same move as cycle detection in any graph problem: mark the node, not the route you took to reach it.</p>
+      <p>So the fix for the crash isn't "raise the recursion limit" — that's a band-aid (Python at least fails loudly; C just dies). The fix is to keep the exact same DFS order but move the to-do list somewhere you own: an explicit stack, literally a Python list with append and pop. The difference is real estate — the call stack is megabytes, your heap is gigabytes, and the failure mode becomes a clean OOM instead of a crash. If you've ever rewritten recursive inorder traversal into the iterative version (LC 94), you've already made this exact move. The standard library agrees, by the way: <code>os.walk</code> is implemented iteratively.</p>
+      <p>Now the parallel story. You want ten-plus workers on this, and recursion is awkward to parallelize because each thread's frontier is buried in its own call stack — private by construction. So you turn the frontier inside out: one thread-safe queue holding folders-to-visit, seeded with the root, and a fixed pool of workers, each looping <i>grab a folder → readdir → handle the files → push the child folders back</i>. Notice what happened to "levels": they dissolved. Nobody waits for level three to finish before touching level four; this is BFS-shaped only in the sense that the frontier is a shared queue.</p>
+      <p>Three details separate this from a toy. Worker count follows the bottleneck, and the bottleneck is disk IO, not CPU — 8 to 32 threads saturate an SSD, so a million folders means a longer queue, not a bigger pool (<code>fd</code> defaults to one thread per core). Termination is the subtle bug: an empty queue does <i>not</i> mean you're done — some worker may be mid-readdir, about to push ten more folders — so you track in-flight work with <code>queue.join()</code> + <code>task_done()</code>, or an atomic counter. And the visited set is shared now, so lock it or shard it — still keyed by (device, inode).</p>
+      <p>One last thing. If you search the same disk <i>often</i>, the grown-up answer is to stop traversing altogether: crawl once, build an index, query the index — which is exactly what Spotlight and Windows Search do. Traversal is for cold, one-shot scans.</p>
+    </details>
   </div>
 
   <h3 class="tier">Part 2 · Advanced pool</h3>

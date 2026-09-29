@@ -307,7 +307,7 @@ const EDGES = [
 })();
 </script>
 <section class="core">
-<h2>Shared Core <span class="coresub">六大共享地基的正文区，图在上，文在下。每块三部分：思考题 · Article (EN) · 文章 (中文)。</span></h2>
+<h2>Shared Core <span class="coresub">六大共享地基的正文区，图在上，文在下。每块四部分：思考题 · Article (EN) · 文章 (中文) · Brainteasers。§3–§7 为骨架（文章未写，brainteaser 已填；§7 为 proposed row）。</span></h2>
 
 <h3 class="sub">§1 · Conditional Expectation</h3>
 
@@ -514,6 +514,21 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <p>条件期望是什么？它是没打完的赌局的实时价格，是知道一部分信息之后的最优猜测，是那张大表上"按切片取平均"造出来的新 column。1654 年它为分钱而生，今天它定价、回归、猜下一个词。行业换了三个，动作还是那一个：只留和已知信息兼容的未来，加权，取平均。</p>
 </details>
 
+<details>
+<summary>Part 4 · Brainteasers</summary>
+<p>Statement + key move only — work each one yourself. ⭐ = high probability with detail-oriented FI-quant interviewers.</p>
+<ol class="qs">
+<li>⭐ <b>Bayes false positive</b>: disease hits 1%, test is 95% accurate both ways; you test positive — P(sick)? Key move: base rate dominates; count the two positive populations. (~16%)</li>
+<li>⭐ <b>Monty Hall</b>: switch or stay? Key move: the host's reveal is *constrained*, so it carries information; switching wins 2/3.</li>
+<li>⭐ <b>Boy-girl family</b>: "at least one boy" vs "the elder is a boy" vs "one boy born on Tuesday" — three different answers. Key move: the information set defines the denominator; enumerate the sample space each time.</li>
+<li>⭐ <b>Expected flips until HH vs until HT</b>: why 6 vs 4? Key move: state recursion; HH restarts from zero on failure, HT keeps partial progress.</li>
+<li><b>Penney's game</b>: for any 3-flip pattern I pick, you can pick one that beats it. Key move: non-transitive; condition on overlapping prefixes.</li>
+<li>⭐ <b>Gambler's ruin</b>: start with $a$, opponent $b$, fair game — P(win all)? Key move: the wealth process is a martingale; P = a/(a+b).</li>
+<li>⭐ <b>Die until first 6, given all rolls were even</b>: E[rolls]? (Answer 1.5, not 3.) Key move: conditioning on "all even" reweights toward *short* paths — compute P(path | all even) honestly.</li>
+<li><b>Two envelopes paradox</b>: where does the "always switch" argument break? Key move: no uniform prior exists on all positive amounts; define the probability space first.</li>
+</ol>
+</details>
+
 <h3 class="sub">§2 · Linear Algebra: matmul · projection · eigendecomposition / SVD</h3>
 
 <details>
@@ -667,6 +682,220 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <p>一个动作——乘加。一副解剖——转、拉、转回来。第一章那张表把 columns 摞起来之后，结构就只有这么多，而三个行业天天来租用它：加总组合的风险，往 column space 上放垂线，让一屋子词互相打分。拉伸大的方向是数据在说话；拉伸接近零的方向，就要有人除以沉默了——ridge、协方差收缩、1/√d_k，是同一位保安的三套制服。</p>
 </details>
 
+<details>
+<summary>Part 4 · Brainteasers</summary>
+<p>Statement + key move only — work each one yourself. ⭐ = high probability with detail-oriented FI-quant interviewers.</p>
+<ol class="qs">
+<li><b>Markov-chain expected steps</b> (mouse in a maze): E[steps to exit]? Key move: first-step analysis = a small linear system; solving it IS linear algebra.</li>
+<li><b>Rank puzzle</b>: can 6 people each having shaken exactly 3 hands exist? Key move: handshake lemma (degree sum even) — bridges to row 7.</li>
+</ol>
+</details>
+
+<h3 class="sub">§3 · Chain Rule + Taylor Expansion</h3>
+
+<details>
+<summary>Part 1 · The 15 questions</summary>
+<ol class="qs">
+<li><code>[C]</code> Chain rule warm-up: differentiate f(g(h(x))) for a concrete triple; then compute ∇ₓ ||Ax − b||².</li>
+<li><code>[C]</code> Multivariable chain rule: for f(u(t), v(t)), write df/dt. (This exact pattern reappears as backprop and as Itô's lemma.)</li>
+<li><code>[C]</code> Write the first- and second-order Taylor expansions of f around x, in one variable and in the gradient–Hessian form.</li>
+<li><code>[C]</code> Using first-order Taylor, show why gradient descent x ← x − η∇f decreases f for small η. What property of f controls how large η can be?</li>
+<li><code>[C]</code> Derive Newton's method from the second-order Taylor expansion. When does it beat gradient descent, and what are its two classic failure modes?</li>
+<li><code>[ML]</code> Define convexity. Show the least-squares loss is convex via its Hessian (PSD, §2). Why does convexity make optimization claims global?</li>
+<li><code>[C]</code> Derive the logsumexp trick log Σe^{zᵢ} = m + log Σe^{zᵢ−m} with m = max zᵢ. Why does the naive version overflow in fp16? Show softmax(z) = exp(z − logsumexp(z)).</li>
+<li><code>[LLM]</code> Backprop is the chain rule on a graph: for a two-layer MLP with scalar loss, derive gradients w.r.t. both weight matrices. Why does reverse-mode differentiation cost about the same as the forward pass, and why is that fact what makes deep learning trainable?</li>
+<li><code>[LLM]</code> Softmax + cross-entropy: with L = −log softmax(z)_y, show ∂L/∂z = p − e_y. Why is this fused form numerically preferable?</li>
+<li><code>[SC]</code> Greeks are derivatives: define delta, gamma, vega, theta. Write the delta-gamma-theta P&amp;L expansion ΔV ≈ δΔS + ½γ(ΔS)² + θΔt and state when the gamma term dominates.</li>
+<li><code>[SC]</code> Quadratic variation: argue heuristically that (dW)² = dt — sum squared Brownian increments over a partition and show the sum concentrates at t.</li>
+<li><code>[SC]</code> State Itô's lemma for f(t, W_t) and derive it heuristically as a second-order Taylor expansion that keeps the (dW)² = dt term. Apply it to d(W_t²).</li>
+<li><code>[SC]</code> For GBM dS = μS dt + σS dW, use Itô to derive d(log S) and the lognormal solution. Identify exactly which Taylor term produces the −½σ².</li>
+<li><code>[LLM]</code> Curvature and training: what do the largest Hessian eigenvalues of the loss surface imply for the learning rate? Give the intuition for why Adam-style per-coordinate rescaling helps when curvature is very anisotropic.</li>
+<li><code>[C]</code> Capstone: the same second-order bookkeeping three ways — delta-gamma expansion, Newton's step, Itô's lemma. For each, name the second-order term you cannot drop and describe what breaks if you do.</li>
+</ol>
+</details>
+
+<details>
+<summary>Part 2 · Article (EN) — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 3 · 文章（中文） — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 4 · Brainteasers</summary>
+<p>Statement + key move only — work each one yourself. ⭐ = high probability with detail-oriented FI-quant interviewers.</p>
+<ol class="qs">
+<li>⭐ <b>Rule of 72</b>: why does money at r% double in ~72/r years? Key move: ln 2 ≈ 0.693 and ln(1+r) ≈ r.</li>
+<li><b>Estimate √1.02, 1.03^10 in your head</b>: key move: (1+x)^a ≈ 1+ax (+ second-order check).</li>
+<li><b>Volatility drag</b>: stock goes +50% then −50% — you lost 25%; why does high vol eat returns? Key move: E[log X] &lt; log E[X] (Jensen); arithmetic vs geometric mean. Bridge to row 4.</li>
+</ol>
+</details>
+
+<h3 class="sub">§4 · Gaussians &amp; Variance Scaling Laws</h3>
+
+<details>
+<summary>Part 1 · The 15 questions</summary>
+<ol class="qs">
+<li><code>[C]</code> Write the N(μ, σ²) density. Show Gaussians are closed under affine maps and under sums of independent Gaussians.</li>
+<li><code>[C]</code> Variance algebra: Var(aX), Var(X+Y) with covariance, and — for n iid terms — the mean and standard deviation of the sum and of the average. State the √n law.</li>
+<li><code>[C]</code> State the CLT. Why do sums of many small independent effects look Gaussian? Give one place it shows up in each of the three directions.</li>
+<li><code>[C]</code> Why does the standard error of a sample mean shrink as 1/√n? How many times more Monte Carlo samples buy one extra decimal digit of accuracy?</li>
+<li><code>[SC]</code> Define Brownian motion via independent Gaussian increments with Var(W_{t+s} − W_t) = s. Why must the sd scale as √t? Sketch why paths are nowhere differentiable.</li>
+<li><code>[SC]</code> Vol annualization: convert daily vol to annual vol via √252. Which independence assumption is buried in this, and how does return autocorrelation break it?</li>
+<li><code>[ML]</code> Show that MLE under y = f(x) + ε with ε ~ N(0, σ²) is exactly least squares. What loss does Laplace noise produce instead, and when would you prefer it?</li>
+<li><code>[ML]</code> Derive the bias–variance decomposition of expected squared prediction error. Which term does increasing model complexity move, and in which direction?</li>
+<li><code>[ML]</code> Multivariate Gaussian: write the density with covariance Σ; describe the level sets via Σ's eigendecomposition (§2). Show the conditional distribution of a bivariate Gaussian is Gaussian with a *linear* conditional mean — the case where the §1 regression function is exactly linear.</li>
+<li><code>[LLM]</code> Initialization: for y = Wx with d-dimensional x (iid, unit variance) and W entries iid with variance σ_w², compute Var(yᵢ). Why choose σ_w² ≈ 1/d (Xavier/He), and what happens across many layers if you don't?</li>
+<li><code>[LLM]</code> The 1/√d_k: compute the variance of q·k for iid mean-0, variance-1 entries. What happens to softmax and its gradients when logits have sd √d_k, and how does dividing by √d_k fix it?</li>
+<li><code>[SC]</code> Fat tails: compare the kurtosis of real returns to Gaussian. Name two mechanisms that generate fat tails (vol clustering/mixtures, jumps) and explain why Gaussian dynamics understate the wings of the implied-vol smile.</li>
+<li><code>[ML]</code> High-dimensional Gaussians concentrate on a thin shell of radius ≈ √d. Derive the intuition and give one practical consequence for nearest-neighbor methods (the ESL Ch 2 curse of dimensionality).</li>
+<li><code>[LLM]</code> Why do deep networks need normalization layers (LayerNorm) to keep activation scale controlled across depth? Connect to the layer-by-layer variance bookkeeping of Q10.</li>
+<li><code>[C]</code> Capstone: collect the square roots — √t (BM), √252 (annualization), 1/√n (MC error), 1/√d_k (attention), 1/√fan-in (init). Show that each is the same additivity-of-variance argument and name the independence assumption each one leans on.</li>
+</ol>
+</details>
+
+<details>
+<summary>Part 2 · Article (EN) — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 3 · 文章（中文） — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 4 · Brainteasers</summary>
+<p>Statement + key move only — work each one yourself. ⭐ = high probability with detail-oriented FI-quant interviewers.</p>
+<ol class="qs">
+<li>⭐ <b>Drunk walk distance</b>: after n unit steps, how far from start? Key move: E[S_n²] = n so RMS = √n (E|S_n| ≈ √(2n/π)).</li>
+<li>⭐ <b>Sum of 100 dice &gt; 400?</b>: key move: CLT; μ = 350, σ = √(100·35/12) ≈ 17 → ~3σ event.</li>
+<li><b>Meeting problem</b>: two people arrive uniformly in an hour, wait 10 min — P(meet)? Key move: area in the unit square (geometric probability).</li>
+</ol>
+</details>
+
+<h3 class="sub">§5 · Likelihood · Cross-Entropy · KL · Change of Measure</h3>
+
+<details>
+<summary>Part 1 · The 15 questions</summary>
+<ol class="qs">
+<li><code>[C]</code> Define the likelihood of iid data. Why maximize the log-likelihood instead of the likelihood itself?</li>
+<li><code>[C]</code> Derive the MLE of p from n coin flips, and of (μ, σ²) from Gaussian data. Is the σ² MLE biased?</li>
+<li><code>[ML]</code> Logistic regression: write p(y=1|x) = σ(wᵀx), show its negative log-likelihood is the cross-entropy/log-loss, and compute the gradient (same structure as §3 Q9).</li>
+<li><code>[C]</code> Define entropy H(p). Compute it for fair and biased coins. Which distribution over k outcomes maximizes it?</li>
+<li><code>[C]</code> Define cross-entropy H(p,q) and KL(p||q) = H(p,q) − H(p). Prove KL ≥ 0 via Jensen. Give a concrete two-point example showing KL is asymmetric.</li>
+<li><code>[C]</code> Show that maximizing average log-likelihood is (up to a constant) minimizing KL(p̂_data || p_model). What does this objective make the model care about?</li>
+<li><code>[LLM]</code> The LLM objective is per-token cross-entropy. Define perplexity = exp(average NLL) and interpret it as an effective branching factor. How does teacher forcing turn training into a sum of §1-style conditional estimation problems?</li>
+<li><code>[C]</code> Define the likelihood ratio Λ(x) = p(x)/q(x). State Neyman–Pearson informally: why is thresholding Λ the optimal way to decide between two hypotheses?</li>
+<li><code>[SC]</code> Change of measure in discrete space: fair coin P vs biased coin Q over n-flip paths. Compute dQ/dP on a path and verify E^Q[X] = E^P[X · dQ/dP] — reweighting by a likelihood ratio.</li>
+<li><code>[SC]</code> Importance sampling: derive E_p[f(X)] = E_q[f(X)p(X)/q(X)]. When does it reduce variance, when does it blow up, and why is deep-OTM option pricing the textbook use case?</li>
+<li><code>[SC]</code> Girsanov at statement level: under an equivalent measure change, Brownian motion gains a drift but keeps its volatility. Why does risk-neutral pricing change μ → r but never σ? Connect dQ/dP to Q9's path likelihood ratio.</li>
+<li><code>[ML]</code> Why is log-loss a proper scoring rule (honest probabilities optimal)? Contrast evaluating a probabilistic classifier by accuracy vs by log-loss.</li>
+<li><code>[LLM]</code> Temperature: p_T = softmax(z/T). How does T reshape entropy? Show p_T is an exponential tilting of p₁ — i.e., a reweighting in the same likelihood-ratio family.</li>
+<li><code>[LLM]</code> RLHF: the objective max E[reward] − β·KL(π || π_ref). Why is the KL anchor there (support control, reward-hacking prevention)? Describe behavior as β → 0 and β → ∞, and relate it to importance-weight degeneracy from Q10.</li>
+<li><code>[C]</code> Capstone: the likelihood-ratio family portrait — MLE (fit by minimizing KL), Neyman–Pearson (decide by LR), Girsanov (price by LR), importance sampling (integrate by LR), RLHF (regularize by KL). Write down the LR/KL object in each and its role in one sentence.</li>
+</ol>
+</details>
+
+<details>
+<summary>Part 2 · Article (EN) — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 3 · 文章（中文） — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 4 · Brainteasers</summary>
+<p>Statement + key move only — work each one yourself. ⭐ = high probability with detail-oriented FI-quant interviewers.</p>
+<ol class="qs">
+<li><b>Which die</b>: one fair, one loaded toward 6; you see three 6s — odds it's the loaded one? Key move: multiply likelihood ratios; prior × LR = posterior odds.</li>
+<li><b>Fair toss from a biased coin</b> (von Neumann): key move: HT and TH have equal probability; discard HH/TT. Bridge to row 6.</li>
+</ol>
+</details>
+
+<h3 class="sub">§6 · Sampling / Monte Carlo</h3>
+
+<details>
+<summary>Part 1 · The 15 questions</summary>
+<ol class="qs">
+<li><code>[C]</code> The crude MC estimator for E[f(X)]: why is it unbiased, and what is its standard error (§4 Q4)?</li>
+<li><code>[C]</code> Estimate π by uniform darts on a square with an inscribed circle. Compute the estimator's variance — why is this just Bernoulli mean estimation?</li>
+<li><code>[C]</code> Inverse-transform sampling: show F⁻¹(U) has CDF F for U ~ Uniform(0,1). Use it to sample an exponential.</li>
+<li><code>[C]</code> Rejection sampling: describe the algorithm, compute the acceptance rate, and explain why it collapses in high dimensions.</li>
+<li><code>[SC]</code> Simulate GBM two ways: the exact lognormal scheme (§3 Q13) vs Euler–Maruyama on the SDE. Why prefer exact when available, and what bias does Euler introduce?</li>
+<li><code>[SC]</code> Price a European call by MC under Q with a standard-error bar. Then price an arithmetic-average Asian option — why is MC natural exactly where closed forms fail?</li>
+<li><code>[SC]</code> Variance reduction: antithetic variates and control variates (e.g., geometric-Asian closed form as control for the arithmetic Asian). When does each help, and how do you measure the gain?</li>
+<li><code>[ML]</code> Bootstrap: build a confidence interval for a statistic (say, a Sharpe ratio) by resampling. Why does the plug-in principle work, and when does it fail (heavy tails; serial dependence → block bootstrap)?</li>
+<li><code>[ML]</code> Cross-validation as resampling: what quantity does K-fold CV actually estimate, and for what (the procedure, not the fitted model)? Why does naive CV leak on time series, and what do purging and embargo fix?</li>
+<li><code>[ML]</code> Bagging: why does averaging models fit on bootstrap resamples reduce variance (§4 Q2), and why does correlation between the models cap the benefit? How do random forests attack that correlation?</li>
+<li><code>[LLM]</code> Decoding: define greedy, temperature, top-k, and top-p (nucleus) sampling precisely, given final logits z. Why does pure sampling degrade over long generations and greedy become repetitive?</li>
+<li><code>[LLM]</code> Sampling for uncertainty: self-consistency (sample k reasoning paths, majority-vote) and MC dropout. What is the shared statistical idea, and what does it estimate?</li>
+<li><code>[SC]</code> Importance sampling as variance reduction (§5 Q10): design a tilted proposal for a rare-event probability (a deep-OTM digital). What is weight degeneracy and how do you diagnose it?</li>
+<li><code>[C]</code> MCMC at concept level: why is it needed when you can only evaluate an unnormalized density? Sketch Metropolis–Hastings and why detailed balance yields the right stationary distribution. One use per direction.</li>
+<li><code>[C]</code> Capstone drill: estimate a small tail probability three ways — (a) crude MC, (b) one variance-reduction technique of your choice, (c) importance sampling. For each: the estimator, the unbiasedness argument, and the variance behavior. (The same pattern prices rare payoffs, sizes strategy tail risk, and estimates rare LLM failure rates in evals.)</li>
+</ol>
+</details>
+
+<details>
+<summary>Part 2 · Article (EN) — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 3 · 文章（中文） — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 4 · Brainteasers</summary>
+<p>Statement + key move only — work each one yourself. ⭐ = high probability with detail-oriented FI-quant interviewers.</p>
+<ol class="qs">
+<li>⭐ <b>Reservoir sampling</b>: keep one uniform item from a stream of unknown length. Key move: replace current keeper with item i with probability 1/i; prove by induction.</li>
+<li><b>Fisher-Yates correctness</b>: why does naive "swap each with random index" fail? Key move: count reachable arrangements (n^n paths vs n! outcomes — doesn't divide evenly). Bridge to row 7.</li>
+<li><b>Random point in a disk</b>: why r = R·√U, not R·U? Key move: area grows as r², so the radius CDF is (r/R)² — invert it.</li>
+</ol>
+</details>
+
+<h3 class="sub">§7 · Counting / Discrete Probability (Combinatorics) <span class="coresub">proposed row — LLM 列最薄，如实标注</span></h3>
+
+<p>Load-bearing in stochastic (the L0 layer: random walks, reflection principle, binomial trees) and ESL (bootstrap 1−1/e, permutation tests, VC counting); thinnest in LLM (dedup via MinHash/LSH = birthday-collision math; perplexity as effective branching factor). Structural note: the best teasers live on bridges between rows — coupon collector = counting × linearity of expectation (§1); reflection principle = counting × random walk (continuum limit: barrier options); bootstrap 1−1/e = counting × sampling (§6).</p>
+
+<details>
+<summary>Part 1 · The 15 questions — TBD</summary>
+<p>梯子未铸（BAM 面试后）。</p>
+</details>
+
+<details>
+<summary>Part 2 · Article (EN) — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 3 · 文章（中文） — TBD</summary>
+<p>骨架已立，文章未写。</p>
+</details>
+
+<details>
+<summary>Part 4 · Brainteasers</summary>
+<p>Statement + key move only — work each one yourself. ⭐ = high probability with detail-oriented FI-quant interviewers.</p>
+<ol class="qs">
+<li>⭐ <b>Birthday paradox</b>: 23 people → &gt;50% shared birthday. Key move: complement product ≈ exp(−n²/730); collisions scale as n². Bridge to LLM: MinHash/LSH dedup uses the same collision math.</li>
+<li>⭐ <b>Coupon collector</b>: E[boxes to collect all n coupons] = n·H_n. Key move: split into n geometric stages, add expectations (linearity — bridge to row 1).</li>
+<li>⭐ <b>Hat check / derangements</b>: P(no one gets their own hat) → 1/e. Key move: inclusion-exclusion; the alternating series is e^{−1}.</li>
+<li>⭐ <b>Ballot problem</b>: A always ahead in the count — probability (a−b)/(a+b). Key move: reflection principle — reflect the bad paths. Bridge to stochastic: continuum limit = barrier options / running-max of Brownian motion.</li>
+<li><b>100 lockers</b>: which stay open? Key move: locker k toggled once per divisor; only perfect squares have an odd divisor count.</li>
+<li><b>Ants on a rope</b>: ants bounce off each other, fall off ends — max time? Key move: bouncing = passing with relabeled identities; symmetry kills the interaction.</li>
+<li><b>Stars and bars</b>: ways to split n identical items among k people = C(n+k−1, k−1). Key move: arrange n stars and k−1 bars.</li>
+<li><b>Bootstrap inclusion</b>: P(a given row appears in a bootstrap resample) = 1−(1−1/n)^n → 1−1/e. Key move: complement + the e-limit. Bridge to row 6 / ESL.</li>
+<li><b>Socks / pigeonhole</b>: minimum draws to guarantee a pair among k colors = k+1. Key move: worst case first, then one more.</li>
+</ol>
+</details>
 </section>
 </body>
 </html>

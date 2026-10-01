@@ -402,6 +402,84 @@ assert run("SET A2 A1+1\nGET A2\nSET A1 1\nGET A2") \
 assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
        == ["OK","OK","OK","6"]                 # overwriting removes old edges — no cycle anymore</code></pre>
     <p class="trap">Traps: rollback semantics (only write after the check passes); re-SET must rebuild the cell's outgoing edges; deep chains blow Python's recursion limit (raise it or go iterative — say this out loud).</p>
+    <p class="trap">&#10003; solved 2026-09-30 · 20/20 local tests (parts 1-4) · write-then-rollback variant, iterative DFS for both the cycle check and evaluation</p>
+<pre><code>def run(script: str) -&gt; list[str]:
+    cells = {}          # label -&gt; [tokens]; a token is an int or another label
+    result = []         # the same dict is the data table AND the adjacency list
+
+    def get_cell_value(cell):
+        value = calculate_value(cell)
+        return "ERROR" if value is None else str(value)
+
+    def calculate_value(cell):
+        # iterative post-order: a cell is computed only after every label it
+        # references is in memo; memo is per-GET so edits are always visible
+        memo = {}
+        stack = [cell]
+        while stack:
+            current = stack[-1]
+            if current in memo:
+                stack.pop()
+                continue
+            if current not in cells:
+                return None                      # unset somewhere upstream
+            missing = [t for t in cells[current] if isinstance(t, str) and t not in memo]
+            if missing:
+                stack.extend(missing)            # deps first, current stays put
+            else:
+                memo[current] = sum(memo[t] if isinstance(t, str) else t for t in cells[current])
+                stack.pop()
+        return memo[cell]
+
+    def set_cell_value(cell, value):
+        items = [int(t) if t.isdigit() else t for t in value.split("+")]
+        has_previous = cell in cells
+        previous = cells.get(cell)
+        cells[cell] = items                      # write first ...
+        retval = detect_cycle(cell)              # ... then check ...
+        if retval == "ERROR":                    # ... and roll back on failure
+            if has_previous:
+                cells[cell] = previous
+            else:
+                del cells[cell]
+        return retval
+
+    def detect_cycle(cell):
+        # the old graph is acyclic (every accepted SET was checked), so a new
+        # cycle must pass through `cell`: walk from its references, look for it
+        stack = [t for t in cells[cell] if isinstance(t, str)]
+        visited = set()
+        while stack:
+            current = stack.pop()
+            if current == cell:
+                return "ERROR"
+            if current in visited:
+                continue                         # diamonds: each cell once
+            visited.add(current)
+            for t in cells.get(current, []):
+                if isinstance(t, str):
+                    stack.append(t)
+        return "OK"
+
+    for line in script.split("\n"):
+        parts = line.split(" ")
+        if parts[0] == "SET":
+            _, cell, value = parts
+            result.append(set_cell_value(cell, value))
+        elif parts[0] == "GET":
+            _, cell = parts
+            result.append(get_cell_value(cell))
+        else:
+            raise ValueError(f"Invalid line: {line}")
+    return result</code></pre>
+    <details>
+      <summary>Lineage &amp; follow-ups — what this problem is made of, what to do before and after it</summary>
+      <p><b>Parts on the map.</b> Four nodes do all the work. <b>Hashmap</b>: the <code>cells</code> dict is both the data table and the adjacency list — "A3 references A1" is already stored as "A1 appears in A3's token list", so no second structure is needed for the graph. <b>Set</b>: the <code>visited</code> set in the cycle walk and the <code>memo</code> dict in evaluation are the same idea (touch each cell once; diamonds like <code>C1 = A1+B1, B1 = A1+1</code> otherwise double the work at every level). <b>Stack</b>: two explicit stacks instead of recursion — because the container is a stack the walk is DFS; swap in a queue and it becomes BFS with the same answer, reachability doesn't care. <b>Memoization</b> is DP's memo without the DP: cache results of a pure function for the duration of one query. The cycle question is <b>Topo sort</b>'s question in disguise ("does the dependency DAG still topologically sort after this edge?"), asked one edge at a time.</p>
+      <p><b>Do before.</b> <a href="https://leetcode.com/problems/design-spreadsheet/" target="_blank" rel="noopener">3484 Design Spreadsheet ↗</a> (same cell grammar, no dependencies — the part-1 warm-up) · <a href="https://leetcode.com/problems/clone-graph/" target="_blank" rel="noopener">133 Clone Graph ↗</a> (a graph living in a dict) · <a href="https://leetcode.com/problems/course-schedule/" target="_blank" rel="noopener">207 Course Schedule ↗</a> (cycle detection, both Kahn and DFS) · <a href="https://leetcode.com/problems/evaluate-reverse-polish-notation/" target="_blank" rel="noopener">150 Evaluate RPN ↗</a> (evaluation with a stack).</p>
+      <p><b>Do after, by part.</b> <i>Graph in a hashmap:</i> <a href="https://leetcode.com/problems/evaluate-division/" target="_blank" rel="noopener">399 Evaluate Division ↗</a> — symbols evaluated over a weighted graph stored as nested dicts; the closest cousin to "GET walks the references". <i>Cycle detection:</i> <a href="https://leetcode.com/problems/find-eventual-safe-states/" target="_blank" rel="noopener">802 Find Eventual Safe States ↗</a> and <a href="https://leetcode.com/problems/all-paths-from-source-lead-to-destination/" target="_blank" rel="noopener">1059 ↗</a> (three-color DFS: a node that is <i>in progress</i> when reached again closes a cycle — this is how detection at GET time works, see below) · <a href="https://leetcode.com/problems/redundant-connection/" target="_blank" rel="noopener">684 Redundant Connection ↗</a> (union-find for undirected cycles). <i>Evaluate expression:</i> <a href="https://leetcode.com/problems/basic-calculator-ii/" target="_blank" rel="noopener">227 Basic Calculator II ↗</a> (add − × ÷ with precedence) → <a href="https://leetcode.com/problems/basic-calculator/" target="_blank" rel="noopener">224 ↗</a> (parentheses) → <a href="https://leetcode.com/problems/parse-lisp-expression/" target="_blank" rel="noopener">736 Parse Lisp Expression ↗</a> (variables with scope). <i>Spreadsheet lineage:</i> <a href="https://leetcode.com/problems/design-excel-sum-formula/" target="_blank" rel="noopener">631 Design Excel Sum Formula ↗</a>° (eager propagation + <code>SUM(A1:B3)</code> ranges) and problem 6 above (batch input, whole-output CYCLE).</p>
+      <p><b>Follow-up questions an interviewer would add, in rising order.</b> (1) Support <code>- * /</code> — precedence breaks the one-line split; that is 227. (2) Make GET O(1): cache each cell's value and keep <i>reverse</i> edges (who depends on me); SET marks everything downstream dirty, GET recomputes only dirty cells — push the invalidation, pull the recompute. (3) Move cycle detection from SET to GET: keep an <i>in-progress</i> set during evaluation and fail when a cell is reached while still in it (three-color DFS). When is this forced rather than optional? When dependencies are <i>dynamic</i> — a formula like <code>IF(A1&gt;0, B1, C1)</code> only reveals what it reads while it runs, so no static check at SET is possible. (4) Add DELETE: what happens to cells that reference the deleted one? (5) Ranges like <code>SUM(A1:A5)</code> — 631. (6) All definitions arrive at once — problem 6.</p>
+      <p><b>Where this shape lives.</b> A cell is a pure function of other cells, evaluated on demand, memoized, invalidated when an input changes. That is the spreadsheet recalc engine, but also build systems (<code>make</code> rebuilds a target only if a dependency's timestamp moved), reactive UI signals, incremental-computation frameworks (Salsa inside rust-analyzer, Jane Street's Incremental), and the dependency graphs quant desks use for pricing: market data at the leaves, prices at the roots, recomputed lazily. Two schools: <i>pull</i> (recompute on read, cheap writes — this problem, make, lazy pricing graphs) versus <i>push</i> (propagate on write, cheap reads — Excel's recalc chain, signals, Incremental). Follow-up (2) above is the pull design with a dirty flag; follow-up (3) is why lazy systems can only catch cycles while evaluating.</p>
+    </details>
   </div>
 
   <div class="prob">

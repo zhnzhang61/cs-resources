@@ -383,6 +383,46 @@ assert highlight("aa aaab x", ["aa"]) == "&lt;hl&gt;aa&lt;/hl&gt; aaab x"   # wh
 assert highlight("a b a", ["a"]) == "&lt;hl&gt;a&lt;/hl&gt; b &lt;hl&gt;a&lt;/hl&gt;"  # non-adjacent regions stay separate
 assert highlight("a b c", ["x"]) == "a b c"                   # no match: return unchanged</code></pre>
     <p class="trap">Traps: word boundaries (tokenize into words and match word sequences — not substrings); transitive merge = sort occurrence intervals, one sweep.</p>
+    <p class="trap">&#10003; solved 2026-10-03 · 21/21 local tests · first-word index: 20,000 words × 2,000 sources in under 0.05 s (the naive per-source scan took 2.1 s)</p>
+<pre><code>def highlight(text: str, sources: list[str]) -&gt; str:
+    text_list = text.split(" ")
+    text_coord = []
+    positions = {}                                   # word -&gt; every index where it occurs
+    for i, word in enumerate(text_list):
+        positions.setdefault(word, []).append(i)
+    for source in sources:
+        source_list = source.split(" ")
+        source_len = len(source_list)
+        for start_index in positions.get(source_list[0], []):     # only where the first word occurs
+            if source_list == text_list[start_index: start_index + source_len]:
+                text_coord.append((start_index, start_index + source_len))   # half-open [a, b)
+    text_coord.sort()
+
+    merged_coord = []                                # LC 56; half-open, so overlap is strict &lt;
+    for left, right in text_coord:
+        if merged_coord and left &lt; merged_coord[-1][1]:
+            merged_coord[-1] = (merged_coord[-1][0], max(merged_coord[-1][1], right))
+        else:
+            merged_coord.append((left, right))
+
+    res = []
+    cur = 0
+    for left, right in merged_coord:
+        res.extend(text_list[cur: left])             # untouched words before the region
+        res.append("&lt;hl&gt;" + " ".join(text_list[left: right]) + "&lt;/hl&gt;")   # one piece per region
+        cur = right
+    res.extend(text_list[cur:])
+    return " ".join(res)</code></pre>
+    <details>
+      <summary>Lineage &amp; follow-ups — what this problem is made of, what to do before and after it</summary>
+      <p><b>What it is asking.</b> A model wrote <code>text</code>; <code>sources</code> are passages it may have copied from. Mark every stretch of the answer that appears word-for-word in a source, so a reader can see which claims are grounded. The pipeline has four steps and no new algorithm: split <code>text</code> into a word list; for each source, find every position where the next <code>len(source)</code> words equal the source's words (one source can match many times — don't stop at the first); collect all matches as word-index intervals; sort by start, merge the overlapping ones (LC 56), and rebuild the string with a tag around each merged interval. The spec hides three rules, and each test group checks one: whole-word only (<code>aa</code> never matches inside <code>aaab</code>), overlapping matches become one region (transitively — A touches B, B touches C, so A-B-C is one region even if A and C don't touch), and regions that merely sit next to each other stay separate.</p>
+      <p><b>Parts on the map.</b> <b>2 pointers / walk</b>: the match test is <code>words[i:i+m] == source_words</code> slid along the text. <b>Segment / Interval</b> and <b>Sort</b>: the merge is exactly 56 — sorting is what makes the single greedy pass legal, because once an interval's start is past the current region's end, every later interval starts even later and can never reach back. <b>Hashmap</b> and <b>Trie</b> are how you stop the naive scan from being n·L (next paragraph). <b>Set</b> would be the wrong tool here: it answers "is this word present", the question is "do these m consecutive words appear in order".</p>
+      <p><b>Why the limits are what they are.</b> 1e5 characters is about 20,000 words; 2,000 sources of a few words each is a few thousand words of patterns; the naive per-source scan is words × pattern-words, around 1e8 comparisons — the local harness clocks it at ~2 s, and the limits were chosen to punish exactly that. The ladder: (1) index the text once, word → its positions, and only test a source at the positions where its first word occurs; (2) put all sources in a trie over words and scan the text once, walking the trie from each position — every position costs at most the longest source, and this is 212 Word Search II's pruning on a one-dimensional grid; (3) rolling hash over word windows (Rabin–Karp); (4) Aho–Corasick, KMP for many patterns at once, one pass over the text, the textbook optimum — name it, write the trie. A free consequence of (2): matches come out in left-to-right order, so the sort disappears and the merge runs as you scan.</p>
+      <p><b>Do before.</b> <a href="https://leetcode.com/problems/merge-intervals/" target="_blank" rel="noopener">56 Merge Intervals ↗</a> (the merge, already done) · <a href="https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" target="_blank" rel="noopener">28 ↗</a> (the slide-and-compare, on characters) · <a href="https://leetcode.com/problems/add-bold-tag-in-string/" target="_blank" rel="noopener">616 Add Bold Tag in String ↗</a>° / <a href="https://leetcode.com/problems/bold-words-in-string/" target="_blank" rel="noopener">758 Bold Words ↗</a>° (this exact problem at character level — tags, overlaps and all) · <a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank" rel="noopener">208 Trie ↗</a>.</p>
+      <p><b>Do after.</b> <a href="https://leetcode.com/problems/word-search-ii/" target="_blank" rel="noopener">212 Word Search II ↗</a> (the trie scan, on a grid) · <a href="https://leetcode.com/problems/stream-of-characters/" target="_blank" rel="noopener">1032 Stream of Characters ↗</a> (matching many patterns against text that arrives one token at a time — Aho–Corasick's home turf) · <a href="https://leetcode.com/problems/longest-duplicate-substring/" target="_blank" rel="noopener">1044 ↗</a> (rolling hash) · <a href="https://leetcode.com/problems/word-break/" target="_blank" rel="noopener">139 Word Break ↗</a> (dictionary matching with memo) · problem 4 above (rank the citations).</p>
+      <p><b>Follow-up questions an interviewer would add, in rising order.</b> (1) Append <code>[i]</code> citations after each region, ranked by how often each source occurs — problem 4. (2) Tokenization rules: case-insensitive? punctuation attached to words? Ask, then normalize once up front. (3) "It's too slow" — climb the ladder: first-word index, then the trie. (4) Nested or adjacent regions: one tag or two? Say what your merge does and why. (5) The text arrives as a stream, token by token from a model — highlight incrementally: keep the trie state per live position, or run Aho–Corasick, which is streaming by construction (1032). (6) The output must keep the original spacing and punctuation — switch from word indices to character offsets and never rebuild from a word list.</p>
+      <p><b>Where it lives.</b> Citation grounding in RAG interfaces; the snippet highlighter in a search engine; plagiarism and near-duplicate detection (shingling — the same word-window idea that MinHash fingerprints, see the hashing article below); and Aho–Corasick running in virus scanners and <code>grep -F</code>, where thousands of patterns are matched in one pass.</p>
+    </details>
   </div>
 
   <div class="prob">

@@ -587,6 +587,55 @@ assert evaluate(["a=b+1", "b=a+1"]) == ["CYCLE"]</code></pre>
 assert top_k([1,0], [[1,0],[0,1],[2,0]], 2) == [0,2]   # equal cosine → smaller index first
 assert top_k([1,1], [[1,0],[0,1]], 1) == [0]</code></pre>
     <p class="trap">Traps: zero-vector division; confirm the tie rule before writing.</p>
+    <p class="trap">&#10003; solved 2026-10-02 · 26/26 local tests (cosine · top-k · precision/recall · end to end) · push-all heap, n log n; the size-k variant is the follow-up</p>
+<pre><code>import heapq
+import math
+
+
+def cosine(a: list[float], b: list[float]) -&gt; float:
+    dot_product = sum(a[i] * b[i] for i in range(len(a)))
+    a_length = math.sqrt(sum(a[i] * a[i] for i in range(len(a))))
+    b_length = math.sqrt(sum(b[i] * b[i] for i in range(len(b))))
+    if a_length == 0 or b_length == 0:
+        return 0.0                       # convention: a zero vector has no direction
+    return dot_product / (a_length * b_length)
+
+
+def top_k(query: list[float], docs: list[list[float]], k: int) -&gt; list[int]:
+    res = []
+    for index, doc in enumerate(docs):
+        sim_score = cosine(query, doc)
+        heapq.heappush(res, (-sim_score, index))   # min-heap: negate so the best pops first;
+    output = []                                    # equal scores fall through to the smaller index
+    for i in range(min(k, len(docs))):             # also covers k == 0 and k &gt; len(docs)
+        output.append(heapq.heappop(res)[1])
+    return output
+
+
+def precision_recall_at_k(retrieved: list[int], relevant: set[int], k: int) -&gt; tuple[float, float]:
+    correct = relevant.intersection(retrieved[:k])          # only the first k count
+    precision = len(correct) / k if k else 0.0              # of what I showed, how much was right
+    recall = len(correct) / len(relevant) if relevant else 0.0   # of what was right, how much I showed
+    return (precision, recall)
+
+
+def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
+    return precision_recall_at_k(top_k(query, docs, k), relevant, k)</code></pre>
+    <details>
+      <summary>Lineage &amp; follow-ups — what this problem is made of, what to do before and after it</summary>
+      <p><b>Parts on the map.</b> <b>Heap</b> does the ranking, and there are two ways to hold it. Push every doc and pop k times — heap of size n, n log n, no better than sorting, but easy to get right: store <code>(-sim, index)</code> so the best score is the smallest tuple and equal scores fall through to the smaller index. Or keep only the k best — heap of size k, n log k: now the root must be the <i>worst</i> of the k, so store <code>(sim, -index)</code> un-negated, push while the heap is short, otherwise compare with <code>heap[0]</code> and <code>heapreplace</code>, and sort the survivors at the end. Same tie rule, opposite encoding, because one design wants the best on top and the other wants the worst on top. <b>Set</b> counts the hits: <code>relevant.intersection(retrieved[:k])</code> — a list has no intersection because answering "is x in there" costs a scan; a set answers it with one hash. <b>Sort</b> is the brute-force oracle the random test checks against.</p>
+      <p><b>Do before.</b> <a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank" rel="noopener">215 Kth Largest ↗</a> (the size-k heap on its own) · <a href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank" rel="noopener">973 K Closest Points ↗</a> (top-k by a distance score — this problem with Euclidean instead of cosine) · <a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank" rel="noopener">347 Top K Frequent ↗</a>.</p>
+      <p><b>Do after.</b> <a href="https://leetcode.com/problems/top-k-frequent-words/" target="_blank" rel="noopener">692 Top K Frequent Words ↗</a> (the tie rule becomes lexicographic — same tuple trick, different second field) · <a href="https://leetcode.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703 Kth Largest in a Stream ↗</a> (the size-k heap kept alive across calls — docs arriving one at a time) · <a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank" rel="noopener">23 Merge k Sorted Lists ↗</a> (a heap of list heads: the shape of merging per-shard top-k results into one answer).</p>
+      <p><b>Follow-up questions an interviewer would add, in rising order.</b> (1) Switch to the size-k heap — say the complexity changes from n log n to n log k and why. (2) Normalize every vector once at index time; cosine becomes a plain dot product, no square roots per query. (3) Many queries at once: stack them into a matrix and let <code>numpy</code> do one matrix multiply instead of Python loops — two orders of magnitude. (4) n is ten million: exact search is too slow, go approximate — see the next block. (5) How do you know the approximate index is good enough? Treat the exact answer as the relevant set and measure recall@k — part 3's metric, pointed at the index itself. (6) Order-aware metrics: precision ignores whether the hit was first or fifth; MRR and nDCG don't. (7) Filters: "only documents this user may see" — pre-filter or post-filter, and what each breaks.</p>
+      <p><b>Where it lives.</b> This is the retrieval half of RAG: embed the corpus once, embed the question, rank by cosine, hand the top k to the model. Precision and recall split the job across the funnel — the retrieval stage should run high recall (a document it misses can never be cited), and a reranker or the model itself buys precision back on the short list.</p>
+    </details>
+    <details>
+      <summary>Follow-up spoken answer — scaling retrieval: FAISS and vector databases (a short story)</summary>
+      <p>So the brute-force version costs n times d multiplications per query. One million documents at 1,536 dimensions is 1.5 billion multiplications — a few hundred milliseconds on a CPU. That's fine at ten thousand documents and hopeless at ten million. FAISS calls the brute-force version a <i>Flat</i> index, and it's the right answer more often than people admit: exact, nothing to tune, and on a GPU it stays fast into the millions. Past that you accept approximate answers, and the whole game becomes measuring <i>how</i> approximate — which is exactly recall@k from part 3, with the Flat index's answer standing in as the relevant set.</p>
+      <p>Three ideas, in the order people usually stack them. <b>IVF</b>: run k-means over the corpus into, say, 4,096 clusters and remember each center. At query time compare the query to the 4,096 centers (cheap), pick the closest few — <code>nprobe</code>, say 8 — and scan only those clusters. The work drops by roughly 4,096 over 8. The miss case is a true neighbor sitting just across a boundary in a cluster you didn't probe; raising nprobe buys recall with time. <b>PQ</b>: shrink the vectors so the scan is cheaper and the index fits in RAM. Cut 1,536 dimensions into 96 chunks of 16; for each chunk learn 256 representative sub-vectors; store each chunk as the one-byte id of its nearest representative. 6,144 bytes become 96, and distance to a query is a table lookup per chunk. The loss is quantization error. IVF plus PQ is the classic recipe for a billion vectors on one machine. <b>HNSW</b>: no clusters, a graph. Every vector links to a few near neighbors, and the graph is layered like a skip list — the top layer holds a handful of points with long-range links, the bottom holds everything. Search enters at the top, hops greedily to whichever neighbor is closest to the query, and drops a layer when it can't improve: a logarithmic number of hops instead of a scan. Best recall-for-speed when the data fits in memory; the price is memory for the edges and slower inserts.</p>
+      <p>Vector databases — Milvus, Qdrant, Weaviate, Pinecone, Chroma, pgvector, Elasticsearch's kNN — all run these same two or three algorithms inside. What they add is the database part: filtering by metadata next to the vector search (harder than it sounds — filter first and you break the index's assumptions, filter last and you may be left with too few results), keeping the index fresh as documents change, and sharding across machines. If you already run Postgres, pgvector is the no-drama place to start.</p>
+      <p>And the metric closes the loop. Run the exact search once to get the truth, then measure the approximate index's recall@k while turning nprobe or ef up until recall clears your bar. That knob is the whole tuning story, and the number you report is a sentence like "recall@10 of 0.97 at two milliseconds."</p>
+    </details>
   </div>
 
   <p class="trap" style="margin-top:16px">Variants seen in the same pool: versioned KV store with consistency checks, DB connection pool (concurrency), file system with capacity limits — same shape; recognition is enough.</p>

@@ -11,7 +11,8 @@ Spreadsheet():  ("set", label, value)  ("get", label)  ("del", label)
 Scopes 1-2 record only the results of gets; scope 3 also records what
 set_cell returns (True / False).
 
-Scope 4 (follow-up variant): a case is a command script string passed to run().
+Scope 4 (follow-up variant): a case is a command script string passed to run();
+each line yields exactly what the method call returned (True/False, int/None, None).
 """
 import contextlib
 import io
@@ -19,7 +20,9 @@ import sys
 import time
 import traceback
 
-from excel import Spreadsheet, run
+import excel
+from excel import run
+Spreadsheet = getattr(excel, "Spreadsheet", None) or excel.SpreadSheet      # either spelling works
 
 GREEN = "\033[92m"
 RED = "\033[91m"
@@ -42,57 +45,57 @@ def run_ops(ops, record_set=False):
         elif op[0] == "get":
             out.append(sh.get_cell(op[1]))
         elif op[0] == "del":
-            sh.delete_cell(op[1])
+            (getattr(sh, "delete_cell", None) or sh.del_cell)(op[1])   # either name works
     return out
 
 
 def chain_then_gets(n, gets):
-    ops = [("set", "A1", 1)] + [("set", f"A{i}", f"=A{i-1}+1") for i in range(2, n + 1)]
+    ops = [("set", "A1", "1")] + [("set", f"A{i}", f"=A{i-1}+1") for i in range(2, n + 1)]
     ops += [("get", f"A{n}")] * gets
     return ops, [n] * gets
 
 
 def chain_then_independent_sets(n):
-    ops = [("set", "A1", 1)] + [("set", f"A{i}", f"=A{i-1}+1") for i in range(2, n + 1)]
-    ops += [("set", f"B{i}", i) for i in range(1, n + 1)]          # no dependents at all
+    ops = [("set", "A1", "1")] + [("set", f"A{i}", f"=A{i-1}+1") for i in range(2, n + 1)]
+    ops += [("set", f"B{i}", str(i)) for i in range(1, n + 1)]          # no dependents at all
     ops += [("get", f"A{n}"), ("get", "B7")]
     return ops, [True] * (2 * n) + [n, 7]        # scope 3 records every set's True/False
 
 
 def script_chain(n):
-    lines = ["SET A1 1"] + [f"SET A{i} A{i-1}+1" for i in range(2, n + 1)] + [f"GET A{n}"]
-    return "\n".join(lines), ["OK"] * n + [str(n)]
+    lines = ["SET A1 1"] + [f"SET A{i} =A{i-1}+1" for i in range(2, n + 1)] + [f"GET A{n}"]
+    return "\n".join(lines), [True] * n + [n]
 
 
 SCOPES = {
     1: ("literals: set / get", [
-        ("set then get", [("set", "A1", 10), ("get", "A1")], [10]),
+        ("set then get", [("set", "A1", "10"), ("get", "A1")], [10]),
         ("get of an unset cell -> None", [("get", "A1")], [None]),
-        ("overwrite", [("set", "A1", 5), ("set", "A1", 7), ("get", "A1")], [7]),
+        ("overwrite", [("set", "A1", "5"), ("set", "A1", "7"), ("get", "A1")], [7]),
         ("literal given as a string (one report's format)", [("set", "A1", "10"), ("get", "A1")], [10]),
-        ("zero and a two-letter column", [("set", "AA10", 0), ("get", "AA10"), ("get", "A10")], [0, None]),
+        ("zero and a two-letter column", [("set", "AA10", "0"), ("get", "AA10"), ("get", "A10")], [0, None]),
     ]),
     2: ("formulas, cached so that get is one lookup", [
         ("formula of literals only", [("set", "A1", "=1+2"), ("get", "A1")], [3]),
         ("references plus a literal",
-         [("set", "A1", 1), ("set", "B1", 2), ("set", "C1", "=A1+B1+1"), ("get", "C1")], [4]),
+         [("set", "A1", "1"), ("set", "B1", "2"), ("set", "C1", "=A1+B1+1"), ("get", "C1")], [4]),
         ("a later set propagates to the dependent",
-         [("set", "A1", 1), ("set", "B1", "=A1+1"), ("get", "B1"), ("set", "A1", 10), ("get", "B1")], [2, 11]),
+         [("set", "A1", "1"), ("set", "B1", "=A1+1"), ("get", "B1"), ("set", "A1", "10"), ("get", "B1")], [2, 11]),
         ("nested references, update the root",
-         [("set", "A1", 1), ("set", "B1", "=A1+1"), ("set", "C1", "=B1+1"), ("set", "D1", "=C1+1"),
-          ("get", "D1"), ("set", "A1", 100), ("get", "D1")], [4, 103]),
+         [("set", "A1", "1"), ("set", "B1", "=A1+1"), ("set", "C1", "=B1+1"), ("set", "D1", "=C1+1"),
+          ("get", "D1"), ("set", "A1", "100"), ("get", "D1")], [4, 103]),
         ("one cell referenced by three others",
-         [("set", "A1", 1), ("set", "B1", "=A1+1"), ("set", "C1", "=A1+2"), ("set", "D1", "=A1+3"),
-          ("set", "A1", 10), ("get", "B1"), ("get", "C1"), ("get", "D1")], [11, 12, 13]),
+         [("set", "A1", "1"), ("set", "B1", "=A1+1"), ("set", "C1", "=A1+2"), ("set", "D1", "=A1+3"),
+          ("set", "A1", "10"), ("get", "B1"), ("get", "C1"), ("get", "D1")], [11, 12, 13]),
         ("same cell twice in one formula",
-         [("set", "A1", 2), ("set", "B1", "=A1+A1"), ("get", "B1")], [4]),
+         [("set", "A1", "2"), ("set", "B1", "=A1+A1"), ("get", "B1")], [4]),
         ("formula replaced by a literal stops following upstream",
-         [("set", "A1", 1), ("set", "B1", "=A1+1"), ("set", "B1", 100), ("set", "A1", 50), ("get", "B1")], [100]),
+         [("set", "A1", "1"), ("set", "B1", "=A1+1"), ("set", "B1", "100"), ("set", "A1", "50"), ("get", "B1")], [100]),
         ("formula replaced by another formula drops the old edge",
-         [("set", "A1", 1), ("set", "C1", 5), ("set", "B1", "=A1+1"), ("set", "B1", "=C1+1"),
-          ("set", "A1", 99), ("get", "B1")], [6]),
+         [("set", "A1", "1"), ("set", "C1", "5"), ("set", "B1", "=A1+1"), ("set", "B1", "=C1+1"),
+          ("set", "A1", "99"), ("get", "B1")], [6]),
         ("unset dependency -> None, then it appears",
-         [("set", "B1", "=A1+1"), ("get", "B1"), ("set", "A1", 1), ("get", "B1")], [None, 2]),
+         [("set", "B1", "=A1+1"), ("get", "B1"), ("set", "A1", "1"), ("get", "B1")], [None, 2]),
         ("unset two levels down -> None",
          [("set", "B1", "=A1+1"), ("set", "C1", "=B1+1"), ("get", "C1")], [None]),
         ("bonus timing: 500-cell chain then 20,000 gets (lazy recompute = seconds, cache = instant)",
@@ -100,57 +103,64 @@ SCOPES = {
     ]),
     3: ("cycle detection + delete (set returns True / False)", [
         ("cycle rejected, old values kept",
-         [("set", "A1", 10), ("set", "B1", "=A1+1"), ("set", "A1", "=B1+1"), ("get", "A1"), ("get", "B1")],
+         [("set", "A1", "10"), ("set", "B1", "=A1+1"), ("set", "A1", "=B1+1"), ("get", "A1"), ("get", "B1")],
          [True, True, False, 10, 11]),
         ("self reference", [("set", "A1", "=A1+1"), ("get", "A1")], [False, None]),
-        ("self reference keeps the old literal", [("set", "A1", 5), ("set", "A1", "=A1+1"), ("get", "A1")], [True, False, 5]),
+        ("self reference keeps the old literal", [("set", "A1", "5"), ("set", "A1", "=A1+1"), ("get", "A1")], [True, False, 5]),
         ("three-cell cycle through unset cells",
-         [("set", "A1", "=B1+1"), ("set", "B1", "=C1+1"), ("set", "C1", "=A1+1"), ("get", "A1"), ("set", "C1", 7), ("get", "A1")],
+         [("set", "A1", "=B1+1"), ("set", "B1", "=C1+1"), ("set", "C1", "=A1+1"), ("get", "A1"), ("set", "C1", "7"), ("get", "A1")],
          [True, True, False, None, True, 9]),
         ("overwrite removes the old edge, so no cycle anymore",
-         [("set", "A1", "=B1+1"), ("set", "A1", 5), ("set", "B1", "=A1+1"), ("get", "B1")],
+         [("set", "A1", "=B1+1"), ("set", "A1", "5"), ("set", "B1", "=A1+1"), ("get", "B1")],
          [True, True, True, 6]),
         ("delete a referenced cell -> dependents see None, then set it back",
-         [("set", "A1", 5), ("set", "B1", "=A1+1"), ("get", "B1"), ("del", "A1"), ("get", "B1"), ("get", "A1"),
-          ("set", "A1", 2), ("get", "B1")],
+         [("set", "A1", "5"), ("set", "B1", "=A1+1"), ("get", "B1"), ("del", "A1"), ("get", "B1"), ("get", "A1"),
+          ("set", "A1", "2"), ("get", "B1")],
          [True, True, 6, None, None, True, 3]),
         ("delete an unset cell is a no-op", [("del", "Z9"), ("get", "Z9")], [None]),
         ("delete then a formula into the gap may be set again",
-         [("set", "A1", 1), ("set", "B1", "=A1+1"), ("del", "B1"), ("set", "B1", "=A1+2"), ("get", "B1")],
+         [("set", "A1", "1"), ("set", "B1", "=A1+1"), ("del", "B1"), ("set", "B1", "=A1+2"), ("get", "B1")],
          [True, True, True, 3]),
         ("bonus timing: 1,500-cell chain, then 1,500 unrelated sets (recompute-all = seconds, dependents-only = instant)",
          *chain_then_independent_sets(1_500)),
     ]),
-    4: ("follow-up variant: run(script) with SET/GET and OK/ERROR", [
-        ("set then get", "SET A1 10\nGET A1", ["OK", "10"]),
-        ("get an unset cell", "GET A1", ["ERROR"]),
-        ("overwrite a literal", "SET A1 5\nSET A1 7\nGET A1", ["OK", "OK", "7"]),
-        ("zero value, two-digit row", "SET B10 0\nGET B10", ["OK", "0"]),
-        ("two-letter column is a different cell", "SET AA1 3\nGET AA1\nGET A1", ["OK", "3", "ERROR"]),
-        ("chain (the write-up's example 1)",
-         "SET A1 10\nGET A1\nSET A2 A1+20\nGET A2\nSET A3 A1+A2+5\nGET A3",
-         ["OK", "10", "OK", "30", "OK", "45"]),
-        ("formula of literals only", "SET A1 1+2+3\nGET A1", ["OK", "6"]),
+    4: ("follow-up variant: run(script), one method call per line, results passed through", [
+        ("set then get", "SET A1 10\nGET A1", [True, 10]),
+        ("get an unset cell", "GET A1", [None]),
+        ("overwrite a literal", "SET A1 5\nSET A1 7\nGET A1", [True, True, 7]),
+        ("zero value, two-digit row", "SET B10 0\nGET B10", [True, 0]),
+        ("two-letter column is a different cell", "SET AA1 3\nGET AA1\nGET A1", [True, 3, None]),
+        ("chain of three cells",
+         "SET A1 10\nGET A1\nSET A2 =A1+20\nGET A2\nSET A3 =A1+A2+5\nGET A3",
+         [True, 10, True, 30, True, 45]),
+        ("formula of literals only", "SET A1 =1+2+3\nGET A1", [True, 6]),
         ("diamond: one cell reached by two paths is legal",
-         "SET A1 1\nSET B1 A1+1\nSET C1 A1+B1\nGET C1", ["OK", "OK", "OK", "3"]),
-        ("same cell twice in one formula", "SET A1 2\nSET B1 A1+A1\nGET B1", ["OK", "OK", "4"]),
+         "SET A1 1\nSET B1 =A1+1\nSET C1 =A1+B1\nGET C1", [True, True, True, 3]),
+        ("same cell twice in one formula", "SET A1 2\nSET B1 =A1+A1\nGET B1", [True, True, 4]),
         ("GET reflects the latest upstream value",
-         "SET A1 10\nSET A2 A1+1\nGET A2\nSET A1 20\nGET A2", ["OK", "OK", "11", "OK", "21"]),
+         "SET A1 10\nSET A2 =A1+1\nGET A2\nSET A1 20\nGET A2", [True, True, 11, True, 21]),
         ("formula replaced by a literal stops following upstream",
-         "SET A1 1\nSET A2 A1+1\nSET A2 100\nSET A1 50\nGET A2", ["OK", "OK", "OK", "OK", "100"]),
-        ("unset dependency: SET is OK, GET errors until it is filled",
-         "SET A2 A1+1\nGET A2\nSET A1 1\nGET A2", ["OK", "ERROR", "OK", "2"]),
-        ("unset two levels down", "SET A2 A1+1\nSET A3 A2+1\nGET A3", ["OK", "OK", "ERROR"]),
-        ("cycle rejected, old values kept (the write-up's example 2)",
-         "SET A1 10\nSET B1 A1+1\nSET A1 B1+1\nGET A1\nGET B1", ["OK", "OK", "ERROR", "10", "11"]),
-        ("self-reference on an unset cell", "SET A1 A1+1\nGET A1", ["ERROR", "ERROR"]),
-        ("self-reference keeps the old value", "SET A1 5\nSET A1 A1+1\nGET A1", ["OK", "ERROR", "5"]),
+         "SET A1 1\nSET A2 =A1+1\nSET A2 100\nSET A1 50\nGET A2", [True, True, True, True, 100]),
+        ("unset dependency: SET succeeds, GET is None until it is filled",
+         "SET A2 =A1+1\nGET A2\nSET A1 1\nGET A2", [True, None, True, 2]),
+        ("unset two levels down", "SET A2 =A1+1\nSET A3 =A2+1\nGET A3", [True, True, None]),
+        ("cycle rejected, old values kept",
+         "SET A1 10\nSET B1 =A1+1\nSET A1 =B1+1\nGET A1\nGET B1", [True, True, False, 10, 11]),
+        ("self-reference on an unset cell", "SET A1 =A1+1\nGET A1", [False, None]),
+        ("self-reference keeps the old value", "SET A1 5\nSET A1 =A1+1\nGET A1", [True, False, 5]),
         ("three-cell cycle, then the sheet still works",
-         "SET A1 B1+1\nSET B1 C1+1\nSET C1 A1+1\nGET A1\nSET C1 7\nGET A1",
-         ["OK", "OK", "ERROR", "ERROR", "OK", "9"]),
-        ("cycle that runs through unset cells", "SET A1 B1+1\nSET B1 A1+1\nGET B1", ["OK", "ERROR", "ERROR"]),
+         "SET A1 =B1+1\nSET B1 =C1+1\nSET C1 =A1+1\nGET A1\nSET C1 7\nGET A1",
+         [True, True, False, None, True, 9]),
+        ("cycle that runs through unset cells", "SET A1 =B1+1\nSET B1 =A1+1\nGET B1", [True, False, None]),
         ("overwrite removes the old edge, so no cycle anymore",
-         "SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1", ["OK", "OK", "OK", "6"]),
+         "SET A1 =B1+1\nSET A1 5\nSET B1 =A1+1\nGET B1", [True, True, True, 6]),
+        ("DELETE: the dependent goes back to None",
+         "SET A1 1\nSET B1 =A1+1\nGET B1\nDELETE A1\nGET B1\nGET A1", [True, True, 2, None, None, None]),
+        ("DELETE an unset cell is a no-op", "DELETE Z9\nGET Z9", [None, None]),
+        ("DELETE then SET the same cell again",
+         "SET A1 1\nSET B1 =A1+1\nDELETE B1\nSET B1 =A1+2\nGET B1", [True, True, None, True, 3]),
+        ("DELETE removes the cell's edges, so the reverse formula is no longer a cycle",
+         "SET A1 1\nSET B1 =A1+1\nDELETE B1\nSET A1 =B1+1\nGET A1", [True, True, None, True, None]),
         ("chain of 3,000 cells (Python's default recursion limit is ~1,000)", *script_chain(3000)),
     ]),
 }

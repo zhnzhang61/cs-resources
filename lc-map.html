@@ -115,20 +115,21 @@
   table.log code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; line-height: 1.45; color: var(--fg); white-space: pre; }
   .times { display: inline-block; margin-left: 6px; font-size: 10px; color: var(--muted); border: 1px solid var(--tbl); border-radius: 10px; padding: 0 6px; vertical-align: 1px; }
   .dsbank .prob { border: 1.5px solid var(--tbl); border-radius: 10px; padding: 14px 16px 10px; margin: 14px 0; }
-  .dsbank h3 { font-size: 13.5px; margin: 0 0 8px; }
-  .dsbank h3.tier { font-size: 14px; margin: 26px 0 4px; }
-  .dsbank .parts { font-size: 12px; color: var(--muted); margin: 6px 0; line-height: 1.65; }
-  .dsbank p { font-size: 12.5px; line-height: 1.7; margin: 6px 0; }
+  .dsbank h3 { font-size: 15.5px; margin: 0 0 8px; }
+  .dsbank h3.tier { font-size: 16px; margin: 26px 0 4px; }
+  .dsbank .parts { font-size: 13.5px; color: var(--muted); margin: 6px 0; line-height: 1.65; }
+  .dsbank p { font-size: 14px; line-height: 1.7; margin: 6px 0; }
   .dsbank p a { color: var(--d1); text-decoration: none; }
   .dsbank p a:hover { text-decoration: underline; }
   .dsbank pre { background: var(--d5-bg); border-radius: 6px; padding: 8px 10px; overflow-x: auto; margin: 8px 0; }
-  .dsbank pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.55; color: var(--fg); white-space: pre; }
-  .dsbank p code, .dsbank h3 code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; }
-  .dsbank .chip { display: inline-block; font-size: 10.5px; font-weight: 400; border: 1px solid var(--tbl); border-radius: 10px; padding: 0 8px; margin-left: 8px; color: var(--muted); vertical-align: 2px; }
-  .dsbank .trap { color: var(--muted); font-size: 12px; }
+  .dsbank pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.55; color: var(--fg); white-space: pre; }
+  .dsbank p code, .dsbank h3 code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
+  .dsbank .chip { display: inline-block; font-size: 11.5px; font-weight: 400; border: 1px solid var(--tbl); border-radius: 10px; padding: 0 8px; margin-left: 8px; color: var(--muted); vertical-align: 2px; }
+  .dsbank .trap { color: var(--muted); font-size: 13.5px; }
   .dsbank details { margin: 10px 0 4px; }
-  .dsbank details summary { cursor: pointer; font-size: 12.5px; font-weight: 600; }
-  .dsbank table.spec { border-collapse: collapse; font-size: 12px; margin: 12px 0; }
+  .dsbank details summary { cursor: pointer; font-size: 14px; font-weight: 600; }
+  .dsbank details.code summary { font-weight: 500; color: var(--muted); }
+  .dsbank table.spec { border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
   .dsbank table.spec th, .dsbank table.spec td { border: 1px solid var(--tbl); padding: 7px 10px; text-align: left; vertical-align: top; line-height: 1.55; }
   .dsbank table.spec th { background: var(--d5-bg); font-weight: 600; white-space: nowrap; }
 </style>
@@ -385,6 +386,7 @@ assert highlight("a b a", ["a"]) == "&lt;hl&gt;a&lt;/hl&gt; b &lt;hl&gt;a&lt;/hl
 assert highlight("a b c", ["x"]) == "a b c"                   # no match: return unchanged</code></pre>
     <p class="trap">Traps: word boundaries (tokenize into words and match word sequences — not substrings); transitive merge = sort occurrence intervals, one sweep.</p>
     <p class="trap">&#10003; solved 2026-10-03 · 21/21 local tests · first-word index: 20,000 words × 2,000 sources in under 0.05 s (the naive per-source scan took 2.1 s)</p>
+    <details class="code"><summary>Solution code · 29 lines</summary>
 <pre><code>def highlight(text: str, sources: list[str]) -&gt; str:
     text_list = text.split(" ")
     text_coord = []
@@ -414,6 +416,7 @@ assert highlight("a b c", ["x"]) == "a b c"                   # no match: return
         cur = right
     res.extend(text_list[cur:])
     return " ".join(res)</code></pre>
+    </details>
     <details>
       <summary>Lineage &amp; follow-ups — what this problem is made of, what to do before and after it</summary>
       <p><b>What it is asking.</b> A model wrote <code>text</code>; <code>sources</code> are passages it may have copied from. Mark every stretch of the answer that appears word-for-word in a source, so a reader can see which claims are grounded. The pipeline has four steps and no new algorithm: split <code>text</code> into a word list; for each source, find every position where the next <code>len(source)</code> words equal the source's words (one source can match many times — don't stop at the first); collect all matches as word-index intervals; sort by start, merge the overlapping ones (LC 56), and rebuild the string with a tag around each merged interval. The spec hides three rules, and each test group checks one: whole-word only (<code>aa</code> never matches inside <code>aaab</code>), overlapping matches become one region (transitively — A touches B, B touches C, so A-B-C is one region even if A and C don't touch), and regions that merely sit next to each other stay separate.</p>
@@ -456,7 +459,110 @@ assert run("SET A2 A1+1\nGET A2\nSET A1 1\nGET A2") \
 assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
        == ["OK","OK","OK","6"]                 # overwriting removes old edges — no cycle anymore</code></pre>
     <p class="trap">Traps: rollback semantics (only write after the check passes); re-SET must rebuild the cell's outgoing edges; deep chains blow Python's recursion limit (raise it or go iterative — say this out loud).</p>
-    <p class="trap">&#10003; solved 2026-09-30 — the follow-up variant, lazy run() · 20/20 · write-then-rollback, iterative DFS for both the cycle check and evaluation. The cached class version is the open item.</p>
+    <p class="trap">&#10003; solved 2026-10-04 — the main problem: cached class, scopes 1–3, plus the script adapter · 49/49 · two dicts (formulas + values), recompute everything on each set, iterative post-order evaluate, cycle check by walking forward edges from the new formula's labels until the cell itself shows up. run() here passes the methods' own results through (True/False, int/None) and keeps the = in formulas; the string protocol above is a three-line translation inside the adapter. Timing: a 1,500-cell chain followed by 1,500 unrelated sets ≈ 2.3 s — that is the bill for recompute-all; recomputing only the dependents (a third dict of reverse edges) is the follow-up.</p>
+    <details class="code"><summary>Solution code · 99 lines</summary>
+<pre><code>class SpreadSheet():
+    def __init__(self):
+        self.cell_value_map = {}
+        self.cell_formula_map = {}
+
+    def get_cell(self, cell):
+        return self.cell_value_map.get(cell, None)
+
+    def convert_expressions(self, expression):
+        # convert an expression string into list
+        items = []
+        if expression.startswith("="):
+            for p in expression[1:].split("+"):
+                if p.isdigit():
+                    items.append(int(p))
+                else:
+                    items.append(p)
+        else:
+            items = [int(expression)]
+        return items
+
+    def set_cell(self, cell, expression):
+        items = self.convert_expressions(expression)
+        if self.detect_cycle(cell, items):
+            return False
+        self.cell_formula_map[cell] = items
+        self.recompute_all()
+        return True
+
+    def recompute_all(self):
+        self.cell_value_map = {}
+        for cell in self.cell_formula_map:
+            self.evaluate(cell)
+
+    def evaluate(self, start):
+        stack = [start]
+        while stack:
+            cell = stack[-1]
+            if cell in self.cell_value_map:
+                stack.pop()
+                continue
+            if cell not in self.cell_formula_map:
+                self.cell_value_map[cell] = None
+                stack.pop()
+                continue
+            pending = [t for t in self.cell_formula_map[cell] if isinstance(t, str) and t not in self.cell_value_map]
+            if pending:
+                stack.extend(pending)
+                continue
+            total = 0
+            for t in self.cell_formula_map[cell]:
+                v = t if isinstance(t, int) else self.cell_value_map[t]
+                if v is None:
+                    total = None
+                    break
+                total += v
+            self.cell_value_map[cell] = total
+            stack.pop()
+
+    def detect_cycle(self, cell, items):
+        stack = [t for t in items if isinstance(t, str)]
+        seen = set()
+        while stack:
+            cur = stack.pop()
+            if cur == cell:
+                return True
+            if cur in seen:
+                continue
+            seen.add(cur)
+            stack.extend(t for t in self.cell_formula_map.get(cur, []) if isinstance(t, str))
+        return False
+
+    def del_cell(self, cell):
+        self.cell_formula_map.pop(cell, None)
+        self.recompute_all()
+
+    def run_all(self, scripts):
+        res = []
+        all_actions = scripts.split("\n")
+        for action in all_actions:
+            res.append(self.run_one(action))
+        return res
+
+    def run_one(self, action):
+        # SET    -&gt; True / False (cycle)
+        # GET    -&gt; int / None
+        # DELETE -&gt; None
+        parts = action.split(" ")
+        if parts[0] == "SET":
+            return self.set_cell(parts[1], parts[2])
+        elif parts[0] == "GET":
+            return self.get_cell(parts[1])
+        elif parts[0] == "DELETE":
+            return self.del_cell(parts[1])
+        else:
+            return False
+
+def run(script):            # the adapter: one method call per line, results passed through
+    return SpreadSheet().run_all(script)</code></pre>
+    </details>
+    <p class="trap">&#10003; solved 2026-09-30 — the follow-up variant under the string protocol, lazy run() · 20/20 · write-then-rollback, iterative DFS for both the cycle check and evaluation.</p>
+    <details class="code"><summary>Solution code · 69 lines</summary>
 <pre><code>def run(script: str) -&gt; list[str]:
     cells = {}          # label -&gt; [tokens]; a token is an int or another label
     result = []         # the same dict is the data table AND the adjacency list
@@ -526,6 +632,7 @@ assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
         else:
             raise ValueError(f"Invalid line: {line}")
     return result</code></pre>
+    </details>
     <details>
       <summary>Lineage &amp; follow-ups — what this problem is made of, what to do before and after it</summary>
       <p><b>Parts on the map.</b> Four nodes do all the work. <b>Hashmap</b>: the <code>cells</code> dict is both the data table and the adjacency list — "A3 references A1" is already stored as "A1 appears in A3's token list", so no second structure is needed for the graph. <b>Set</b>: the <code>visited</code> set in the cycle walk and the <code>memo</code> dict in evaluation are the same idea (touch each cell once; diamonds like <code>C1 = A1+B1, B1 = A1+1</code> otherwise double the work at every level). <b>Stack</b>: two explicit stacks instead of recursion — because the container is a stack the walk is DFS; swap in a queue and it becomes BFS with the same answer, reachability doesn't care. <b>Memoization</b> is DP's memo without the DP: cache results of a pure function for the duration of one query. The cycle question is <b>Topo sort</b>'s question in disguise ("does the dependency DAG still topologically sort after this edge?"), asked one edge at a time.</p>
@@ -542,6 +649,7 @@ assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
     <div class="parts">① parse the path strings　② group content → paths, keep groups ≥2　③ <b>follow-up discussion (memorize — the classic set)</b>: huge files → compare size first, then chunked hashing; hash collisions → byte-by-byte confirmation; real filesystem traversal → BFS/DFS + symlink-cycle protection; doesn't fit in memory → streaming / external grouping</div>
     <p><b>Reported spec (one first-hand report).</b> Not the LeetCode string format: you are handed <code>list_dir(root)</code> and <code>is_dir(path)</code> and write <code>find_dups(root) -&gt; list[list[str]]</code> yourself — the traversal is live code, not a discussion. Key by content or by a hash of it. Follow-ups asked, in order: "it crashed on a real machine, why?" — a file without read permission (catch <code>PermissionError</code>, skip it, keep going), a file too large to load (read in buffers, hash as you go), too many files (stack overflow); then "a folder with thousands of children, a folder nested very deep?" — BFS queue size versus DFS stack depth, write the iterative version. Practice it against a fake disk with all of those hazards built in: <code>coding exercise/dupfinder.py</code> + <code>fakefs.py</code> + <code>test_dupfinder.py</code> (14 cases: plain tree, symlink cycles, permissions, 2,000-deep, 5,000-wide, files too big to load).</p>
     <p class="trap">✓ solved 2026-09-26 · all LC tests passed · follow-ups discussed</p>
+    <details class="code"><summary>Solution code · 21 lines</summary>
 <pre><code>class Solution:
     def findDuplicate(self, paths: list[str]) -&gt; list[list[str]]:
         content_path_dict = {}
@@ -563,6 +671,7 @@ assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
             if len(value) &gt; 1:
                 res.append(value)
         return res</code></pre>
+    </details>
     <details>
       <summary>Follow-up &#9312; — searching a real filesystem: DFS or BFS? (a short story)</summary>
       <p>So — DFS or BFS? Honestly, either one visits every node exactly once. The more interesting question is what happens when you point a walker at a real disk. For the record: classic single-threaded tools like <code>find</code> and Python's <code>os.walk</code> run iterative DFS; modern parallel ones like <code>fd</code> and <code>ripgrep</code> run a work queue that's BFS-shaped. And note the filesystem itself doesn't search anything — all it gives you is <code>readdir</code>. Searching is the tool's job.</p>
@@ -643,6 +752,7 @@ assert top_k([1,0], [[1,0],[0,1],[2,0]], 2) == [0,2]   # equal cosine → smalle
 assert top_k([1,1], [[1,0],[0,1]], 1) == [0]</code></pre>
     <p class="trap">Traps: zero-vector division; confirm the tie rule before writing.</p>
     <p class="trap">&#10003; solved 2026-10-02 · 26/26 local tests (cosine · top-k · precision/recall · end to end) · push-all heap, n log n; the size-k variant is the follow-up</p>
+    <details class="code"><summary>Solution code · 33 lines</summary>
 <pre><code>import heapq
 import math
 
@@ -676,6 +786,7 @@ def precision_recall_at_k(retrieved: list[int], relevant: set[int], k: int) -&gt
 
 def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
     return precision_recall_at_k(top_k(query, docs, k), relevant, k)</code></pre>
+    </details>
     <details>
       <summary>Lineage &amp; follow-ups — what this problem is made of, what to do before and after it</summary>
       <p><b>Parts on the map.</b> <b>Heap</b> does the ranking, and there are two ways to hold it. Push every doc and pop k times — heap of size n, n log n, no better than sorting, but easy to get right: store <code>(-sim, index)</code> so the best score is the smallest tuple and equal scores fall through to the smaller index. Or keep only the k best — heap of size k, n log k: now the root must be the <i>worst</i> of the k, so store <code>(sim, -index)</code> un-negated, push while the heap is short, otherwise compare with <code>heap[0]</code> and <code>heapreplace</code>, and sort the survivors at the end. Same tie rule, opposite encoding, because one design wants the best on top and the other wants the worst on top. <b>Set</b> counts the hits: <code>relevant.intersection(retrieved[:k])</code> — a list has no intersection because answering "is x in there" costs a scan; a set answers it with one hash. <b>Sort</b> is the brute-force oracle the random test checks against.</p>

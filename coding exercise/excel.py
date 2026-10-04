@@ -13,8 +13,8 @@ class Spreadsheet:
     value : an int, a decimal string ("10"), or a formula string starting
             with "=" — additions of non-negative ints and labels: "=B1+C1+1", "=1+2"
 
-Scope 1  literals only: set / get; get of an unset cell -> None.
-         (pass it fast — the reports say don't spend time here)
+Scope 1  literals only: set / get; get of an unset cell -> None; set_cell
+         returns True. (pass it fast — the reports say don't spend time here)
 
 Scope 2  formulas. get_cell must be O(1): compute at set time and cache the
          value of every cell, so a get is one dictionary lookup. Simplest
@@ -24,26 +24,31 @@ Scope 2  formulas. get_cell must be O(1): compute at set time and cache the
 
 Scope 3  cycle detection + delete. set_cell returns False and leaves the
          sheet unchanged if the new formula would create a cycle (including
-         a cell referencing itself); otherwise returns True (scopes 1-2 may
-         ignore the return value). delete_cell removes a cell: its
-         dependents now see an unset cell (-> None); deleting an unset cell
-         is a no-op. Optimization: on set, recompute only the cells that
-         depend on the changed cell (keep reverse edges).
+         a cell referencing itself); otherwise returns True. delete_cell
+         removes a cell and returns None: its dependents now see an unset
+         cell (-> None); deleting an unset cell is a no-op. Optimization: on
+         set, recompute only the cells that depend on the changed cell (keep
+         reverse edges).
 
 Advice from the field: make each scope run before starting the next.
 
-FOLLOW-UP VARIANT (seen in aggregator write-ups): the same engine driven by
-a command script.
+FOLLOW-UP VARIANT: the same engine driven by a command script, one method
+call per line.
 
-    run(script) -> list[str]
+    run(script) -> list
 
-    script : lines "SET label value" and "GET label", joined by "\\n"
-    value  : a non-negative int, or an addition formula WITHOUT the "="
-             prefix ("A1+A2+5")
-    SET    -> "OK", or "ERROR" if it would create a cycle (sheet unchanged)
-    GET    -> the value as a string, or "ERROR" if the cell is unset or
-              depends on an unset cell
-    Implement it as a thin adapter over Spreadsheet.
+    script : lines "SET label value", "GET label" and "DELETE label",
+             joined by "\\n"
+    value  : exactly what set_cell takes, as text: "10" or "=A1+A2+5"
+             (the "=" stays)
+    Each line yields what the method call returned, in order:
+        SET    -> True, or False if it would create a cycle (sheet unchanged)
+        GET    -> the int, or None if the cell is unset or depends on one
+        DELETE -> None
+    So run() is pure dispatch: split the line, call the method, append.
+    (Some write-ups phrase the output as strings — "OK"/"ERROR" and numbers
+    as text, no "=" in formulas; that is the version on the web page's card
+    and a three-line translation inside the adapter.)
 
 Run the tests:  python3 test_excel.py        (all scopes)
                 python3 test_excel.py 2      (scope 2 only)
@@ -51,25 +56,139 @@ Run the tests:  python3 test_excel.py        (all scopes)
 or just run this file (F5 in VS Code).
 """
 
-
-class Spreadsheet:
+class SpreadSheet():
     def __init__(self):
-        raise NotImplementedError
+        self.cell_value_map = {}
+        self.cell_formula_map = {}
 
-    def set_cell(self, label: str, value) -> bool:
-        raise NotImplementedError
+    def get_cell(self, cell):
+        return self.cell_value_map.get(cell, None)
 
-    def get_cell(self, label: str):
-        raise NotImplementedError
+    def convert_expressions(self, expression):
+        # convert an expression string into list
+        items = []
+        if expression.startswith("="):
+            #items.append("=")
+            for p in expression[1:].split("+"):
+                if p.isdigit():
+                    items.append(int(p))
+                else:
+                    items.append(p)
+        else:
+            items = [int(expression)]
+        return items
 
-    def delete_cell(self, label: str) -> None:
-        raise NotImplementedError
+    def set_cell(self, cell, expression):
+        items = self.convert_expressions(expression)     
+        if self.detect_cycle(cell, items):
+            return False   
+        self.cell_formula_map[cell] = items
+        self.recompute_all()
+        return True
 
+    def recompute_all(self):
+        self.cell_value_map = {}
+        for cell in self.cell_formula_map:
+            self.evaluate(cell)
 
-def run(script: str) -> list[str]:
-    raise NotImplementedError
+    def evaluate(self, start):
+        stack = [start]
+        while stack:
+            cell = stack[-1]
+            if cell in self.cell_value_map:
+                stack.pop()
+                continue
+            if cell not in self.cell_formula_map:
+                self.cell_value_map[cell] = None
+                stack.pop()
+                continue
+            pending = [t for t in self.cell_formula_map[cell] if isinstance(t, str) and t not in self.cell_value_map]
+            if pending:
+                stack.extend(pending)
+                continue
+            total = 0
+            for t in self.cell_formula_map[cell]:
+                v = t if isinstance(t, int) else self.cell_value_map[t]
+                if v is None:
+                    total = None
+                    break
+                total += v
+            self.cell_value_map[cell] = total
+            stack.pop()
 
+    def detect_cycle(self, cell, items):
+        stack = [t for t in items if isinstance(t, str)]
+        seen = set()
+        while stack:
+            cur = stack.pop()
+            if cur == cell:
+                return True
+            if cur in seen:
+                continue
+            seen.add(cur)
+            stack.extend(t for t in self.cell_formula_map.get(cur, []) if isinstance(t, str))
+        return False
+
+    def del_cell(self, cell):
+        self.cell_formula_map.pop(cell, None)
+        self.recompute_all()        
+
+    def run_all(self, scripts):
+        res = []
+        all_actions = scripts.split("\n")
+        for action in all_actions:
+            res.append(self.run_one(action))
+        return res
+
+    def run_one(self, action):
+        # SET    -> True / False (cycle)
+        # GET    -> int / None
+        # DELETE -> None
+        parts = action.split(" ")
+        if parts[0] == "SET":
+            return self.set_cell(parts[1], parts[2])
+        elif parts[0] == "GET":
+            return self.get_cell(parts[1])
+        elif parts[0] == "DELETE":
+            return self.del_cell(parts[1])
+        else:
+            return False
+
+# SET Numerical value only
+test_1 = "SET A1 10\nGET A1\nGET Z9"
+res_1 = [True, 10, None]
+
+# SET cell that refers to other cells
+test_2 = "SET B1 =A1+5\nGET B1"
+res_2 = [True, 15]
+
+# RESET A1 = 1 and recalculate B1
+test_3 = "SET A1 1\nGET B1"
+res_3 = [True, 6]
+
+# SET Empty dependency
+test_4 = "SET C1 =A1+D1\nGET C1"
+res_4 = [True, None]
+
+# SET Cycle, set invalidated
+test_5 = "SET A1 =B1+1\nGET B1"
+res_5 = [False, 6]
+
+# Delete, invalidate all dependency
+test_6 = "DELETE A1\nGET B1"
+res_6 = [None, None]
+
+def run(scripts): # for test harness
+    return SpreadSheet().run_all(scripts)
 
 if __name__ == "__main__":
-    from test_excel import main
-    main()
+    s = SpreadSheet()
+        
+    assert s.run_all(test_1) == res_1
+    assert s.run_all(test_2) == res_2
+    assert s.run_all(test_3) == res_3
+    assert s.run_all(test_4) == res_4
+    assert s.run_all(test_5) == res_5
+    print(s.run_all(test_6))
+    assert s.run_all(test_6) == res_6
+

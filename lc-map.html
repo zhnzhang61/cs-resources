@@ -380,6 +380,7 @@ class MovingAverage:
 assert highlight("the quick brown fox", ["the quick", "quick brown"]) \
        == "&lt;hl&gt;the quick brown&lt;/hl&gt; fox"          # overlapping matches merge
 assert highlight("aa aaab x", ["aa"]) == "&lt;hl&gt;aa&lt;/hl&gt; aaab x"   # whole-word: must NOT match inside "aaab"
+assert highlight("blue sky and blueprint", ["blue"]) == "&lt;hl&gt;blue&lt;/hl&gt; sky and blueprint"   # the reported example
 assert highlight("a b a", ["a"]) == "&lt;hl&gt;a&lt;/hl&gt; b &lt;hl&gt;a&lt;/hl&gt;"  # non-adjacent regions stay separate
 assert highlight("a b c", ["x"]) == "a b c"                   # no match: return unchanged</code></pre>
     <p class="trap">Traps: word boundaries (tokenize into words and match word sequences — not substrings); transitive merge = sort occurrence intervals, one sweep.</p>
@@ -426,11 +427,24 @@ assert highlight("a b c", ["x"]) == "a b c"                   # no match: return
   </div>
 
   <div class="prob">
-    <h3>2 · Spreadsheet Formula Evaluator — formulas + cycle rejection<span class="chip">hash + dependency DAG + cycle check</span></h3>
-    <p>Input is a multi-line command script; output one result per command. <code>SET label value</code>: label is like <code>A1</code>/<code>B10</code> (uppercase letters + digits); value is a non-negative integer or an addition-only formula (<code>A1+A2+5</code>). If the assignment would create a dependency cycle → return <code>"ERROR"</code> and leave the sheet <b>unchanged</b>; otherwise <code>"OK"</code>. <code>GET label</code>: return the evaluated value as a string; <code>"ERROR"</code> if the cell is unset or any transitive dependency is unset. Lazy or eager evaluation is your choice — GET must always reflect the latest committed values.</p>
-    <div class="parts">① literals: set/get + parsing　② formula references + recursive evaluation (diamond dependencies are legal)　③ cycle detection: check before commit — rejection has zero side effects</div>
+    <h3>2 · Excel: set_cell / get_cell — cached formulas + cycle rejection<span class="chip">hash + dependency DAG + cycle check</span></h3>
+    <p>Build a spreadsheet as a class. <code>set_cell(label, value)</code>: label is like <code>A1</code>/<code>B10</code> (uppercase letters + digits); value is an int, a decimal string, or a formula string starting with <code>=</code> that adds non-negative ints and labels (<code>"=B1+C1+1"</code>, <code>"=1+2"</code>). <code>get_cell(label)</code> returns the cell's value, or <code>None</code> if the cell is unset or depends on an unset cell. <b><code>get_cell</code> must be O(1)</b>: compute at set time and cache every value, so a read is one dictionary lookup. Setting a cell again replaces its formula and its dependencies.</p>
+    <div class="parts">Scope 1 literals only — pass it fast　② formulas with the value cache; recomputing <i>every</i> cell on every set is explicitly fine　③ cycle detection: <code>set_cell</code> returns False and leaves the sheet unchanged (self-reference included); <code>delete_cell</code>; then recompute only the cells that depend on the change</div>
+<pre><code>class Spreadsheet:
+    def set_cell(self, label: str, value) -&gt; bool: ...
+    def get_cell(self, label: str) -&gt; int | None: ...
+    def delete_cell(self, label: str) -&gt; None: ...
+
+sh = Spreadsheet()
+sh.set_cell("A1", 10);        assert sh.get_cell("A1") == 10
+sh.set_cell("B1", "=A1+1");   assert sh.get_cell("B1") == 11
+sh.set_cell("A1", 20);        assert sh.get_cell("B1") == 21        # refreshed at set time
+assert sh.get_cell("Z9") is None                                   # unset
+assert sh.set_cell("A1", "=B1+1") is False and sh.get_cell("A1") == 20   # cycle: rejected, unchanged
+sh.delete_cell("A1");         assert sh.get_cell("B1") is None     # its dependency is gone</code></pre>
+    <p class="trap">Field notes: edge cases named in reports — a cell referenced by many others, references nested several levels, deleting a referenced cell. The report that failed says why: the code volume is real and the hour is short — make each scope run before touching the next. Practice: <code>coding exercise/excel.py</code> + <code>test_excel.py</code> (45 cases; two timing cases expose lazy reads and recompute-everything).</p>
+    <p><b>Follow-up variant (seen in write-ups): the same engine driven by a command script.</b> <code>run(script)</code> takes lines <code>SET label value</code> / <code>GET label</code> and returns one string per line; the formula has no <code>=</code> prefix. SET returns <code>"OK"</code>, or <code>"ERROR"</code> if it would create a cycle (sheet unchanged); GET returns the value as a string, or <code>"ERROR"</code> if unset or depending on an unset cell. Lazy evaluation is allowed here. Write it as a thin adapter over the class.</p>
 <pre><code>def run(script: str) -&gt; list[str]: ...
-# common variant is a class API: set_cell(label, value) -&gt; bool · get_cell(label) -&gt; int | None
 
 assert run("SET A1 10\nGET A1\nSET A2 A1+20\nGET A2\nSET A3 A1+A2+5\nGET A3") \
        == ["OK","10","OK","30","OK","45"]
@@ -442,7 +456,7 @@ assert run("SET A2 A1+1\nGET A2\nSET A1 1\nGET A2") \
 assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
        == ["OK","OK","OK","6"]                 # overwriting removes old edges — no cycle anymore</code></pre>
     <p class="trap">Traps: rollback semantics (only write after the check passes); re-SET must rebuild the cell's outgoing edges; deep chains blow Python's recursion limit (raise it or go iterative — say this out loud).</p>
-    <p class="trap">&#10003; solved 2026-09-30 · 20/20 local tests (parts 1-4) · write-then-rollback variant, iterative DFS for both the cycle check and evaluation</p>
+    <p class="trap">&#10003; solved 2026-09-30 — the follow-up variant, lazy run() · 20/20 · write-then-rollback, iterative DFS for both the cycle check and evaluation. The cached class version is the open item.</p>
 <pre><code>def run(script: str) -&gt; list[str]:
     cells = {}          # label -&gt; [tokens]; a token is an int or another label
     result = []         # the same dict is the data table AND the adjacency list
@@ -526,6 +540,7 @@ assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
     <h3>3 · Duplicate File Finder<span class="chip">parsing + hash grouping = LC 609</span></h3>
     <p>Given directory info strings <code>"root/d1 f1.txt(content1) f2.txt(content2)"</code>, return all groups of files with identical content (each group ≥2, elements are full paths like <code>root/d1/f1.txt</code>). Practice directly as <a href="https://leetcode.com/problems/find-duplicate-file-in-system/" target="_blank" rel="noopener">LC 609 ↗</a>.</p>
     <div class="parts">① parse the path strings　② group content → paths, keep groups ≥2　③ <b>follow-up discussion (memorize — the classic set)</b>: huge files → compare size first, then chunked hashing; hash collisions → byte-by-byte confirmation; real filesystem traversal → BFS/DFS + symlink-cycle protection; doesn't fit in memory → streaming / external grouping</div>
+    <p><b>Reported spec (one first-hand report).</b> Not the LeetCode string format: you are handed <code>list_dir(root)</code> and <code>is_dir(path)</code> and write <code>find_dups(root) -&gt; list[list[str]]</code> yourself — the traversal is live code, not a discussion. Key by content or by a hash of it. Follow-ups asked, in order: "it crashed on a real machine, why?" — a file without read permission (catch <code>PermissionError</code>, skip it, keep going), a file too large to load (read in buffers, hash as you go), too many files (stack overflow); then "a folder with thousands of children, a folder nested very deep?" — BFS queue size versus DFS stack depth, write the iterative version. Practice it against a fake disk with all of those hazards built in: <code>coding exercise/dupfinder.py</code> + <code>fakefs.py</code> + <code>test_dupfinder.py</code> (14 cases: plain tree, symlink cycles, permissions, 2,000-deep, 5,000-wide, files too big to load).</p>
     <p class="trap">✓ solved 2026-09-26 · all LC tests passed · follow-ups discussed</p>
 <pre><code>class Solution:
     def findDuplicate(self, paths: list[str]) -&gt; list[list[str]]:

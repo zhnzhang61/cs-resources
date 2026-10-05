@@ -681,39 +681,165 @@ def run(script):            # the adapter: one method call per line, results pas
   </div>
 
   <div class="prob">
-    <h3>3 · Duplicate File Finder<span class="chip">parsing + hash grouping = LC 609</span></h3>
-    <p>Given directory info strings <code>"root/d1 f1.txt(content1) f2.txt(content2)"</code>, return all groups of files with identical content (each group ≥2, elements are full paths like <code>root/d1/f1.txt</code>). Practice directly as <a href="https://leetcode.com/problems/find-duplicate-file-in-system/" target="_blank" rel="noopener">LC 609 ↗</a>.</p>
-    <div class="parts">① parse the path strings　② group content → paths, keep groups ≥2　③ <b>follow-up discussion (memorize — the classic set)</b>: huge files → compare size first, then chunked hashing; hash collisions → byte-by-byte confirmation; real filesystem traversal → BFS/DFS + symlink-cycle protection; doesn't fit in memory → streaming / external grouping</div>
-    <p><b>Reported spec (one first-hand report).</b> Not the LeetCode string format: you are handed <code>list_dir(root)</code> and <code>is_dir(path)</code> and write <code>find_dups(root) -&gt; list[list[str]]</code> yourself — the traversal is live code, not a discussion. Key by content or by a hash of it. Follow-ups asked, in order: "it crashed on a real machine, why?" — a file without read permission (catch <code>PermissionError</code>, skip it, keep going), a file too large to load (read in buffers, hash as you go), too many files (stack overflow); then "a folder with thousands of children, a folder nested very deep?" — BFS queue size versus DFS stack depth, write the iterative version. Practice it against a fake disk with all of those hazards built in: <code>coding exercise/dupfinder.py</code> + <code>fakefs.py</code> + <code>test_dupfinder.py</code> (14 cases: plain tree, symlink cycles, permissions, 2,000-deep, 5,000-wide, files too big to load).</p>
-<pre><code>def find_dups(root: str, fs) -&gt; list[list[str]]: ...
+    <h3>3 · Duplicate File Finder — walk a real filesystem<span class="chip">LC 609 is Q0 · traversal + hash grouping</span></h3>
+    <p>Six questions in the order an interview runs them. Q0 is the LeetCode warm-up: the input is strings, the walk is done for you. From Q1 on you are given a root path and a filesystem interface — <code>list_dir(path)</code> returns the full paths of ONE directory's entries (it does not descend), <code>is_dir(path)</code> says whether a path is a directory — and the traversal is live code, not a discussion (one first-hand report). Each question consumes the one before:</p>
+    <div class="parts"><b>Q0</b> <a href="https://leetcode.com/problems/find-duplicate-file-in-system/" target="_blank" rel="noopener">LC 609 ↗</a>: directory-info strings <code>"root/d1 f1.txt(content1) f2.txt(content2)"</code> → every group of files with identical content (groups ≥2, full paths); parse, then group — the grouping half is what every later question calls<br><b>Q1</b> <code>list_files(root) -&gt; list[str]</code>: every file under root; list_dir shows one level, you write the loop that opens every directory (recursion is fine here)<br><b>Q2</b> <code>find_dups(root) -&gt; list[list[str]]</code>: the walk replaces the string parsing — read each file from Q1's list, feed (path, content) pairs to Q0's grouping, keep groups ≥2, each file once ("key by content or by a hash of it")<br><b>Q3</b> "it crashed on a real machine, why?" — unreadable directories and files raise <code>PermissionError</code>: skip the entry, keep going; the walk and the read wrapped in try/except<br><b>Q4</b> "some files are gigabytes" — too large to load: group by size first (free), then feed (path, digest) pairs to the same grouping, hashing in chunks and only inside same-size groups; a file with no size twin is never read<br><b>Q5</b> "thousands of children, nested very deep, a symlink loop" — recursion dies near 1,000 frames: rewrite Q1 with an explicit queue or stack (BFS vs DFS, say which and why); visited keyed by file identity, not path, so a symlink cannot loop you and a file reached by two paths is listed once<br><b>Beyond</b> hash collisions → byte-by-byte confirmation of a group; does not fit in memory → external grouping (sort the (digest, path) pairs on disk)</div>
+    <p>Practice it in one script that holds the six statements, the test cases and the implementation: <code>coding exercise/dupfinder.py</code> (+ <code>fakefs.py</code>, the fake disk). <code>python3 dupfinder.py 3</code> runs one question; 21 cases in all.</p>
+<pre><code>groups = lambda out: sorted(sorted(g) for g in out)       # any order is fine
+
+# Q0 — LeetCode 609: the walk is done for you, the input is strings
+def find_duplicate_609(paths: list[str]) -&gt; list[list[str]]: ...
+assert groups(find_duplicate_609(["root/a 1.txt(abcd) 2.txt(efgh)", "root/c 3.txt(abcd)", "root/c/d 4.txt(efgh)"])) \
+       == [["root/a/1.txt", "root/c/3.txt"], ["root/a/2.txt", "root/c/d/4.txt"]]
+
+# from here on the input is a disk
 # fs.list_dir(path) -&gt; full child paths    fs.is_dir(path) -&gt; bool          (the reported interface)
 # fs.size(path) -&gt; int   fs.read_chunks(path) -&gt; iterator of bytes   fs.identity(path) -&gt; (dev, inode)   (for the follow-ups)
-
-fs = FakeFS()                                 # tiny fake disk from the practice harness
+fs = FakeFS()                                 # tiny fake disk from the practice script
 fs.add_file("/docs/a.txt", b"hello"); fs.add_file("/docs/sub/c.txt", b"hello")
 fs.add_file("/img/x.png", b"\x89PNG"); fs.add_file("/img/y.png", b"\x89PNG"); fs.add_file("/img/z.png", b"other")
-groups = lambda out: sorted(sorted(g) for g in out)       # any order is fine
+
+# Q1 — every file under root
+def list_files(root: str, fs) -&gt; list[str]: ...
+assert sorted(list_files("/docs", fs)) == ["/docs/a.txt", "/docs/sub/c.txt"]
+
+# Q2 — groups of identical content: the walk replaces the parsing, the grouping is Q0's
+def find_dups(root: str, fs) -&gt; list[list[str]]: ...
 assert groups(find_dups("/", fs)) == [["/docs/a.txt", "/docs/sub/c.txt"], ["/img/x.png", "/img/y.png"]]
-fs.add_symlink("/docs/sub/loop", "/docs")     # a cycle: must terminate, each file listed once
-assert groups(find_dups("/docs", fs)) == [["/docs/a.txt", "/docs/sub/c.txt"]]
-fs.deny("/img/y.png")                         # unreadable: skipped, so x.png loses its twin
+
+# Q3 — an unreadable file is skipped, so x.png loses its twin
+fs.deny("/img/y.png")
 assert find_dups("/img", fs) == []
+
+# Q4 — too big to load: size first, then a chunked hash
 fs.add_file("/big/a.bin", big=(1, 6 * MB)); fs.add_file("/big/b.bin", big=(1, 6 * MB)); fs.add_file("/big/c.bin", big=(2, 9 * MB))
-assert groups(find_dups("/big", fs)) == [["/big/a.bin", "/big/b.bin"]]   # too big to load: size first, then chunked hash</code></pre>
-    <p class="trap">&#10003; 2026-10-04 — reference solution for the reported version, on the fake disk · 14/14 · walk → size → hash: BFS with an explicit queue, visited keyed by file identity (symlink cycles), PermissionError skipped once at the walk and once at the hash, size groups first so a file without a size twin is never read, sha256 over chunks. Studied, not yet re-typed from memory — that is the open item.</p>
-    <details class="code"><summary>Solution code · 63 lines</summary>
-<pre><code>def find_dups(root: str, fs) -&gt; list[list[str]]:
-    # three layers, one per scope: walk the disk -&gt; cheap grouping by size -&gt; exact grouping by hash
-    files = walk(root, fs)                                  # every readable file, each real file once
+assert groups(find_dups("/big", fs)) == [["/big/a.bin", "/big/b.bin"]]
+
+# Q5 — a symlink cycle: must terminate, each file listed once
+fs.add_symlink("/docs/sub/loop", "/docs")
+assert sorted(list_files("/docs", fs)) == ["/docs/a.txt", "/docs/sub/c.txt"]</code></pre>
+    <p class="trap">&#10003; 2026-10-04 — reference solution for Q1–Q5 on the fake disk, with the 9-26 LC 609 code kept as Q0 · 21/21 · walk → size → hash: BFS with an explicit queue, visited keyed by file identity (symlink cycles), PermissionError skipped once at the walk and once at the hash, size groups first so a file without a size twin is never read, sha256 over chunks. Studied, not yet re-typed from memory — that is the open item.</p>
+    <details class="code"><summary>Solution code · 146 lines, in question order (Q0 is the 9-26 solution, split at its own seam)</summary>
+<pre><code># ---------------- Q0: LeetCode 609 — the walk is done for you; parse, then group ----------------
+def parse_609(paths):
+    # "root/d1 f1.txt(content1) f2.txt(content2)" -&gt; [(complete_path, file_content), ...]
+    pairs = []
+    for i in range(len(paths)):
+        contents = paths[i].split(" ")
+        file_path = contents[0]
+        for j in range(1, len(contents)):
+            file_string = contents[j].split("(")
+            file_content = file_string[1].rstrip(")")
+            file_name = file_string[0]
+            complete_path = file_path + "/" + file_name
+            pairs.append((complete_path, file_content))
+    return pairs
+
+
+def group_by_content(pairs):
+    # (path, content) pairs -&gt; groups of 2+. The content is the dict key, the paths are the value.
+    # Every later question calls this one; only where the pairs come from changes.
+    content_path_dict = {}
+    for complete_path, file_content in pairs:
+        if file_content not in content_path_dict:
+            content_path_dict[file_content] = [complete_path]
+        else:
+            content_path_dict[file_content].append(complete_path)
+    res = []
+    for key, value in content_path_dict.items():
+        if len(value) &gt; 1:
+            res.append(value)
+    return res
+
+
+def find_duplicate_609(paths):
+    return group_by_content(parse_609(paths))
+
+
+# ---------------- Q1: every file under root (recursion allowed here) ----------------
+def list_files(root, fs):
+    # list_dir shows one level, so: for each entry, a directory means "go in", a file means "collect"
+    files = []
+    for p in fs.list_dir(root):
+        if fs.is_dir(p):
+            files.extend(list_files(p, fs))
+        else:
+            files.append(p)
+    return files
+
+
+# ---------------- Q2: the walk replaces the string parsing; the grouping is Q0's ----------------
+def read_pairs(paths, fs):
+    # the real-disk version of parse_609: (path, content) pairs, content read from the file
+    return [(p, fs.read_file(p)) for p in paths]
+
+
+def find_dups(root, fs):
+    return group_by_content(read_pairs(list_files(root, fs), fs))
+
+
+# ---------------- Q3: permissions — the walk and the read, wrapped in try/except ----------------
+def list_files(root, fs):                               # a directory that will not open is skipped, with its subtree
+    files = []
+    try:
+        children = fs.list_dir(root)
+    except OSError:                                     # PermissionError is an OSError
+        return files
+    for p in children:
+        if fs.is_dir(p):
+            files.extend(list_files(p, fs))
+        else:
+            files.append(p)
+    return files
+
+
+def read_pairs(paths, fs):                              # an unreadable file yields no pair, so it is in no group
+    pairs = []
+    for p in paths:
+        try:
+            pairs.append((p, fs.read_file(p)))
+        except OSError:
+            continue
+    return pairs
+
+
+# ---------------- Q4: too large to load — size first, then (path, digest) pairs into Q0's grouping ----------------
+def group_by_size(paths, fs):
+    # size is metadata, free to read; different sizes cannot be equal, so most files are never opened
+    by_size = {}
+    for p in paths:
+        try:
+            by_size.setdefault(fs.size(p), []).append(p)
+        except OSError:
+            continue
+    return [g for g in by_size.values() if len(g) &gt;= 2]
+
+
+def hash_pairs(paths, fs):
+    # read_pairs with a digest instead of the content: chunked, so the file's size does not matter; Q3's skip again
+    pairs = []
+    for p in paths:
+        h = hashlib.sha256()
+        try:
+            for chunk in fs.read_chunks(p):
+                h.update(chunk)
+        except OSError:
+            continue
+        pairs.append((p, h.digest()))
+    return pairs
+
+
+def find_dups(root, fs):                                # "key by content or by a hash of it": same grouping, new key
     result = []
-    for same_size in group_by_size(files, fs):              # only size twins get read at all
-        result.extend(group_by_hash(same_size, fs))
+    for same_size in group_by_size(list_files(root, fs), fs):
+        result.extend(group_by_content(hash_pairs(same_size, fs)))
     return result
 
 
-def walk(root, fs):
-    # BFS with an explicit queue (no recursion: 2,000-deep dirs). visited is keyed by fs.identity,
-    # not by path, because a symlink makes the same directory appear under a second path -&gt; cycle.
+# ---------------- Q5: deep, wide, symlink loops — the walk, iterative and keyed by identity ----------------
+def list_files(root, fs):
+    # explicit queue instead of recursion (BFS; a stack here would be DFS, same answer, different memory shape).
+    # visited is keyed by fs.identity, not by path: a symlink makes one directory appear under a second path.
     files = []
     seen_dirs = set()
     seen_files = set()
@@ -726,7 +852,7 @@ def walk(root, fs):
                 continue
             seen_dirs.add(ident)
             children = fs.list_dir(d)
-        except OSError:                                     # PermissionError is an OSError: skip this dir, keep going
+        except OSError:
             continue
         for p in children:
             if fs.is_dir(p):
@@ -734,62 +860,14 @@ def walk(root, fs):
                 continue
             try:
                 ident = fs.identity(p)
-            except OSError:                                 # dangling symlink etc.
+            except OSError:                             # dangling symlink etc.
                 continue
-            if ident not in seen_files:                     # the same file reachable by two paths: list it once
+            if ident not in seen_files:                 # the same file reachable by two paths: once
                 seen_files.add(ident)
                 files.append(p)
-    return files
-
-
-def group_by_size(files, fs):
-    # size is free (metadata); two files of different size cannot be equal, so most files never get read
-    by_size = {}
-    for p in files:
-        try:
-            by_size.setdefault(fs.size(p), []).append(p)
-        except OSError:
-            continue
-    return [g for g in by_size.values() if len(g) &gt;= 2]
-
-
-def group_by_hash(paths, fs):
-    # exact check: hash the content in chunks (files may be too big to load), group by digest
-    by_hash = {}
-    for p in paths:
-        h = hashlib.sha256()
-        try:
-            for chunk in fs.read_chunks(p):
-                h.update(chunk)
-        except OSError:                                     # unreadable file: it cannot be in any group
-            continue
-        by_hash.setdefault(h.digest(), []).append(p)
-    return [g for g in by_hash.values() if len(g) &gt;= 2]</code></pre>
+    return files</code></pre>
     </details>
-    <p class="trap">&#10003; solved 2026-09-26 — the LC 609 string version · all LC tests passed · follow-ups discussed</p>
-    <details class="code"><summary>Solution code · 21 lines</summary>
-<pre><code>class Solution:
-    def findDuplicate(self, paths: list[str]) -&gt; list[list[str]]:
-        content_path_dict = {}
-        for i in range(len(paths)):
-            contents = paths[i].split(" ")
-            file_path = contents[0]
-            for j in range(1, len(contents)):
-                file_string = contents[j].split("(")
-                file_content = file_string[1].rstrip(")")
-                file_name = file_string[0]
-                complete_path = file_path + "/" + file_name
-                if file_content not in content_path_dict:
-                    content_path_dict[file_content] = [complete_path]
-                else:
-                    content_path_dict[file_content].append(complete_path)
-
-        res = []
-        for key, value in content_path_dict.items():
-            if len(value) &gt; 1:
-                res.append(value)
-        return res</code></pre>
-    </details>
+    <p class="trap">&#10003; solved 2026-09-26 — Q0, the LC 609 string version · all LC tests passed; its grouping loop is the <code>group_by_content</code> every later question calls.</p>
     <details>
       <summary>Follow-up &#9312; — searching a real filesystem: DFS or BFS? (a short story)</summary>
       <p>So — DFS or BFS? Honestly, either one visits every node exactly once. The more interesting question is what happens when you point a walker at a real disk. For the record: classic single-threaded tools like <code>find</code> and Python's <code>os.walk</code> run iterative DFS; modern parallel ones like <code>fd</code> and <code>ripgrep</code> run a work queue that's BFS-shaped. And note the filesystem itself doesn't search anything — all it gives you is <code>readdir</code>. Searching is the tool's job.</p>

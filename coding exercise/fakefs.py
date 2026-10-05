@@ -153,8 +153,9 @@ class FakeFS:
         return (1, self._resolve(path).inode)
 
     # ---------- ground truth for the tests ----------
-    def _truth(self, root="/"):
-        """inode -> (content key, one path), for every file a traversal from root may legally read."""
+    def _truth(self, root="/", include_unreadable=False):
+        """inode -> (content key, one path), for every file a traversal from root can reach through readable
+        directories; by default only readable files (the ones a grouping may use)."""
         out = {}
         seen = set()
         stack = [(self._resolve(root), root.rstrip("/"))]
@@ -167,7 +168,7 @@ class FakeFS:
             seen.add(n.inode)
             for name, c in n.children.items():
                 if c.kind == "file":
-                    if not c.denied:
+                    if include_unreadable or not c.denied:
                         out[c.inode] = (("big",) + c.big if c.big else c.content, prefix + "/" + name)
                 else:
                     stack.append((c, prefix + "/" + name))

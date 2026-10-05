@@ -92,6 +92,12 @@ class SpreadSheet:
             self.evaluate(cell)
 
     def evaluate(self, start):
+        # mental model: 
+        # compute A1
+        # A1:[B1, C1, D1, 1]
+        # B1:[C2]
+        # C1:[5]
+        # D1:[NONE]
         stack = [start]
         while stack:
             cell = stack[-1]
@@ -102,9 +108,12 @@ class SpreadSheet:
                 self.cell_value_map[cell] = None
                 stack.pop()
                 continue
-            pending = [t for t in self.cell_formula_map[cell] if isinstance(t, str) and t not in self.cell_value_map]
-            if pending:
-                stack.extend(pending)
+            unresolved_reference = False
+            for t in self.cell_formula_map[cell]:
+                if isinstance(t, str) and t not in self.cell_value_map:
+                    stack.append(t)
+                    unresolved_reference = True
+            if unresolved_reference:
                 continue
             total = 0
             for t in self.cell_formula_map[cell]:
@@ -123,10 +132,12 @@ class SpreadSheet:
             cur = stack.pop()
             if cur == cell:
                 return True
-            if cur in seen:
+            if cur in seen: #A1 = B1 + C1; C1 = D1 AND B1 = D1, D1 appear twice, but only need to appear once
                 continue
             seen.add(cur)
-            stack.extend(t for t in self.cell_formula_map.get(cur, []) if isinstance(t, str))
+            for t in self.cell_formula_map.get(cur,[]):
+                if isinstance(t, str):
+                    stack.append(t)            
         return False
 
     def del_cell(self, cell):

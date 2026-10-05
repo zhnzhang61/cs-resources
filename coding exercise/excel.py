@@ -56,7 +56,7 @@ Run the tests:  python3 test_excel.py        (all scopes)
 or just run this file (F5 in VS Code).
 """
 
-class SpreadSheet():
+class SpreadSheet:
     def __init__(self):
         self.cell_value_map = {}
         self.cell_formula_map = {}
@@ -188,7 +188,6 @@ if __name__ == "__main__":
     assert s.run_all(test_2) == res_2
     assert s.run_all(test_3) == res_3
     assert s.run_all(test_4) == res_4
-    assert s.run_all(test_5) == res_5
-    print(s.run_all(test_6))
+    assert s.run_all(test_5) == res_5    
     assert s.run_all(test_6) == res_6
 

@@ -916,5 +916,72 @@ total spread = average within-grade spread + spread of the grade averages</code>
 </ol>
 </details>
 </section>
+<section class="core">
+<h2>Interview Log · Quant &amp; Concept <span class="coresub">真实面试里被问到的非 coding 题（定价、概率、系统设计、概念）。每条：日期 · 公司 · 题 · key move。coding 题记在 lc-map.html。</span></h2>
+<ol class="qs">
+<li><b>2026-10-06 · Balyasny · Macro AI Engineer.</b> 10-year fixed-coupon bond, coupon → ∞: duration? Key move: all coupons scale together so their relative weights don't change; principal weight → 0; limit = duration of a 10-year level annuity (≈ 5.1 yr at 5%, 5.5 yr at 0%) — not 0.</li>
+<li><b>2026-10-06 · Balyasny · Macro AI Engineer.</b> 10-year SOFR floater discounted at SOFR: duration? Key move: value is par at every reset (backward induction), so rate duration = time to next reset (≈ 0 for daily SOFR); spread duration still ≈ 5 yr — floater strips rate risk, keeps credit risk.</li>
+<li><b>2026-10-06 · Balyasny · Macro AI Engineer.</b> Same floater with coupon spread 1 / 10 / 200 bp: duration? Key move: spread leg = 10-year annuity (duration ≈ 5.2 yr); total = PV-weight of that leg × 5.2. 1 bp ≈ 0, 10 bp ≈ 0.04 yr, 200 bp ≈ 0.7 yr; capped at the annuity duration as spread → ∞.</li>
+</ol>
+</section>
+<section class="core">
+<h2>Desk 视角 <span class="coresub">每个概念先问：这张桌子靠什么挣钱、在哪亏钱、坐在上面的人早上第一件事看什么。公式放最后。2026-10-08 起，一天一课。</span></h2>
+
+<h3 class="sub">第 1 课 · 银行 rates desk 的一天（面试官在 RBC 的座位）</h3>
+
+<p><b>一句话版本。</b>银行 rates desk 是中间商：客户要做利率交易来找它，它报个价成交，手里就多了一个自己没想要的头寸。它挣的是报价里藏的那一点差价，亏的是头寸在对冲掉之前市场动了、以及价报错了被客户占便宜。desk quant 的活就是保证"价没报错"和"风险算得对"。</p>
+
+<h4>谁来找它、来干什么</h4>
+<p>保险公司和养老金：负债是三十年后要付的钱，想锁住固定收益，来 receive fixed（收固定、付浮动）。公司财务：发了固定利率债想换成浮动，或反过来，来做 swap。房贷机构：利率跌了房贷提前还、久期缩水，要补久期，来 receive fixed 或买 swaption。对冲基金：赌方向或赌曲线形状。他们找银行不找交易所，因为 swap 是双边合同，金额大、期限长、条款要定制，交易所没有这种东西。</p>
+
+<h4>桌子上坐着谁</h4>
+<p>Trader 按期限分段：front end（到两三年）、belly（五到十年）、long end（三十年）；cash Treasury 和 swap 是两拨人；还有一个 vol trader 管 swaption；structured desk 管 callable 债和奇异 swap；BMA desk 管 muni 的 swap（她 LinkedIn 上的四个 desk 就是 Treasury、swap、structured、BMA）。Sales 接客户电话，把 RFQ 带进来。Desk quant（她的座位）管曲线、定价工具、风险数字、P&amp;L explain、新产品模型。Risk 是中台，每天对限额。</p>
+
+<h4>一天（纽约时间）</h4>
+<ol class="qs">
+<li><b>6:30–7:00 到位。</b>看隔夜：亚洲和伦敦把曲线动到哪了。看日历：8:30 有没有 CPI 或非农，1pm 有没有国债拍卖，2pm 是不是 FOMC。Quant 的第一件事：今早的曲线对不对。曲线是从市场报价（SOFR 期货、swap 报价、国债价格）每天重新拼出来的，一个输入坏了，比如七年期 swap 报价还是昨天的，所有从它出来的价都错。第二件事：昨天的 P&amp;L explain 有没有大残差。P&amp;L explain 把昨天的盈亏拆成四块：carry（时间过去自然挣到的利息差）、曲线动了、新交易、剩下的残差。残差大说明模型或数据有问题，这是 quant 要查的。</li>
+<li><b>7:30 晨会。</b>经济学家讲看法，trader 决定数据前仓位怎么摆。</li>
+<li><b>8:30 数据。</b>市场一跳。那一分钟没人想给大单报价。</li>
+<li><b>一天中间，sales 带单进来。</b>举一个：保险公司要 receive fixed，五亿美元三十年 swap。Trader 报价前要知道五件事：中间价（从曲线来）；这单的 DV01（五亿三十年大约每 bp 八十到一百万美元）；自己现在的仓位（已经收了很多 fixed 就不想再收，报价往对客户不利的方向挪）；对冲用什么（卖三十年国债，或和别的 dealer 做反向 swap）；对冲要多久、多贵。成交后银行是 pay fixed，利率跌就亏，所以要马上买久期对冲。对冲不是完美的：swap 对国债之间有 swap spread 风险，trader 可能有意留一点。</li>
+<li><b>Structured desk 的单。</b>公司发 callable 债，银行把结构 swap 过来，exotic book 里就多了 Bermudan swaption 的风险，用 vanilla swaption 和 swap 对冲。这里模型才是主角（她的 2+ model、SABR）。</li>
+<li><b>CSA 和 collateral option。</b>同一个 swap 对不同对手价不一样，因为贴现率跟抵押品协议走：对方押美元现金就按 SOFR 贴现，押别的就按别的。三十年期上几个 bp 的 basis 乘上 DV01 就是真金白银。她的 publication 就是这个。</li>
+<li><b>1pm 拍卖日。</b>Primary dealer 必须投标，Treasury trader 决定投多少、什么价，中标后几天内卖给客户，这几天手里是多头。</li>
+<li><b>3pm 期货收盘，5pm 现货收盘。</b>全书 mark，P&amp;L 出来，风险报告跑隔夜。Quant 常常留下来修模型、查残差。</li>
+</ol>
+
+<h4>钱在哪挣、在哪亏（数量级）</h4>
+<p>一亿美元十年 swap 的 DV01 大约八到九万美元每 bp。给大客户的 edge 大约 0.1 到 0.5 bp，也就是一到四万美元。对冲前市场动 2 bp 就是十六到十八万，是 edge 的好几倍。所以 trader 的注意力在对冲速度和库存，不在模型。Structured desk 反过来：margin 有几个 bp 甚至更多，风险是模型错，比如 Bermudan 的 vol 标错了，每笔都在漏。第三个口子是价格不一致：swap desk 和 Treasury desk 对同一段曲线看法不同，客户两边一比就能占便宜，所以全 desk 要用同一条曲线，这条曲线是 quant 维护的。</p>
+
+<h4>她怕什么（面试题从这里长出来）</h4>
+<p>今早曲线错了，trader 已经按它报了价。P&amp;L explain 的残差没人解释得了。一笔交易用错模型入账。两个 desk 价格不一致被客户套利。两道她可能当场问的题：</p>
+<ol class="qs">
+<li>客户要 receive fixed 五亿三十年，trader 报价前要知道什么，成交后发生什么？（答案就是上面"一天中间"那一条。）</li>
+<li>昨天 P&amp;L explain 有三十万残差，你先查哪里？先查曲线输入有没有 stale 报价；再查新交易有没有入错（方向、名义、模型）；再查 mark 有没有被人手动改过。顺序这么排是因为曲线错会影响全书，出现频率最高，先查最省时间。</li>
+</ol>
+
+<h4>和你经历的连接</h4>
+<p>你在 GS 做的 CVA/IMM Monte Carlo 算的就是这些 swap 的对手方风险，你知道一条坏曲线往下游会变成什么。你 review 的 credit e-trading 定价，问的和她早上第一件事一模一样："今天的 mid 对不对"。面试口径：我坐过这张桌子的下游，知道价报错会在哪里炸。</p>
+
+<p><b>观点。</b>银行 rates desk 的钱是中间商的钱，亏钱的三个口子是对冲慢、价不一致、融资没收费。Fancy model 只在 structured desk 是主角。她问 bond 和 curve，是在问你知不知道这三个口子。</p>
+
+<h3 class="sub">第 4 课（2026-10-09 提前记）· Option：从自己的座位换到做市商的座位</h3>
+
+<p><b>起点：你自己的画面（用自己的钱看出来的，基本全对）。</b>Delta 是对标的的敏感度，0.5 delta 的一张合约当 50 股的风险；gamma 是 delta 的变化速度；vega 是对 implied vol 的敏感度，个股财报前 vol 能从 50–60% 涨到 200%，出完财报 put call 双杀；theta 是对时间的敏感度，最后两三周时间价值掉得最快，你愿意挣这个钱。Gamma squeeze：short call 的机构在标的暴涨时被迫买标的对冲，越买越涨，gamma 变大，delta 涨得更快。Vol surface：同一标的不同 strike 和期限的 implied vol 不一样，strike 方向是 smile，ATM 低两边高。</p>
+
+<h4>三处修正</h4>
+<ol class="qs">
+<li><b>Smile 不是 liquidity 算不准，是尾部风险的价格。</b>真实收益分布比正态胖，暴跌暴涨比 Black-Scholes 假设的常见，所以 OTM 期权真的更值钱。更重要的是谁在报价：做市商卖出 OTM put 之后自己就是 short tail 的人，一次暴跌能吃光一年的 theta，所以他故意把 wing 报高，这是自我保护费。个股大多不是对称 smile，是往 put 那边歪的 skew，因为买保护的人永远比买暴涨的人多。</li>
+<li><b>Term structure 不是平的，它装的是事件和均值回归。</b>财报当周到期的 vol 高，是因为那一周里装着一个已知的大跳，市场把跳的大小换算进 vol，这叫 event vol。Vol 会回到平均，所以短期 vol 高时长期 vol 不跟着高，期限结构倒挂，市场在说"现在的恐慌不会持续"。</li>
+<li><b>你的座位和做市商的座位差在"谁选交易"。</b>你选好了再下单；做市商被动成交，客户买什么他 short 什么，一天下来书上是几千个 strike 的混合。所以他看的是整本书按 bucket 加总的 delta、gamma、vega、theta，delta 不留，用标的随时对冲掉。他的 P&amp;L 三块：每笔成交的 spread；gamma 和 theta 之间的差（short gamma 的书每天收 theta、大动时赔 gamma，long gamma 反过来）；vega 在 vol 涨跌时的盈亏。</li>
+</ol>
+<p>把你的两个观察放进这个框，它们是同一件事：theta 是 short gamma 收的租金，没有白拿的 theta；gamma squeeze 就是 short gamma 的书付租金的那一天。面试官听到"我爱挣 theta"，下一句一定是"你最多亏多少"，答案得是"我 short gamma，大动时亏，所以我控制 size 和到期前的 gamma 峰值"。</p>
+
+<h4>追问：卖 3–5 周的、三周前 roll 掉，比卖最后一周的"gamma 相对 theta 更划算"吗？</h4>
+<p><b>没道理的一半：比例那句在数学上站不住。</b>对 ATM 期权，一个 delta 对冲掉的 short option 每天盈亏 = 收的 theta − ½ × Γ × (ΔS)²。市场公平时两项期望抵消，所以 <code>theta ≈ ½ σ² S² Γ</code>，式子里没有到期时间：不管卖一周还是五周的，每单位 gamma 市场付的租金一样。近到期 gamma 大，theta 同比例大。</p>
+<p><b>有道理的一半：不在比例，在分布的形状。</b>近到期的 gamma 全堆在 strike 附近：价格停在旁边 gamma 巨大，价格离开 gamma 和 theta 一起归零，一周的 short option 越来越像二选一。五周的 gamma 摊在一段价格范围里，盈亏曲线平滑。对不做 delta 对冲的人，平滑比比例重要，因为赚的是长期平均，一次打穿要好几个月补。三周时 roll 是用 theta 换平滑，放弃的正是掉得最陡的那段。</p>
+<p><b>真正挡住大动的不是到期日，是 size 和不加杠杆。</b>10% 跳空，一周 straddle 约亏 10% 减去收的 3% 多权利金，五周的亏 10% 减 7% 左右再加回剩余时间价值，差别只削掉一两成亏损。没杠杆，这是能扛的回撤不是爆仓。</p>
+<p><b>做市商怎么看：</b>他不问"卖几周"，因为他不选。Delta 随时对冲掉，赌持有期间 realized vol 低于卖出时的 implied vol，这是全部。近到期 gamma 堆在 strike 附近叫 pin risk，对策是到期日对冲更勤。到 rates：swaption 的 smile 形状和股票不同（利率上下的分布不对称，SABR 就是给这个形状配的工具），但管一本书的方式一样。</p>
+<p><b>观点。</b>"卖 3–5 周、三周前 roll"对不对冲的散户是好纪律，理由是平滑不是比例。面试里被问到，说出 theta ≈ ½σ²S²Γ，再说"所以我控制的是 size 和集中度"，就是做市商听得懂的话。</p>
+</section>
 </body>
 </html>

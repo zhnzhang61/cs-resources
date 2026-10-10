@@ -23,6 +23,7 @@ import traceback
 import excel
 from excel import run
 Spreadsheet = getattr(excel, "Spreadsheet", None) or excel.SpreadSheet      # either spelling works
+Cached = getattr(excel, "SpreadSheetCached", None) or Spreadsheet          # scope 5 runs on this one
 
 GREEN = "\033[92m"
 RED = "\033[91m"
@@ -32,10 +33,11 @@ BOLD = "\033[1m"
 RESET = "\033[0m"
 
 
-def run_ops(ops, record_set=False):
-    if isinstance(ops, str):                    # scope 4: command script
-        return run(ops)
-    sh = Spreadsheet()
+def run_ops(ops, record_set=False, cls=None):
+    cls = cls or Spreadsheet
+    if isinstance(ops, str):                    # command script
+        return run(ops) if cls is Spreadsheet else cls().run_all(ops)
+    sh = cls()
     out = []
     for op in ops:
         if op[0] == "set":
@@ -75,7 +77,7 @@ SCOPES = {
         ("literal given as a string (one report's format)", [("set", "A1", "10"), ("get", "A1")], [10]),
         ("zero and a two-letter column", [("set", "AA10", "0"), ("get", "AA10"), ("get", "A10")], [0, None]),
     ]),
-    2: ("formulas, cached so that get is one lookup", [
+    2: ("formulas: references to other cells; values computed at set time, get is a lookup", [
         ("formula of literals only", [("set", "A1", "=1+2"), ("get", "A1")], [3]),
         ("references plus a literal",
          [("set", "A1", "1"), ("set", "B1", "2"), ("set", "C1", "=A1+B1+1"), ("get", "C1")], [4]),
@@ -98,7 +100,7 @@ SCOPES = {
          [("set", "B1", "=A1+1"), ("get", "B1"), ("set", "A1", "1"), ("get", "B1")], [None, 2]),
         ("unset two levels down -> None",
          [("set", "B1", "=A1+1"), ("set", "C1", "=B1+1"), ("get", "C1")], [None]),
-        ("bonus timing: 500-cell chain then 20,000 gets (lazy recompute = seconds, cache = instant)",
+        ("get must be a lookup: 500-cell chain then 20,000 gets (computing at get time = seconds, at set time = instant)",
          *chain_then_gets(500, 20_000)),
     ]),
     3: ("cycle detection + delete (set returns True / False)", [
@@ -121,8 +123,6 @@ SCOPES = {
         ("delete then a formula into the gap may be set again",
          [("set", "A1", "1"), ("set", "B1", "=A1+1"), ("del", "B1"), ("set", "B1", "=A1+2"), ("get", "B1")],
          [True, True, True, 3]),
-        ("bonus timing: 1,500-cell chain, then 1,500 unrelated sets (recompute-all = seconds, dependents-only = instant)",
-         *chain_then_independent_sets(1_500)),
     ]),
     4: ("follow-up variant: run(script), one method call per line, results passed through", [
         ("set then get", "SET A1 10\nGET A1", [True, 10]),
@@ -161,7 +161,11 @@ SCOPES = {
          "SET A1 1\nSET B1 =A1+1\nDELETE B1\nSET B1 =A1+2\nGET B1", [True, True, None, True, 3]),
         ("DELETE removes the cell's edges, so the reverse formula is no longer a cycle",
          "SET A1 1\nSET B1 =A1+1\nDELETE B1\nSET A1 =B1+1\nGET A1", [True, True, None, True, None]),
-        ("chain of 3,000 cells (Python's default recursion limit is ~1,000)", *script_chain(3000)),
+    ]),
+    5: ("follow-up: deep chains — runs on SpreadSheetCached (explicit-stack evaluate)", [
+        ("1,500-cell chain, then 1,500 unrelated sets (recompute-all = seconds, dependents-only = instant)",
+         *chain_then_independent_sets(1_500)),
+        ("script: chain of 3,000 cells (Python's default recursion limit is ~1,000)", *script_chain(3000)),
     ]),
 }
 
@@ -212,7 +216,7 @@ def show_diff(ops, expected, got, record_set):
 
 def run_scope(n):
     title, cases = SCOPES[n]
-    record_set = (n == 3)
+    record_set = (n in (3, 5))
     print(f"\n{BLUE}{BOLD}Scope {n} · {title}{RESET}")
     passed = 0
     for name, ops, expected in cases:
@@ -220,7 +224,7 @@ def run_scope(n):
         t0 = time.perf_counter()
         try:
             with contextlib.redirect_stdout(buf):
-                got = run_ops(ops, record_set)
+                got = run_ops(ops, record_set, cls=Cached if n == 5 else None)
         except BaseException as exc:
             if isinstance(exc, KeyboardInterrupt):
                 raise

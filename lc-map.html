@@ -455,18 +455,18 @@ assert highlight("a b c", ["x"]) == "a b c"                   # no match: return
   </div>
 
   <div class="prob">
-    <h3>2 · Excel: set_cell / get_cell — cached formulas + cycle rejection<span class="chip">hash + dependency DAG + cycle check</span></h3>
-    <p>Build a spreadsheet as a class. <code>set_cell(label, value)</code>: label is like <code>A1</code>/<code>B10</code> (uppercase letters + digits); value is an int, a decimal string, or a formula string starting with <code>=</code> that adds non-negative ints and labels (<code>"=B1+C1+1"</code>, <code>"=1+2"</code>). <code>get_cell(label)</code> returns the cell's value, or <code>None</code> if the cell is unset or depends on an unset cell. <b><code>get_cell</code> must be O(1)</b>: compute at set time and cache every value, so a read is one dictionary lookup. Setting a cell again replaces its formula and its dependencies.</p>
-    <div class="parts">Scope 1 literals only — pass it fast　② formulas with the value cache; recomputing <i>every</i> cell on every set is explicitly fine　③ cycle detection: <code>set_cell</code> returns False and leaves the sheet unchanged (self-reference included); <code>delete_cell</code>; then recompute only the cells that depend on the change</div>
+    <h3>2 · Excel: set_cell / get_cell — formulas, references, cycles<span class="chip">hash + dependency DAG + cycle check</span></h3>
+    <p>Build a spreadsheet as a class, in the three parts the interview asks them. <code>set_cell(label, value)</code>: label is like <code>A1</code>/<code>B10</code> (uppercase letters + digits); value is a decimal string or a formula string starting with <code>=</code> that adds non-negative ints and labels (<code>"=B1+C1+1"</code>, <code>"=1+2"</code>). <code>get_cell(label)</code> returns the cell's value, or <code>None</code> if the cell is unset or depends on an unset cell. Setting a cell again replaces its formula.</p>
+    <div class="parts"><b>Part 1</b> cells hold numbers: set stores, get returns — pass it fast<br><b>Part 2</b> cells may reference other cells, and the values are computed when a cell is set, so <code>get</code> is one lookup (the interviewer says so; recomputing every cell on every set is fine); a cell that depends on an unset cell is <code>None</code><br><b>Part 3</b> cycles: <code>set_cell</code> returns False and leaves the sheet unchanged if the new formula would lead back to the cell (self-reference included); <code>delete_cell</code><br><b>Follow-ups, only when asked</b> — chains of thousands of cells kill recursion: go iterative; then recompute only the cells that depend on the change (reverse edges)</div>
 <pre><code>class Spreadsheet:
     def set_cell(self, label: str, value) -&gt; bool: ...
     def get_cell(self, label: str) -&gt; int | None: ...
     def delete_cell(self, label: str) -&gt; None: ...
 
 sh = Spreadsheet()
-sh.set_cell("A1", 10);        assert sh.get_cell("A1") == 10
+sh.set_cell("A1", "10");      assert sh.get_cell("A1") == 10
 sh.set_cell("B1", "=A1+1");   assert sh.get_cell("B1") == 11
-sh.set_cell("A1", 20);        assert sh.get_cell("B1") == 21        # refreshed at set time
+sh.set_cell("A1", "20");      assert sh.get_cell("B1") == 21        # B1 follows A1
 assert sh.get_cell("Z9") is None                                   # unset
 assert sh.set_cell("A1", "=B1+1") is False and sh.get_cell("A1") == 20   # cycle: rejected, unchanged
 sh.delete_cell("A1");         assert sh.get_cell("B1") is None     # its dependency is gone</code></pre>
@@ -484,7 +484,82 @@ assert run("SET A2 A1+1\nGET A2\nSET A1 1\nGET A2") \
 assert run("SET A1 B1+1\nSET A1 5\nSET B1 A1+1\nGET B1") \
        == ["OK","OK","OK","6"]                 # overwriting removes old edges — no cycle anymore</code></pre>
     <p class="trap">Traps: rollback semantics (only write after the check passes); re-SET must rebuild the cell's outgoing edges; deep chains blow Python's recursion limit (raise it or go iterative — say this out loud).</p>
-    <p class="trap">&#10003; solved 2026-10-04 — the main problem: cached class, scopes 1–3, plus the script adapter · 49/49 · two dicts (formulas + values), recompute everything on each set, iterative post-order evaluate, cycle check by walking forward edges from the new formula's labels until the cell itself shows up. run() here passes the methods' own results through (True/False, int/None) and keeps the = in formulas; the string protocol above is a three-line translation inside the adapter. Timing: a 1,500-cell chain followed by 1,500 unrelated sets ≈ 2.3 s — that is the bill for recompute-all; recomputing only the dependents (a third dict of reverse edges) is the follow-up.</p>
+    <p class="trap">&#10003; 2026-10-05 — <b>the version to write first</b>: parts 1–3 in the order they are asked, plus the script adapter · passes every case except the deep-chain follow-ups (those need the explicit-stack class below) · part 1 is store + look up; part 2 is one recursive helper that computes a cell after its references, and a three-line loop at the end of set_cell that rebuilds every value so get stays a lookup; part 3 is the while loop at the top of set_cell (walk the new formula's references; reaching the cell is a cycle). Written after a real screen where the parts came exactly like this and the rehearsed version below was too big to carry on stage: grow the code in the interviewer's order, a helper only when a new part forces it.</p>
+    <details class="code"><summary>Solution code · 72 lines — write this first</summary>
+<pre><code>class Spreadsheet:
+    """Parts 1-3 the way a first sitting writes them. Values are computed at set time, so get is one lookup.
+    Part 1: store + look up. Part 2: _value (recursive) and the recompute loop in set_cell.
+    Part 3: the while loop at the top of set_cell, and delete_cell."""
+
+    def __init__(self):
+        self.formulas = {}                           # label -&gt; raw string: "10" or "=A1+5"
+        self.values = {}                             # label -&gt; int | None, rebuilt on every set
+
+    def set_cell(self, cell, expression):
+        if expression.startswith("="):               # part 3: walk the new formula's references; reaching cell = cycle
+            stack = [t for t in expression[1:].split("+") if not t.isdigit()]
+            seen = set()
+            while stack:
+                cur = stack.pop()
+                if cur == cell:
+                    return False
+                if cur in seen:
+                    continue
+                seen.add(cur)
+                raw = self.formulas.get(cur, "")
+                if raw.startswith("="):
+                    stack.extend(t for t in raw[1:].split("+") if not t.isdigit())
+        self.formulas[cell] = expression             # part 1
+        self.values = {}                             # part 2: recompute everything now, so get stays a lookup
+        for c in self.formulas:
+            self._value(c)
+        return True
+
+    def get_cell(self, cell):
+        return self.values.get(cell)                 # one lookup
+
+    def _value(self, cell):
+        # part 2: the value of one cell; references are computed first by recursing; results land in self.values
+        if cell in self.values:
+            return self.values[cell]
+        raw = self.formulas.get(cell)
+        if raw is None:                              # unset
+            v = None
+        elif not raw.startswith("="):
+            v = int(raw)
+        else:
+            v = 0
+            for t in raw[1:].split("+"):
+                x = int(t) if t.isdigit() else self._value(t)
+                if x is None:
+                    v = None
+                    break
+                v += x
+        self.values[cell] = v
+        return v
+
+    def delete_cell(self, cell):
+        self.formulas.pop(cell, None)
+        self.values = {}
+        for c in self.formulas:
+            self._value(c)
+
+    # the script adapter (follow-up variant), same as the cached class's
+    def run_all(self, scripts):
+        return [self.run_one(action) for action in scripts.split("\n")]
+
+    def run_one(self, action):
+        parts = action.split(" ")
+        if parts[0] == "SET":
+            return self.set_cell(parts[1], parts[2])
+        elif parts[0] == "GET":
+            return self.get_cell(parts[1])
+        elif parts[0] == "DELETE":
+            return self.delete_cell(parts[1])
+        else:
+            return False</code></pre>
+    </details>
+    <p class="trap">&#10003; solved 2026-10-04 — <b>the follow-up answer</b> (deep chains): the same two-dict design with an explicit-stack evaluate, plus the script adapter · 49/49 · two dicts (formulas + values), recompute everything on each set, iterative post-order evaluate, cycle check by walking forward edges from the new formula's labels until the cell itself shows up. run() here passes the methods' own results through (True/False, int/None) and keeps the = in formulas; the string protocol above is a three-line translation inside the adapter. Timing: a 1,500-cell chain followed by 1,500 unrelated sets ≈ 2.3 s — that is the bill for recompute-all; recomputing only the dependents (a third dict of reverse edges) is the follow-up.</p>
     <details class="code"><summary>Solution code · 111 lines</summary>
 <pre><code>class SpreadSheet:
     def __init__(self):
@@ -1022,6 +1097,19 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
   </details>
 </section>
 
+<section class="logwrap dsbank">
+  <h2>Interview Log · Coding <span class="logsub">真实面试里被问到的 coding 题。每条：日期 · 公司 · 题 · 当场表现。攒够几家后统计重复。</span></h2>
+  <div class="prob">
+    <h3>2026-10-05 · Harvey (Staff SWE, Agents) · phone screen</h3>
+    <p><b>Spreadsheet evaluator</b>, three escalating parts: cells hold numbers → cells reference other cells → detect and handle circular references.</p>
+    <p class="parts">Got through part 1 only. Lesson: part 2 is a DFS with memo over the reference graph; part 3 is the same DFS with an "in-progress" set (cycle = revisiting an in-progress node). Should have named the graph shape before coding part 1.</p>
+  </div>
+  <div class="prob">
+    <h3>2026-10-06 · Balyasny (Macro AI Engineer) · technical</h3>
+    <p><b>Sorted array + target</b>: does any pair sum to target?</p>
+    <p class="parts">Gave hashmap (O(n) time, O(n) space) — correct for a general array. Missed that "sorted" is the hint: two pointers from both ends, O(1) space. Lesson: when the statement hands you a property (sorted / distinct / bounded), spend ten seconds asking what it buys before coding.</p>
+  </div>
+</section>
 <script>
 const NS = "http://www.w3.org/2000/svg";
 function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag);

@@ -16,19 +16,22 @@ class Spreadsheet:
 Scope 1  literals only: set / get; get of an unset cell -> None; set_cell
          returns True. (pass it fast — the reports say don't spend time here)
 
-Scope 2  formulas. get_cell must be O(1): compute at set time and cache the
-         value of every cell, so a get is one dictionary lookup. Simplest
-         correct version: on every set, recompute every cell. A cell whose
+Scope 2  formulas: a cell may reference other cells. Values are computed
+         when a cell is set, so get_cell is one lookup (the interviewer said
+         so; simplest: on every set, recompute every cell). A cell whose
          formula depends (directly or indirectly) on an unset cell has value
-         None. Setting a cell again replaces its formula and dependencies.
+         None; setting a cell again replaces its formula.
 
 Scope 3  cycle detection + delete. set_cell returns False and leaves the
          sheet unchanged if the new formula would create a cycle (including
          a cell referencing itself); otherwise returns True. delete_cell
          removes a cell and returns None: its dependents now see an unset
-         cell (-> None); deleting an unset cell is a no-op. Optimization: on
-         set, recompute only the cells that depend on the changed cell (keep
-         reverse edges).
+         cell (-> None); deleting an unset cell is a no-op.
+
+FOLLOW-UPS (only when asked)
+    - chains of thousands of cells: recursion dies near 1,000 frames, go iterative.
+    - recompute only the cells that depend on the changed cell (keep reverse edges).
+    The second class below (SpreadSheetCached: explicit-stack evaluate) answers the first.
 
 Advice from the field: make each scope run before starting the next.
 
@@ -56,7 +59,82 @@ Run the tests:  python3 test_excel.py        (all scopes)
 or just run this file (F5 in VS Code).
 """
 
-class SpreadSheet:
+class Spreadsheet:
+    """Parts 1-3 the way a first sitting writes them. Values are computed at set time, so get is one lookup.
+    Part 1: store + look up. Part 2: _value (recursive) and the recompute loop in set_cell.
+    Part 3: the while loop at the top of set_cell, and delete_cell."""
+
+    def __init__(self):
+        self.formulas = {}                           # label -> raw string: "10" or "=A1+5"
+        self.values = {}                             # label -> int | None, rebuilt on every set
+
+    def set_cell(self, cell, expression):
+        if expression.startswith("="):               # part 3: walk the new formula's references; reaching cell = cycle
+            stack = [t for t in expression[1:].split("+") if not t.isdigit()]
+            seen = set()
+            while stack:
+                cur = stack.pop()
+                if cur == cell:
+                    return False
+                if cur in seen:
+                    continue
+                seen.add(cur)
+                raw = self.formulas.get(cur, "")
+                if raw.startswith("="):
+                    stack.extend(t for t in raw[1:].split("+") if not t.isdigit())
+        self.formulas[cell] = expression             # part 1
+        self.values = {}                             # part 2: recompute everything now, so get stays a lookup
+        for c in self.formulas:
+            self._value(c)
+        return True
+
+    def get_cell(self, cell):
+        return self.values.get(cell)                 # one lookup
+
+    def _value(self, cell):
+        # part 2: the value of one cell; references are computed first by recursing; results land in self.values
+        if cell in self.values:
+            return self.values[cell]
+        raw = self.formulas.get(cell)
+        if raw is None:                              # unset
+            v = None
+        elif not raw.startswith("="):
+            v = int(raw)
+        else:
+            v = 0
+            for t in raw[1:].split("+"):
+                x = int(t) if t.isdigit() else self._value(t)
+                if x is None:
+                    v = None
+                    break
+                v += x
+        self.values[cell] = v
+        return v
+
+    def delete_cell(self, cell):
+        self.formulas.pop(cell, None)
+        self.values = {}
+        for c in self.formulas:
+            self._value(c)
+
+    # the script adapter (follow-up variant), same as the cached class's
+    def run_all(self, scripts):
+        return [self.run_one(action) for action in scripts.split("\n")]
+
+    def run_one(self, action):
+        parts = action.split(" ")
+        if parts[0] == "SET":
+            return self.set_cell(parts[1], parts[2])
+        elif parts[0] == "GET":
+            return self.get_cell(parts[1])
+        elif parts[0] == "DELETE":
+            return self.delete_cell(parts[1])
+        else:
+            return False
+
+
+# ---- the follow-up answer: same design with an explicit-stack evaluate, survives 3,000-cell chains (the 2026-10-04 solution)
+class SpreadSheetCached:
     def __init__(self):
         self.cell_value_map = {}
         self.cell_formula_map = {}
@@ -189,16 +267,16 @@ res_5 = [False, 6]
 test_6 = "DELETE A1\nGET B1"
 res_6 = [None, None]
 
-def run(scripts): # for test harness
-    return SpreadSheet().run_all(scripts)
+def run(scripts):            # for the test harness: the plain class
+    return Spreadsheet().run_all(scripts)
 
 if __name__ == "__main__":
-    s = SpreadSheet()
-        
-    assert s.run_all(test_1) == res_1
-    assert s.run_all(test_2) == res_2
-    assert s.run_all(test_3) == res_3
-    assert s.run_all(test_4) == res_4
-    assert s.run_all(test_5) == res_5    
-    assert s.run_all(test_6) == res_6
-
+    for cls in (Spreadsheet, SpreadSheetCached):
+        s = cls()
+        assert s.run_all(test_1) == res_1
+        assert s.run_all(test_2) == res_2
+        assert s.run_all(test_3) == res_3
+        assert s.run_all(test_4) == res_4
+        assert s.run_all(test_5) == res_5
+        assert s.run_all(test_6) == res_6
+    print("inline tests: both classes pass")

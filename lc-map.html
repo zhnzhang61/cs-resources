@@ -1100,12 +1100,12 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
 <section class="logwrap dsbank">
   <h2>Interview Log · Coding <span class="logsub">真实面试里被问到的 coding 题。每条：日期 · 公司 · 题 · 当场表现。攒够几家后统计重复。</span></h2>
   <div class="prob">
-    <h3>2026-10-05 · Harvey (Staff SWE, Agents) · phone screen</h3>
+    <h3>2026-10-05 · 一家 legal-AI startup (Staff SWE, Agents) · phone screen</h3>
     <p><b>Spreadsheet evaluator</b>, three escalating parts: cells hold numbers → cells reference other cells → detect and handle circular references.</p>
     <p class="parts">Got through part 1 only. Lesson: part 2 is a DFS with memo over the reference graph; part 3 is the same DFS with an "in-progress" set (cycle = revisiting an in-progress node). Should have named the graph shape before coding part 1.</p>
   </div>
   <div class="prob">
-    <h3>2026-10-06 · Balyasny (Macro AI Engineer) · technical</h3>
+    <h3>2026-10-06 · 一家 multi-strat fund (Macro AI Engineer) · technical</h3>
     <p><b>Sorted array + target</b>: does any pair sum to target?</p>
     <p class="parts">Gave hashmap (O(n) time, O(n) space) — correct for a general array. Missed that "sorted" is the hint: two pointers from both ends, O(1) space. Lesson: when the statement hands you a property (sorted / distinct / bounded), spend ten seconds asking what it buys before coding.</p>
   </div>

@@ -80,7 +80,7 @@
   .core details { margin: 12px 0; border: 1.5px solid var(--node-stroke); border-radius: 10px; padding: 10px 18px; }
   .core summary { cursor: pointer; font-weight: 600; font-size: 13.5px; }
   .core h4 { font-size: 13.5px; margin: 20px 0 6px; }
-  .core h4 .tag { color: var(--muted); font-size: 11px; font-weight: 400; margin-left: 8px; }
+  .core h4 .tag, .core summary .tag { color: var(--muted); font-size: 11px; font-weight: 400; margin-left: 8px; }
   .core p { font-size: 12.5px; line-height: 1.8; margin: 8px 0; }
   .core blockquote { margin: 8px 0; padding: 6px 14px; border-left: 3px solid var(--node-stroke); color: var(--muted); font-size: 12px; }
   .core ol.qs { font-size: 12.5px; line-height: 1.7; padding-left: 22px; }
@@ -917,18 +917,12 @@ total spread = average within-grade spread + spread of the grade averages</code>
 </details>
 </section>
 <section class="core">
-<h2>Interview Log · Quant &amp; Concept <span class="coresub">真实面试里被问到的非 coding 题（定价、概率、系统设计、概念）。每条：日期 · 公司 · 题 · key move。coding 题记在 lc-map.html。</span></h2>
-<ol class="qs">
-<li><b>2026-10-06 · 一家 multi-strat fund · Macro AI Engineer.</b> 10-year fixed-coupon bond, coupon → ∞: duration? Key move: all coupons scale together so their relative weights don't change; principal weight → 0; limit = duration of a 10-year level annuity (≈ 5.1 yr at 5%, 5.5 yr at 0%) — not 0.</li>
-<li><b>2026-10-06 · 一家 multi-strat fund · Macro AI Engineer.</b> 10-year SOFR floater discounted at SOFR: duration? Key move: value is par at every reset (backward induction), so rate duration = time to next reset (≈ 0 for daily SOFR); spread duration (sensitivity to the issuer's discount spread) ≈ that of a fixed 10y bond with the same cash flows, ≈ 8 yr, because a wider spread discounts every flow including principal — floater strips rate risk, keeps credit risk. (Corrected 2026-10-11: an earlier version said ≈ 5 yr, which is the annuity leg's rate duration from Q3, not the spread duration.)</li>
-<li><b>2026-10-06 · 一家 multi-strat fund · Macro AI Engineer.</b> Same floater with coupon spread 1 / 10 / 200 bp: duration? Key move: spread leg = 10-year annuity (duration ≈ 5.2 yr); total = PV-weight of that leg × 5.2. 1 bp ≈ 0, 10 bp ≈ 0.04 yr, 200 bp ≈ 0.7 yr; capped at the annuity duration as spread → ∞.</li>
-</ol>
-</section>
-<section class="core">
-<h2>Desk 视角 <span class="coresub">每个概念先问：这张桌子靠什么挣钱、在哪亏钱、坐在上面的人早上第一件事看什么。公式放最后。2026-10-08 起，一天一课。</span></h2>
+<h2>Financial Engineering <span class="coresub">和 Shared Core 并列的第二块地基，暂未进上面的图。规矩：每个概念先问这张桌子靠什么挣钱、在哪亏钱、坐在上面的人早上第一件事看什么，公式放最后；每个概念配一件市场里真发生过的事。现在两个节点，§A Fixed Income Mathematics、§B Basic Options；swaption/vol model 和 credit e-trading 攒够了再开节点。2026-10-08 起记。</span></h2>
 
-<h3 class="sub">第 1 课 · 银行 rates desk 的一天（一个银行 desk quant 的座位）</h3>
+<h3 class="sub">§A · Fixed Income Mathematics</h3>
 
+<details open>
+<summary>Part 1 · Desk：银行 rates desk 的一天 <span class="tag">2026-10-08</span></summary>
 <p><b>一句话版本。</b>银行 rates desk 是中间商：客户要做利率交易来找它，它报个价成交，手里就多了一个自己没想要的头寸。它挣的是报价里藏的那一点差价，亏的是头寸在对冲掉之前市场动了、以及价报错了被客户占便宜。desk quant 的活就是保证"价没报错"和"风险算得对"。</p>
 
 <h4>谁来找它、来干什么</h4>
@@ -963,15 +957,17 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <p>你在 GS 做的 CVA/IMM Monte Carlo 算的就是这些 swap 的对手方风险，你知道一条坏曲线往下游会变成什么。你 review 的 credit e-trading 定价，问的和 desk quant 早上第一件事一模一样："今天的 mid 对不对"。面试口径：我坐过这张桌子的下游，知道价报错会在哪里炸。</p>
 
 <p><b>观点。</b>银行 rates desk 的钱是中间商的钱，亏钱的三个口子是对冲慢、价不一致、融资没收费。Fancy model 只在 structured desk 是主角。面试官问 bond 和 curve，是在问你知不知道这三个口子。</p>
-
-<h3 class="sub">第 2 课（2026-10-10）· Swap 长什么样、报价怎么报、成交后先做什么</h3>
+</details>
+<details>
+<summary>Part 2 · Swap：长什么样、报价怎么报、成交后先做什么 <span class="tag">2026-10-10</span></summary>
 <p><b>一笔标准 swap。</b>五亿三十年，两条腿，本金不换手，每期只结差额。固定腿：年付 notional × 固定利率（如 4.5%），Act/360，三十年不变，没有 spread。浮动腿：每日 SOFR 复利、年付、Act/360，也没有 spread（benchmark + spread 是 credit 和贷款的世界）。屏幕上的"30 年 swap rate 4.50%"= 让两条腿今天现值相等的固定利率：浮动腿 PV = Σ 远期 SOFR × 应计 × DF；固定腿 PV = 固定利率 × annuity（Σ 应计 × DF）；固定利率 = 浮动腿 PV ÷ annuity。投影和贴现同一条曲线时浮动腿 PV = 1 − 末期 DF，所以 swap rate = (1 − DF(T)) ÷ annuity。Spec 一行：trade date 今天、effective T+2、termination 30 年、notional 五亿、固定腿年付 Act/360、浮动腿 SOFR 复利年付 Act/360、纽约日历、LCH/CME 清算或 CSA。</p>
 <p><b>报价。</b>中间价 4.50 从曲线来。Trader 报两边：他 pay fixed 4.49、receive fixed 4.51。客户要 receive fixed = 银行 pay fixed，客户拿 4.49。银行比中间价少付 1 bp × DV01（五亿三十年约每 bp 八九十万）≈ 八九十万 edge，book 进去那一刻按中间价 mark 的 PV 不是零，是这个 edge。仓位和 liquidity 作用在两边的宽窄和偏移：book 上已经 pay 了很多 fixed，再 pay 只肯 4.47。</p>
 <p><b>成交后的顺序（作业里要改的地方）：先对冲，再找客户。</b>银行 pay fixed，利率跌每 bp 亏八九十万。找反向客户要几天，市场几分钟能动 5 bp，所以几分钟内在 dealer 之间的市场把风险铲掉：买三十年国债、买国债期货、或跟别的 dealer 做反向 swap。几分钟不慢，因为三十年国债收益率一天典型波动 5–7 bp，几分钟动不到 1 bp，不敢报价的只有数据那一分钟。对冲完剩的是 swap spread 风险（swap 利率 − 国债收益率，两个不同的东西：国债是 repo 融资的资产，swap 是无本金合同），小得多。之后慢慢等 pay fixed 的客户（macro fund 赌利率涨），把国债换成反向 swap，第二次挣 spread，同时释放资产负债表（国债占表，危机后资本规则按资产总量收费）。2015 年后三十年 swap rate 长期低于国债收益率，就是 dealer 不愿占表持有国债的证据。</p>
 <p><b>成交后还发生三件事：</b>DV01 ladder 三十年格更新；第二天起按 CSA 交 variation margin；当晚 P&amp;L 记 1 bp edge，之后每天按曲线 mark。</p>
 <p><b>统一方向：</b>long bond = 持有债券 = 收益率跌赚钱 = receive fixed（固定票面收进来，相当于借浮动买了张债）= long duration = DV01 为正。pay fixed = short bond。一句话：谁拿着固定票面，谁就是拿着债的人。</p>
-
-<h3 class="sub">第 3 课（2026-10-10）· 2008 年 10 月一条曲线变两条；projection 和 discounting 各用什么</h3>
+</details>
+<details>
+<summary>Part 3 · 2008 年 10 月一条曲线变两条；projection 和 discounting 各用什么 <span class="tag">2026-10-10</span></summary>
 <p><b>事件。</b>2007 年前 swap 用一条 LIBOR 曲线既算远期又贴现，前提是 LIBOR ≈ 无风险（LIBOR − OIS 长期约 10 bp；OIS = Overnight Index Swap，浮动腿是隔夜利率复利，美元过去是 EFFR 现在是 SOFR，都由纽约联储从真实成交算中位数，美联储定目标区间把它推进去）。2007-08-09 BNP 暂停自家三只装着次贷证券的基金的申赎（"流动性完全蒸发无法估值"），LIBOR − OIS 跳到 50–100 bp；2008-10-10 雷曼之后到 365 bp：银行间借三个月要比无风险多付 3.65%。LIBOR 本身是十几家银行的无担保借款"报价"不是成交（2012 年操纵丑闻），装着一块信用溢价，二十年里所有人假装它不存在。</p>
 <p><b>两个用途同时出错。</b>Projection：(1 + r₁₂τ)(1 + r₂₃τ) = 1 + r₁₃·2τ 这条关系破了，因为六个月借款多装了"后三个月对方会不会死"，3M/6M basis swap 报几十 bp，一条曲线给不出两个远期，从此每个 index 一条 projection 曲线。Discounting：有 CSA 的 swap 收抵押品方按 OIS 付息，所以未来现金流等价于按 OIS 生息的抵押品，该按 OIS 贴现；按 LIBOR 贴现把未来收款算少了（十年后一亿按 5% 是 6100 万，按 2% 是 8200 万）。平价 swap 两腿一起错互相抵消没人察觉，book 上早不平价的老 swap 一换曲线 PV 变几百万到几千万，2010 年 LCH 改 OIS 贴现，各行全 book 换，一次性结账。留下三样：每 index 一条 projection；贴现跟抵押品走；多货币可选时取最高那条 + 换的权利 = 下面那篇论文。LIBOR 2021–23 停用换 SOFR，美元清算 swap 两条曲线合一只是巧合。面试里的 SOFR floater 按 SOFR 贴现 = 平价，就是 projection = discounting 的特例；贴现里多了 funding spread 就不平价，这是 spread duration 的来源。</p>
 <p><b>Projection 能用什么</b>（浮动腿写哪个 index 就用它自己的工具建曲线，借别的 index 要加 basis）：SOFR（1M/3M 期货 + SOFR OIS，每日复利 in arrears）；Term SOFR（贷款用，和复利 SOFR 有小 basis）；Fed funds；老 LIBOR 各期限、EURIBOR 3M/6M、SONIA（期限之间用 basis swap 连）；CMS（从 swap 曲线读 + convexity 调整）；BMA/SIFMA（muni 隔夜，约 SOFR 六七成，比例随税率预期变）。远期是从工具市价反推的，反推用到贴现曲线，所以 multi-curve bootstrap 两条曲线一起解。任一天的 DF 从曲线插值（插 log DF / 零利率 / 远期，desk quant 要选），某段远期 = (DF 段首 ÷ DF 段尾 − 1) ÷ τ，7 年、13 年的浮动腿每年一段都是这么插的。</p>
@@ -979,8 +975,9 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <p><b>一篇 2015 年 Risk 上的 collateral option 论文（一家银行固收 quant 组的两位作者）。</b>问题：多货币 CSA 里亏钱一方可以选 post 哪种货币，post 方会挑换算汇率后利息最高的那个，所以收款方要按"几条利率里最高的"贴现，而且对方随时可以换，这个权利值钱，尤其三十年期。不是客户福利，谁 post 谁拿，银行 post 时在银行手里；但不建模的银行在客户 post 时等于白送。之前只有两条路：暴力 Monte Carlo，或 Antonov–Piterbarg 2014 的解析近似（超过两个货币不准，而 CSA 常见三个、最多五个）。论文的方法：要算的是"几条利率里最大的那条"沿时间的积分，用 quadratic Gaussian 过程逼近它的分布，Gram-Charlier 展开配系数，能到五个货币。更有 desk 味道的第二件事：参数（各国短期利率的波动率和相关性）市场上没东西可 calibrate，作者原话"模型再好参数估不出来就是废的"，他们拿历史每天的期货和 swap 报价各建一条曲线、查瞬时远期、从这串历史估参数。行业后来的应对不是把模型做得更好，是把 option 干掉：标准 CSA 改成单一货币现金抵押，清算 swap 没有这个选项，所以这篇是给存量老合同定 reserve 用的，不是每天报价用的。可问作者：这个模型后来在 desk 上怎么用，sales 报价带上，还是只做 XVA reserve？和你的连接：CVA/IMM 的 exposure 模拟里抵押品怎么建模你碰过；参数没市场可 calibrate 时怎么办是你 validation 的日常。</p>
 <p><b>SOFR 时代盯的不是信用是现金够不够。</b>2019-09-17 SOFR 从 2.4% 跳到 5.25%、盘中 10%：9/16 企业交季度税一千多亿划到财政部账户 + 五百多亿国债拍卖结算抽走现金 + 缩表后准备金从 2.8 万亿降到 1.4 万亿没余钱。没人违约，纯管道。美联储当晚开 repo 操作，后买短债，2021 设常备 repo 工具。</p>
 <p><b>观点。</b>2008 年的教训不是"要用 OIS"，是折现率必须等于实际资金成本，而资金成本由合同条款决定。被问"用什么折现"，先反问"这笔的 CSA 是什么条款"。</p>
-
-<h3 class="sub">第 2 课下半（2026-10-10）· DV01、bucket、PCA；carry 和 roll-down</h3>
+</details>
+<details>
+<summary>Part 4 · DV01、bucket、PCA；carry、roll-down、relative value <span class="tag">2026-10-10</span></summary>
 <p><b>三个问题：</b>curve 动了我亏多少（DV01）；哪一段动的（bucket）；最少几笔铲平（hedge ratio / PCA）。Trader 早上第一张表 DV01 ladder，一个 row 一个期限，一个 column 一个 book。</p>
 <p><b>DV01</b> = 整条 curve 平行抬 1 bp book 价值的变化，正 = 利率跌赚钱 = long duration。约等于 notional × duration × 0.0001。每一亿 notional：2 年约 1.9 万、5 年约 4.5 万、10 年约 8 万、30 年约 17–19 万。</p>
 <p><b>Curve 不是平行动的。</b>2023-03 SVB 那周：3/7 鲍威尔作证说可能加快加息，2 年期 5.07%（2007 年来最高）；3/10 SVB、3/12 Signature 倒闭，市场从"还要加"变"得停得降"，两年政策路径整个下挪，2 年期 3/13 到 3.98%（三天跌 100 多 bp），10 年里一大半是两年后的预期没怎么变，只跌 40。推手：投机盘在 2 年期期货历史级空头（押利率涨），跌起来被迫回补，越补越跌，和 gamma squeeze 一个机制。总 DV01 为零、2 年格正 50 万、10 年格负 50 万的 book 那周赚 100×50 − 40×50 = 3000 万：这是 2s10s steepener（receive 2 年、pay 10 年），macro fund 赌降息的全年最赚 trade，押 flattener 的 CTA 亏惨；银行 desk 也会从客户流不小心攒出来（企业 10 年 pay fixed 做 pre-issuance hedge，fund 2 年 receive fixed 赌降息），所以做市商的纪律是按 bucket 铲平，总数为零不算平。</p>
@@ -990,9 +987,9 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <p><b>Relative value：</b>两个东西今天差一点、某个已知日子必须相等（期货交割），买便宜卖贵、repo 借钱撑到那天，几 bp × 20–50 倍杠杆。别的 RV：新旧 10 年债、swap spread、butterfly。每天 care：carry 和融资、期货保证金、价差先变大再收敛（LTCM 1998、2020-03：大家要现金，现券卖不出、期货照样结算，杠杆被追保强平，国债市场几天没流动性，美联储买债才停）。RV 挣的是耐心和资产负债表的钱，出事时先被清。</p>
 <p><b>检查题：</b>2023 倒挂，10 年 4.0%，repo 5.3%，5 年 3.9%，long 一亿 10 年三个月不动：carry (4.0 − 5.3)% × 1 亿 × 0.25 = −32.5 万；roll 三个月回 0.25 年，10 年到 5 年每年坡度 2 bp，收益率低 0.5 bp × 8 万 = +4 万；合计约 −28 万。2 年 5% 的倒挂与此无关，只有 10 年附近的局部坡度影响 roll。</p>
 <p><b>周日 fixed income math 清单：</b>DF 是什么（exp(−rt) / (1+r)^−t，曲线的本体是一串 DF，别的都从它推）；单利复利、DF 和远期的换算；(1+r₁₂τ)(1+r₂₃τ)=1+r₁₃·2τ；annuity；平价 swap rate 推导；债券价格逐笔贴现与收益率；duration（钱平均多久回来）、convexity、DV01 ≈ notional × duration × 0.0001；roll-down 用 DF 算；pull to par；carry；PCA 在线性代数（协方差的特征分解）和概率（方差最大化、解释比例）各过一遍。</p>
-
-<h3 class="sub">Fixed income math 1–6（2026-10-11）· 合同的数和市场的数分开</h3>
-
+</details>
+<details>
+<summary>Part 5 · Math 1–6：合同的数和市场的数分开（7–10 待补） <span class="tag">2026-10-11</span></summary>
 <p><b>第 0 步：两类东西永远分开。</b>合同里写死的：K（swap 固定利率）、c（债券票息）、付息日、day count（τ 怎么数）、notional。市场每天变的：DF(t)，以及从 DF 读出来的所有"rate"（零利率、远期、平价 swap rate S）。两边都叫"利率"是混淆的根源，所以用字母：K 和 c 是你答应付多少，S 和 DF 是钱随时间贬多少。</p>
 
 <h4>1. DF 是本体，利率是它的三种读法；day count 是 τ 的定义</h4>
@@ -1029,9 +1026,12 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <p>DV01 ≈ notional × modified duration × 0.0001，和 A × 1 bp × N 是同一个数的两条路。Convexity = DV01 自己随利率变：利率跌，receive 腿的 DV01 变大；今天铲平的 book 明天动 20 bp 就不平；30 年 swap 对期货两边 convexity 不同，大动后差出来的是真 P&amp;L。</p>
 <p><b>一句话版本：</b>市场给 DF，DF 给 A 和 S，合同给 K 和 c，(S − K) × A 是 swap 值多少，(c − S) × A 是债比 100 多多少，A × 1 bp 是动一下亏多少，duration 是 DV01 除以价格换个单位，复杂的东西拆成 annuity 和零息再加权。</p>
 <p><i>清单 7–10（carry/roll 算术、pull to par 对 roll-down、期货 DV01、swap spread 和 basis）待补。</i></p>
+</details>
 
-<h3 class="sub">第 4 课（2026-10-09 提前记）· Option：从自己的座位换到做市商的座位</h3>
+<h3 class="sub">§B · Basic Options</h3>
 
+<details open>
+<summary>Part 1 · 从自己的座位换到做市商的座位 <span class="tag">2026-10-09</span></summary>
 <p><b>起点：你自己的画面（用自己的钱看出来的，基本全对）。</b>Delta 是对标的的敏感度，0.5 delta 的一张合约当 50 股的风险；gamma 是 delta 的变化速度；vega 是对 implied vol 的敏感度，个股财报前 vol 能从 50–60% 涨到 200%，出完财报 put call 双杀；theta 是对时间的敏感度，最后两三周时间价值掉得最快，你愿意挣这个钱。Gamma squeeze：short call 的机构在标的暴涨时被迫买标的对冲，越买越涨，gamma 变大，delta 涨得更快。Vol surface：同一标的不同 strike 和期限的 implied vol 不一样，strike 方向是 smile，ATM 低两边高。</p>
 
 <h4>三处修正</h4>
@@ -1048,6 +1048,15 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <p><b>真正挡住大动的不是到期日，是 size 和不加杠杆。</b>10% 跳空，一周 straddle 约亏 10% 减去收的 3% 多权利金，五周的亏 10% 减 7% 左右再加回剩余时间价值，差别只削掉一两成亏损。没杠杆，这是能扛的回撤不是爆仓。</p>
 <p><b>做市商怎么看：</b>他不问"卖几周"，因为他不选。Delta 随时对冲掉，赌持有期间 realized vol 低于卖出时的 implied vol，这是全部。近到期 gamma 堆在 strike 附近叫 pin risk，对策是到期日对冲更勤。到 rates：swaption 的 smile 形状和股票不同（利率上下的分布不对称，SABR 就是给这个形状配的工具），但管一本书的方式一样。</p>
 <p><b>观点。</b>"卖 3–5 周、三周前 roll"对不对冲的散户是好纪律，理由是平滑不是比例。面试里被问到，说出 theta ≈ ½σ²S²Γ，再说"所以我控制的是 size 和集中度"，就是做市商听得懂的话。</p>
+</details>
+</section>
+<section class="core">
+<h2>Interview Log · Quant &amp; Concept <span class="coresub">真实面试里被问到的非 coding 题（定价、概率、系统设计、概念）。每条：日期 · 公司 · 题 · key move。coding 题记在 lc-map.html。</span></h2>
+<ol class="qs">
+<li><b>2026-10-06 · 一家 multi-strat fund · Macro AI Engineer.</b> 10-year fixed-coupon bond, coupon → ∞: duration? Key move: all coupons scale together so their relative weights don't change; principal weight → 0; limit = duration of a 10-year level annuity (≈ 5.1 yr at 5%, 5.5 yr at 0%) — not 0.</li>
+<li><b>2026-10-06 · 一家 multi-strat fund · Macro AI Engineer.</b> 10-year SOFR floater discounted at SOFR: duration? Key move: value is par at every reset (backward induction), so rate duration = time to next reset (≈ 0 for daily SOFR); spread duration (sensitivity to the issuer's discount spread) ≈ that of a fixed 10y bond with the same cash flows, ≈ 8 yr, because a wider spread discounts every flow including principal — floater strips rate risk, keeps credit risk. (Corrected 2026-10-11: an earlier version said ≈ 5 yr, which is the annuity leg's rate duration from Q3, not the spread duration.)</li>
+<li><b>2026-10-06 · 一家 multi-strat fund · Macro AI Engineer.</b> Same floater with coupon spread 1 / 10 / 200 bp: duration? Key move: spread leg = 10-year annuity (duration ≈ 5.2 yr); total = PV-weight of that leg × 5.2. 1 bp ≈ 0, 10 bp ≈ 0.04 yr, 200 bp ≈ 0.7 yr; capped at the annuity duration as spread → ∞.</li>
+</ol>
 </section>
 </body>
 </html>

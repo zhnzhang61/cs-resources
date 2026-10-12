@@ -530,6 +530,77 @@ total spread = average within-grade spread + spread of the grade averages</code>
 </ol>
 </details>
 
+<details>
+<summary>Part 5 · 练习题阶梯（题型取自 Stefanica《150 Questions》、Zhou《Practical Guide》、Crack《Heard on the Street》，用自己的话重写；每题一个条件期望的动作） <span class="tag">2026-10-11</span></summary>
+<p>用法：先自己答，再开答案。每题的"考点"是面试官真正想听的那一句。</p>
+<h4>题 1 · 抛到第一个正面要几次 <span class="tag">E = 1 + ½E</span></h4>
+<p>公平硬币，抛到第一次正面为止，期望抛几次？</p>
+<p><b>和上一题的因果：</b>起点：条件期望最小的用法，"第一步之后重新开始"。</p>
+<details><summary>答案</summary>
+<p>设 E。第一次要么正面（结束，用了 1 次），要么反面（用了 1 次，然后一切重来）：E = 1 + ½ × 0 + ½ × E → E = 2。考点：把"之后"的期望写成同一个 E，这就是条件在第一步上。</p>
+</details>
+<h4>题 2 · HH 要 6 次，HT 要 4 次 <span class="tag">重叠让等待变长</span></h4>
+<p>抛到连续两个正面为止，期望几次？抛到"正面后跟反面"为止呢？为什么不一样？</p>
+<p><b>和上一题的因果：</b>第 1 题只有一个状态；这题有两个状态（上一次是不是正面），条件在"当前状态"上。</p>
+<details><summary>答案</summary>
+<p>HH：从空状态 E₀ = 1 + ½E₁ + ½E₀；从"刚出一个 H"E₁ = 1 + ½ × 0 + ½E₀。解得 E₀ = 6。HT：E₀ = 1 + ½E₁ + ½E₀；E₁ = 1 + ½E₁ + ½ × 0（出 H 还在 E₁，出 T 结束）→ E₀ = 4。不一样是因为 HH 失败时（HT）要从头来，HT 失败时（HH）还保留着一个 H。考点：列状态、每个状态写一行方程。</p>
+</details>
+<h4>题 3 · 赌徒破产 <span class="tag">鞅给概率，另一个鞅给时间</span></h4>
+<p>你有 i 块钱，对手有 N − i，每局公平赌 1 块，直到一方输光。你赢的概率？期望打几局？</p>
+<p><b>和上一题的因果：</b>第 2 题的状态是有限的两个；这题状态是 0 到 N，但用鞅可以不列方程。</p>
+<details><summary>答案</summary>
+<p>财富 X 是鞅，E[X_停] = X₀ = i，而停时 X 只能是 0 或 N：N × P(赢) = i → P = i/N。时间：X² − t 也是鞅，E[X_停²] − E[T] = i² → N² × (i/N) − E[T] = i² → E[T] = i(N − i)。考点：找一个鞅，用"停时期望等于起点"一步得答案；这是整个 §1 的核心动作。</p>
+</details>
+<h4>题 4 · Monty Hall <span class="tag">条件在"主持人知道答案"上</span></h4>
+<p>三扇门一辆车，你选一扇，主持人知道车在哪、打开另一扇空门，问你换不换。</p>
+<p><b>和上一题的因果：</b>第 3 题条件在停时上；这题条件在一个"有信息的人的动作"上，大多数人错在忽略主持人知道答案。</p>
+<details><summary>答案</summary>
+<p>换，赢的概率 2/3。你第一次选中的概率 1/3，这件事不因主持人开门而变；剩下那扇门承接了另外 2/3。主持人要是随机开门（可能开到车），那就是 1/2。考点：条件概率要看信息是怎么产生的，不只看看到了什么。</p>
+</details>
+<h4>题 5 · 两个孩子 <span class="tag">条件集合的大小</span></h4>
+<p>一家两个孩子，已知至少一个是男孩，两个都是男孩的概率？已知"有一个男孩在星期二出生"呢？</p>
+<p><b>和上一题的因果：</b>第 4 题说信息怎么产生很重要；这题说同一句话的条件集合会随细节变大变小。</p>
+<details><summary>答案</summary>
+<p>至少一个男孩：样本 {BB, BG, GB}，答案 1/3。加上星期二：男孩的条件被"星期二"细化，BB 里两个男孩都可能是那个星期二的，集合变成 13/27 ≈ 0.48，越细化越接近 1/2。考点：条件越具体，越接近"指定了某一个孩子"，答案从 1/3 走向 1/2。</p>
+</details>
+<h4>题 6 · 两个骰子的最大值 <span class="tag">用分布函数算期望</span></h4>
+<p>掷两个骰子，最大值的期望是多少？最小值呢？</p>
+<p><b>和上一题的因果：</b>前面都是离散等待题；这题练"先算 P(max ≤ k)"的套路，§4 的最大值题会用同样的办法。</p>
+<details><summary>答案</summary>
+<p>P(max ≤ k) = (k/6)²，P(max = k) = (k² − (k−1)²)/36。E[max] = Σ k × (2k−1)/36 = 161/36 ≈ 4.47。E[min] = 7 − E[max] = 91/36 ≈ 2.53，因为 max + min = 两个数之和，期望 7。考点：最大值先算累积分布；对称性省一半计算。</p>
+</details>
+<h4>题 7 · 加倍下注 <span class="tag">有界停时才能用鞅</span></h4>
+<p>公平赌局，输了就把赌注翻倍，赢了就停。每次开局几乎必赢 1 块，为什么期望收益还是 0？</p>
+<p><b>和上一题的因果：</b>第 3 题用"停时期望等于起点"；这题问那条规则什么时候失效。</p>
+<details><summary>答案</summary>
+<p>策略的收益是鞅，但停时无界、而且中途的亏损无界（连输 n 次欠 2ⁿ − 1）。鞅的停时定理要求停时有界或财富有界，这里都不满足，所以"几乎必赢"和"期望为零"不矛盾：极小概率的巨亏正好抵掉。有限本金时迟早破产。考点：optional stopping 有条件，面试官问"为什么不能靠加倍发财"要答这个。</p>
+</details>
+<h4>题 8 · 价格是明天价格的平均 <span class="tag">塔性质</span></h4>
+<p>为什么说"今天的价格是明天价格的期望"？这和"我觉得明天会涨"矛盾吗？</p>
+<p><b>和上一题的因果：</b>第 7 题是鞅的反例；这题是鞅在定价里的正例，连到 §B 第 23、24 题的风险中性。</p>
+<details><summary>答案</summary>
+<p>折现后的价格在风险中性测度下是鞅：今天的价 = E_Q[明天的价]，这是无套利的另一种说法。你觉得会涨是真实测度下的看法，两者用的概率不同，不矛盾。塔性质保证把明天再拆成后天也一样。考点：定价里的"期望"是记账方式，不是预测。</p>
+</details>
+<h4>题 9 · 向均值回归 <span class="tag">E[Y | X] = ρX</span></h4>
+<p>第一次考试排前 10% 的学生，第二次考试平均排在哪？为什么不是还在前 10%？</p>
+<p><b>和上一题的因果：</b>第 8 题的条件期望是在时间上；这题是在两个相关变量之间，是 §4 条件正态的前置。</p>
+<details><summary>答案</summary>
+<p>标准化后 E[Y | X = x] = ρx，ρ < 1 时期望向 0 收。前 10% 的人里一部分是真强、一部分是那天运气好，第二次运气平均掉，整体往中间退。不是"退步"，是选择带来的偏差。考点：任何"挑最好的再看一次"的场景都有这个，包括挑最好的 backtest。</p>
+</details>
+<h4>题 10 · 检测呈阳性 <span class="tag">Bayes 的基数</span></h4>
+<p>某病患病率 1%，检测灵敏度 99%，假阳性 5%。你阳性了，真得病的概率？</p>
+<p><b>和上一题的因果：</b>第 9 题是连续变量的条件期望；这题是离散的 Bayes，基数决定答案。</p>
+<details><summary>答案</summary>
+<p>一万人：100 个病人里 99 个阳性；9900 个健康人里 495 个阳性。P = 99 ÷ (99 + 495) ≈ 16.7%。考点：先把人数写出来再算，基数小的时候假阳性压倒真阳性。</p>
+</details>
+<h4>题 11 · 最好的猜测是什么 <span class="tag">损失函数决定答案</span></h4>
+<p>要猜一个随机变量的值。按平方误差罚，最优猜什么？按绝对误差罚？按"猜错就罚一块"？</p>
+<p><b>和上一题的因果：</b>§1 收尾：条件期望为什么是"平均"而不是别的，答案取决于你怎么被罚。</p>
+<details><summary>答案</summary>
+<p>平方误差：条件均值。绝对误差：条件中位数。0-1 损失：条件众数。考点：回归用均值是因为平方损失；换损失函数，回归的目标就换。</p>
+</details>
+</details>
+
 <h3 class="sub">§2 · Linear Algebra: matmul · projection · eigendecomposition / SVD</h3>
 
 <details>
@@ -710,6 +781,83 @@ total spread = average within-grade spread + spread of the grade averages</code>
 </ol>
 </details>
 
+<details>
+<summary>Part 5 · 练习题阶梯（题型取自 Stefanica《150 Questions》、Zhou《Practical Guide》、Crack《Heard on the Street》，用自己的话重写；每题一个矩阵动作） <span class="tag">2026-10-11</span></summary>
+<p>用法：先自己答，再开答案。每题的"考点"是面试官真正想听的那一句。</p>
+<h4>题 1 · 乘法的代价 <span class="tag">n³ 和结合顺序</span></h4>
+<p>A 是 1000×10，B 是 10×1000，C 是 1000×1。算 (AB)C 和 A(BC) 各要多少次乘法？</p>
+<p><b>和上一题的因果：</b>起点：先知道一次乘法花多少，才谈得上为什么要分块、为什么要降维。</p>
+<details><summary>答案</summary>
+<p>(AB)C：AB 是 1000×1000，花 10⁷；再乘 C 花 10⁶；合计约 1.1 × 10⁷。A(BC)：BC 是 10×1，花 10⁴；A 乘它花 10⁴；合计 2 × 10⁴，少五百倍。考点：矩阵乘法花费 = 行 × 内维 × 列，先乘"瘦"的那一对。</p>
+</details>
+<h4>题 2 · 最小二乘的几何 <span class="tag">残差垂直于列空间</span></h4>
+<p>y = Xβ + ε 的最小二乘解是什么？为什么解里出现 XᵀX？它什么时候不可逆？</p>
+<p><b>和上一题的因果：</b>第 1 题是乘法；这题是乘法的第一个用途：把 y 投影到 X 的列张成的平面上。</p>
+<details><summary>答案</summary>
+<p>β = (XᵀX)⁻¹Xᵀy。最小化 ‖y − Xβ‖² 的条件是残差和 X 的每一列垂直：Xᵀ(y − Xβ) = 0，整理就出 XᵀX。不可逆当且仅当 X 的列线性相关（两个因子完全共线），这时投影唯一但 β 不唯一。考点：最小二乘是投影，XᵀX 是列之间的内积表。</p>
+</details>
+<h4>题 3 · 一个 2×2 的特征分解 <span class="tag">手算一次</span></h4>
+<p>矩阵 [[2,1],[1,2]] 的特征值和特征向量？它把单位圆变成什么？</p>
+<p><b>和上一题的因果：</b>第 2 题投影到平面；这题看一个对称矩阵在哪两个方向上只做拉伸。</p>
+<details><summary>答案</summary>
+<p>特征值 3 和 1，特征向量 (1,1)/√2 和 (1,−1)/√2。单位圆变成椭圆，长轴沿 (1,1) 长 3，短轴沿 (1,−1) 长 1。考点：对称矩阵的特征向量互相垂直，它的作用就是"在两个垂直方向上各拉一个倍数"。</p>
+</details>
+<h4>题 4 · 协方差矩阵为什么半正定 <span class="tag">vᵀΣv 是一个方差</span></h4>
+<p>证明协方差矩阵半正定。什么时候它是奇异的？奇异意味着什么？</p>
+<p><b>和上一题的因果：</b>第 3 题的对称矩阵有实特征值；这题说金融里最常见的对称矩阵的特征值还非负。</p>
+<details><summary>答案</summary>
+<p>vᵀΣv = Var(vᵀX) ≥ 0，方差不可能为负。奇异当且仅当存在 v 使 Var(vᵀX) = 0，即某个线性组合是常数，比如三个资产里一个是另两个的和。意味着有一个方向没有风险，组合优化会在那个方向上无穷加杠杆。考点：半正定的证明只有一句话，奇异的含义是"有一个免费的方向"。</p>
+</details>
+<h4>题 5 · Cholesky 造相关的正态 <span class="tag">L 把独立变相关</span></h4>
+<p>两个独立标准正态 Z₁、Z₂，怎么造出相关系数 ρ 的一对？n 维呢？</p>
+<p><b>和上一题的因果：</b>第 4 题说 Σ 半正定；这题说半正定就能开平方，开出来的 L 就是造相关性的机器。</p>
+<details><summary>答案</summary>
+<p>X₁ = Z₁，X₂ = ρZ₁ + √(1 − ρ²) Z₂。n 维：Σ = LLᵀ（Cholesky），X = LZ，Cov(X) = L × I × Lᵀ = Σ。考点：Cholesky 是协方差矩阵的"平方根"，Monte Carlo 里每条相关路径都从这里来。</p>
+</details>
+<h4>题 6 · PCA 在做什么 <span class="tag">最大方差方向</span></h4>
+<p>第一主成分是什么？为什么是协方差矩阵的最大特征向量？为什么先要中心化？用到利率 curve 上得到什么？</p>
+<p><b>和上一题的因果：</b>第 5 题从 Σ 造数据；这题从数据回到 Σ，找方差最大的方向，是 §A Part 4 PCA hedging 的数学。</p>
+<details><summary>答案</summary>
+<p>找单位向量 w 使 Var(wᵀX) = wᵀΣw 最大，拉格朗日给 Σw = λw，最大的 λ 对应的 w 就是第一主成分，λ 就是它的方差。不中心化的话均值方向会冒充最大方差方向。利率各期限变动的 Σ：第一特征向量各分量同号大小相近（level），第二前负后正（slope），第三两头和中间反号（curvature），三个解释九成多。考点：PCA = 协方差的特征分解，特征值 = 各方向的方差。</p>
+</details>
+<h4>题 7 · 行列式、迹、秩 <span class="tag">三个汇总数</span></h4>
+<p>一个 3×3 矩阵的行列式和迹各等于特征值的什么？正交矩阵的行列式？秩为 2 的 3×3 矩阵有什么特征值？</p>
+<p><b>和上一题的因果：</b>第 6 题用了特征值的大小；这题说特征值的三个汇总数，面试里常当热身。</p>
+<details><summary>答案</summary>
+<p>行列式 = 特征值之积，迹 = 之和。正交矩阵行列式 ±1（它保长度）。秩 2 说明有一个方向被压成零，至少一个特征值为 0。考点：行列式是体积放大倍数，迹是"拉伸总量"，秩是"剩下几个方向"。</p>
+</details>
+<h4>题 8 · Ridge 在哪个方向上缩 <span class="tag">按特征值打折</span></h4>
+<p>Ridge 的解 (XᵀX + λI)⁻¹Xᵀy 比最小二乘多了 λI，它在哪些方向上缩得多？为什么这能解决共线性？</p>
+<p><b>和上一题的因果：</b>第 2 题说共线时 XᵀX 不可逆；这题是修法，按第 3 题的方向拆开看。</p>
+<details><summary>答案</summary>
+<p>在 XᵀX 的特征方向上，解被乘以 d/(d + λ)，d 是特征值。d 大的方向几乎不变，d 小的方向（共线造成的）被压向 0。共线时小方向的 β 本来被噪音放大到无穷，ridge 把它压回去。考点：ridge 不是均匀缩，是按方向的方差打折。</p>
+</details>
+<h4>题 9 · 正定的四种说法 <span class="tag">等价条件</span></h4>
+<p>"A 正定"等价于哪几种说法？协方差矩阵、Hessian、核矩阵里正定各意味着什么？</p>
+<p><b>和上一题的因果：</b>第 4 题证明了半正定；这题把正定的几个等价定义列全，面试爱问"还有别的说法吗"。</p>
+<details><summary>答案</summary>
+<p>对称 A 正定 ⇔ 所有特征值 > 0 ⇔ 对所有 v ≠ 0 有 vᵀAv > 0 ⇔ Cholesky 分解存在且对角为正 ⇔ 所有顺序主子式 > 0。协方差正定 = 没有免费方向；Hessian 正定 = 严格局部极小；核矩阵正定 = 可以当内积用。考点：会从任何一条推到另一条，最常用的是特征值和 vᵀAv。</p>
+</details>
+<h4>题 10 · SVD 和 PCA 的关系 <span class="tag">右奇异向量</span></h4>
+<p>数据矩阵 X（n 个样本，p 个变量，已中心化）的 SVD 和它的 PCA 什么关系？低秩近似是什么意思？</p>
+<p><b>和上一题的因果：</b>第 6 题的 PCA 用的是 Σ；这题说不用算 Σ 也能做，顺便引出"丢掉小的奇异值"。</p>
+<details><summary>答案</summary>
+<p>X = UΣVᵀ，XᵀX = VΣ²Vᵀ，所以 V 的列就是主成分，奇异值的平方 ÷ (n − 1) 就是各主成分的方差。只保留前 k 个奇异值得到的 X_k 是所有秩 k 矩阵里离 X 最近的（Eckart–Young）。考点：PCA 是 SVD 的一个读法；低秩近似就是"只记住几个方向"，LoRA 也是这个想法。</p>
+</details>
+<h4>题 11 · Ax = b 无解或多解 <span class="tag">伪逆</span></h4>
+<p>A 是 100×3，b 是 100 维，Ax = b 一般无解，怎么办？A 是 3×100 呢？</p>
+<p><b>和上一题的因果：</b>第 2 题的最小二乘是"无解时取最近的"；这题补上"多解时取最短的"，两者合起来是伪逆。</p>
+<details><summary>答案</summary>
+<p>高瘦的 A：无解，取最小二乘解 (AᵀA)⁻¹Aᵀb。矮胖的 A：无穷多解，取范数最小的 Aᵀ(AAᵀ)⁻¹b。两者统一写成 A⁺b，A⁺ 从 SVD 来：把非零奇异值取倒数。考点：伪逆回答"没有精确解时什么是最合理的解"。</p>
+</details>
+<h4>题 12 · 马尔可夫链的稳态 <span class="tag">特征值 1 的向量</span></h4>
+<p>转移矩阵 P 的稳态分布是什么？它为什么一定存在？怎么和特征向量联系？</p>
+<p><b>和上一题的因果：</b>§2 收尾：把特征向量用到一个概率问题上，接 §1 的 Markov 状态题。</p>
+<details><summary>答案</summary>
+<p>稳态 π 满足 πP = π，是 Pᵀ 对应特征值 1 的特征向量（归一化）。存在是因为 P 每行和为 1，所以 1 一定是特征值。不可约且非周期时它唯一，而且从任何起点迭代都收敛到它（其他特征值模长 < 1）。考点：长期行为由特征值 1 的方向决定，收敛速度由第二大特征值决定。</p>
+</details>
+</details>
+
 <h3 class="sub">§3 · Chain Rule + Taylor Expansion</h3>
 
 <details>
@@ -751,6 +899,77 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <li><b>Estimate √1.02, 1.03^10 in your head</b>: key move: (1+x)^a ≈ 1+ax (+ second-order check).</li>
 <li><b>Volatility drag</b>: stock goes +50% then −50% — you lost 25%; why does high vol eat returns? Key move: E[log X] &lt; log E[X] (Jensen); arithmetic vs geometric mean. Bridge to row 4.</li>
 </ol>
+</details>
+
+<details>
+<summary>Part 5 · 练习题阶梯（题型取自 Stefanica《150 Questions》、Zhou《Practical Guide》、Crack《Heard on the Street》，用自己的话重写；每题一次求导或展开） <span class="tag">2026-10-11</span></summary>
+<p>用法：先自己答，再开答案。每题的"考点"是面试官真正想听的那一句。</p>
+<h4>题 1 · x 的 x 次方 <span class="tag">对数求导</span></h4>
+<p>d/dx (xˣ) 是什么？</p>
+<p><b>和上一题的因果：</b>起点：链式法则最小的一次使用，面试热身题。</p>
+<details><summary>答案</summary>
+<p>写成 e^(x ln x)，导数 = xˣ × (ln x + 1)。考点：底和指数都含 x 时先取对数。</p>
+</details>
+<h4>题 2 · 三个必背展开 <span class="tag">到二阶</span></h4>
+<p>写出 eˣ、ln(1 + x)、√(1 + x) 在 0 附近到二阶的展开。用它们心算 e^0.1 和 1.05 的十次方。</p>
+<p><b>和上一题的因果：</b>第 1 题是精确求导；这题是近似，所有"心算一下"都靠这三个。</p>
+<details><summary>答案</summary>
+<p>eˣ ≈ 1 + x + x²/2；ln(1 + x) ≈ x − x²/2；√(1 + x) ≈ 1 + x/2 − x²/8。e^0.1 ≈ 1.105。1.05¹⁰ = e^(10 ln 1.05) ≈ e^(10 × 0.04879) = e^0.488 ≈ 1.63。考点：ln(1 + x) 的二阶项是负的，所以复利总比"乘以次数"略少。</p>
+</details>
+<h4>题 3 · 72 法则 <span class="tag">ln 2 ÷ r</span></h4>
+<p>年化 r 多少年翻倍？为什么是 72 不是 69？</p>
+<p><b>和上一题的因果：</b>第 2 题的 ln(1 + x) 展开直接给出这题。</p>
+<details><summary>答案</summary>
+<p>翻倍要 n = ln 2 ÷ ln(1 + r) ≈ 0.693 ÷ (r − r²/2) ≈ 69.3/r × (1 + r/2)。r = 8% 时修正到约 72。考点：69 是连续复利的数，72 是对常见利率做了二阶修正的数。</p>
+</details>
+<h4>题 4 · Delta-gamma 就是二阶 Taylor <span class="tag">duration-convexity 同理</span></h4>
+<p>期权价格对 S 的二阶 Taylor 展开是什么？债券对收益率的呢？两者对应的 greek 各是什么？</p>
+<p><b>和上一题的因果：</b>第 2 题展开的是函数；这题展开的是价格，把 §A 和 §B 的一阶二阶统一起来。</p>
+<details><summary>答案</summary>
+<p>ΔV ≈ Δ × ΔS + ½Γ × ΔS²；ΔP/P ≈ −D_mod × Δy + ½C × Δy²。Delta 对 duration，gamma 对 convexity，都是同一个二阶展开。考点：所有"风险数字"都是 Taylor 系数。</p>
+</details>
+<h4>题 5 · Ito 就是带 (dW)² = dt 的 Taylor <span class="tag">−σ²/2 从哪来</span></h4>
+<p>S 服从 dS = μS dt + σS dW，d(ln S) 是什么？那个 −σ²/2 是哪一项来的？</p>
+<p><b>和上一题的因果：</b>第 4 题的二阶展开在随机变量上多了一项，因为 (dW)² 不是高阶小量。</p>
+<details><summary>答案</summary>
+<p>ln S 的二阶导是 −1/S²，二阶项 ½ × (−1/S²) × (σS)² dt = −σ²/2 dt。所以 d ln S = (μ − σ²/2) dt + σ dW。考点：普通 Taylor 里 (dx)² 可以扔，随机的 (dW)² = dt 不能扔，这一项就是 Ito 和 Newton 的全部差别。</p>
+</details>
+<h4>题 6 · Newton 法解 implied vol <span class="tag">用 vega 当斜率</span></h4>
+<p>给定市场价 C，怎么迭代解 σ？每步用什么当导数？什么时候会不收敛？</p>
+<p><b>和上一题的因果：</b>第 5 题是对随机过程求导；这题是用导数解方程，是 §B 第 20 题的算法版。</p>
+<details><summary>答案</summary>
+<p>σ_{n+1} = σ_n − (C(σ_n) − C_市场) ÷ vega(σ_n)。深度 ITM 或 OTM 时 vega 接近 0，步子会飞；报价在无套利界外时无解。考点：Newton 法就是"用当前斜率一步跳到零点"，斜率太小时不稳。</p>
+</details>
+<h4>题 7 · 反向传播里的链式法则 <span class="tag">乘积里的小数</span></h4>
+<p>一个 10 层网络，每层对输入的导数平均 0.5，输入层的梯度是输出层的多少倍？这叫什么，怎么治？</p>
+<p><b>和上一题的因果：</b>第 6 题用一次导数；这题把十次导数乘起来，是链式法则在深度学习里的样子。</p>
+<details><summary>答案</summary>
+<p>0.5¹⁰ ≈ 0.001，梯度消失。治法：ReLU 这类导数为 1 的激活、残差连接（让导数里多一个 +1）、归一化。考点：链式法则是乘法，乘法里的小数会指数级消失，大数会指数级爆炸。</p>
+</details>
+<h4>题 8 · 拉格朗日乘子 <span class="tag">带约束的最大化</span></h4>
+<p>在 Σwᵢ² = 1 的约束下最大化 Σwᵢμᵢ，解是什么？解的形状告诉你什么？</p>
+<p><b>和上一题的因果：</b>第 7 题是无约束的导数；这题加一个约束，是组合优化和 PCA 推导的共同工具。</p>
+<details><summary>答案</summary>
+<p>∂/∂wᵢ：μᵢ = 2λwᵢ，所以 w ∝ μ，归一化后 w = μ/‖μ‖。意思是"按信号的强弱分配权重"。加上协方差约束 wᵀΣw = 1 就变成 w ∝ Σ⁻¹μ，就是均值方差组合。考点：拉格朗日把约束变成一个"价格"λ，解在目标的梯度和约束的梯度平行处。</p>
+</details>
+<h4>题 9 · √(1 + x) 和 vol 的合成 <span class="tag">二阶修正</span></h4>
+<p>两个独立来源的 vol 各 20% 和 5%，合成 vol 是多少？用展开估一下，再精确算。</p>
+<p><b>和上一题的因果：</b>第 2 题的 √(1 + x) 展开的一个用处，方差相加后开方。</p>
+<details><summary>答案</summary>
+<p>精确：√(0.04 + 0.0025) = √0.0425 ≈ 20.6%。展开：20% × √(1 + 1/16) ≈ 20% × (1 + 1/32) ≈ 20.6%。考点：小 vol 叠到大 vol 上几乎不改变结果，因为是平方相加。</p>
+</details>
+<h4>题 10 · Jensen 和对数正态的均值 <span class="tag">凸函数的期望</span></h4>
+<p>E[eˣ] 和 e^(E[X]) 谁大？X ~ N(μ, σ²) 时 E[eˣ] 是多少？这和 §B 第 24 题的 −σ²/2 什么关系？</p>
+<p><b>和上一题的因果：</b>第 5 题的 −σ²/2 从 Ito 来；这题从 Jensen 再得一次，两条路对上。</p>
+<details><summary>答案</summary>
+<p>eˣ 凸，E[eˣ] ≥ e^(E[X])。对数正态：E[eˣ] = e^(μ + σ²/2)。所以要让 E[S_T] = F，ln S_T 的均值必须是 ln F − σ²/2，这就是 Ito 里那个修正项的另一面。考点：凸函数的平均大于平均的函数值，多出来的部分和方差成正比。</p>
+</details>
+<h4>题 11 · (1 + x/n)ⁿ → eˣ <span class="tag">连续复利的来历</span></h4>
+<p>为什么复利次数趋于无穷时 (1 + r/n)ⁿ 趋于 eʳ？用展开说。</p>
+<p><b>和上一题的因果：</b>§3 收尾：回到 §A 第 1 节的连续复利，用 Taylor 证一次。</p>
+<details><summary>答案</summary>
+<p>ln(1 + r/n)ⁿ = n ln(1 + r/n) ≈ n (r/n − r²/(2n²)) = r − r²/(2n) → r。考点：连续复利是年复利的极限，差的 r²/(2n) 就是 §A 里"复利越频繁报出的利率越低"的数学。</p>
+</details>
 </details>
 
 <h3 class="sub">§4 · Gaussians &amp; Variance Scaling Laws</h3>
@@ -796,6 +1015,77 @@ total spread = average within-grade spread + spread of the grade averages</code>
 </ol>
 </details>
 
+<details>
+<summary>Part 5 · 练习题阶梯（题型取自 Stefanica《150 Questions》、Zhou《Practical Guide》、Crack《Heard on the Street》，用自己的话重写；每题一个正态或 √T 的动作） <span class="tag">2026-10-11</span></summary>
+<p>用法：先自己答，再开答案。每题的"考点"是面试官真正想听的那一句。</p>
+<h4>题 1 · 和与差 <span class="tag">独立正态的组合</span></h4>
+<p>X、Y 独立标准正态。X + Y 和 X − Y 各是什么分布？它们独立吗？X 和 X + Y 的相关系数？</p>
+<p><b>和上一题的因果：</b>起点：正态最基本的封闭性，后面所有 √T 都从"方差相加"来。</p>
+<details><summary>答案</summary>
+<p>都是 N(0, 2)。Cov(X + Y, X − Y) = Var X − Var Y = 0，联合正态下不相关即独立。Corr(X, X + Y) = 1/√2。考点：正态的线性组合还是正态，方差相加、不是标准差相加。</p>
+</details>
+<h4>题 2 · 日 vol 到年 vol <span class="tag">√T</span></h4>
+<p>日波动率 1%，年波动率大约多少？为什么是 √252 不是 252？一个月的 vol 呢？</p>
+<p><b>和上一题的因果：</b>第 1 题说方差相加；这题把它用到时间上，是 §B 所有 σ√T 的来源。</p>
+<details><summary>答案</summary>
+<p>√252 ≈ 15.9，年 vol ≈ 16%。独立的日收益方差相加，252 天的方差是 252 倍，标准差是 √252 倍。一个月 ≈ 1% × √21 ≈ 4.6%。考点：vol 按时间的平方根放大，收益按时间线性放大，所以长期的 Sharpe 按 √T 增长。</p>
+</details>
+<h4>题 3 · 布朗运动的几个数 <span class="tag">E|W|、最大值、反射</span></h4>
+<p>W 是标准布朗运动。P(W_T > 0)？E|W_T|？P(max_{t ≤ T} W_t > a)？E[max]？</p>
+<p><b>和上一题的因果：</b>第 2 题是离散的 √T；这题是连续版，反射原理是面试常客。</p>
+<details><summary>答案</summary>
+<p>P = ½。E|W_T| = √(2T/π)。反射原理：P(max > a) = 2 P(W_T > a)。于是 E[max] = E|W_T| = √(2T/π)。考点：反射原理说"到过 a 的路径里，终点在 a 上下各一半"，所以最大值的分布就是 |W_T| 的分布。</p>
+</details>
+<h4>题 4 · 退出区间的期望时间 <span class="tag">W² − t 是鞅</span></h4>
+<p>布朗运动从 0 出发，第一次碰到 +a 或 −a 的期望时间？</p>
+<p><b>和上一题的因果：</b>第 3 题是最大值的分布；这题是碰到边界的时间，用 §1 第 3 题的鞅方法。</p>
+<details><summary>答案</summary>
+<p>W_t² − t 是鞅，停时期望：E[W_T²] − E[T] = 0，而 W_T = ±a，所以 E[T] = a²。考点：走到距离 a 要时间 a²，这是扩散的标志，和 √T 是同一句话。</p>
+</details>
+<h4>题 5 · 两个正态的最大值 <span class="tag">E[max] = 1/√π</span></h4>
+<p>两个独立标准正态的最大值期望？n 个的最大值大约随 n 怎么长？</p>
+<p><b>和上一题的因果：</b>§1 第 6 题用分布函数算骰子的最大值；这题同样办法用在正态上。</p>
+<details><summary>答案</summary>
+<p>max = (X + Y)/2 + |X − Y|/2，E = 0 + ½ E|X − Y| = ½ × √2 × √(2/π) = 1/√π ≈ 0.564。n 个的最大值 ≈ √(2 ln n)，长得很慢。考点：最大值用"平均 + 一半的差的绝对值"拆，|正态| 的期望是 √(2/π) × σ。</p>
+</details>
+<h4>题 6 · 一百个骰子的和 <span class="tag">中心极限</span></h4>
+<p>掷 100 个骰子，和超过 400 的概率大约多少？</p>
+<p><b>和上一题的因果：</b>第 5 题是精确的正态计算；这题是用正态近似非正态，CLT 的标准用法。</p>
+<details><summary>答案</summary>
+<p>单个骰子均值 3.5、方差 35/12 ≈ 2.92。和的均值 350，标准差 √292 ≈ 17.1。400 是 2.9 个标准差，概率约 0.2%。考点：先算单个的均值方差，再乘 n 和 √n。</p>
+</details>
+<h4>题 7 · 二元正态的条件分布 <span class="tag">E[Y | X] = ρ (σ_y/σ_x) X</span></h4>
+<p>(X, Y) 联合正态，相关 ρ。给定 X = x，Y 的条件均值和条件方差？</p>
+<p><b>和上一题的因果：</b>第 1 题的相关系数在这里变成回归系数，连 §1 第 9 题的回归到均值。</p>
+<details><summary>答案</summary>
+<p>均值 μ_y + ρ(σ_y/σ_x)(x − μ_x)，方差 σ_y²(1 − ρ²)。考点：条件均值是线性的，条件方差不依赖 x，这两条只对正态成立，也是线性回归假设的来源。</p>
+</details>
+<h4>题 8 · 卡方 <span class="tag">平方和的分布</span></h4>
+<p>k 个独立标准正态的平方和叫什么，均值方差各多少？样本方差 s² 和它什么关系？</p>
+<p><b>和上一题的因果：</b>第 6 题的 CLT 是和；这题是平方和，是 §5 里 n − 1 和检验的基础。</p>
+<details><summary>答案</summary>
+<p>χ²_k，均值 k，方差 2k。(n − 1)s²/σ² ~ χ²_{n−1}，自由度少一个因为均值被估了。考点：E[(n − 1)s²/σ²] = n − 1 就是 s² 无偏的原因。</p>
+</details>
+<h4>题 9 · 不相关但不独立 <span class="tag">相关系数只看线性</span></h4>
+<p>X 标准正态，Y = X²。Cov(X, Y)？它们独立吗？</p>
+<p><b>和上一题的因果：</b>第 7 题说联合正态下不相关 = 独立；这题是反例，前提"联合正态"去掉就不成立。</p>
+<details><summary>答案</summary>
+<p>Cov = E[X³] − E[X]E[X²] = 0，不相关。但 Y 完全由 X 决定，不独立。考点：相关系数只测线性关系，非线性依赖它看不见。</p>
+</details>
+<h4>题 10 · 分散化的极限 <span class="tag">ρσ²</span></h4>
+<p>n 个资产等权，每个方差 σ²，两两相关 ρ。组合方差是多少？n → ∞ 时趋于什么？</p>
+<p><b>和上一题的因果：</b>第 2 题是时间上的方差相加；这题是资产之间的，相关性决定分散化能走多远。</p>
+<details><summary>答案</summary>
+<p>σ²/n + (1 − 1/n)ρσ² → ρσ²。考点：分散化只能消掉不相关的那部分，ρσ² 是系统性风险的下限；2008 年所有 ρ 趋于 1 时分散化消失。</p>
+</details>
+<h4>题 11 · 布朗运动的协方差和桥 <span class="tag">min(s, t)</span></h4>
+<p>Cov(W_s, W_t)？已知 W_T = 0，W_t 的方差是多少？</p>
+<p><b>和上一题的因果：</b>§4 收尾：两个布朗运动的性质，第二个是 §6 模拟路径时插值用的。</p>
+<details><summary>答案</summary>
+<p>Cov = min(s, t)，因为 W_t = W_s + 独立增量。条件在 W_T = 0 上（布朗桥）：Var = t(T − t)/T，中点最大 T/4。考点：知道终点后中间的不确定性被两头压住，像一根绷直的弦。</p>
+</details>
+</details>
+
 <h3 class="sub">§5 · Likelihood · Cross-Entropy · KL · Change of Measure</h3>
 
 <details>
@@ -836,6 +1126,77 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <li><b>Which die</b>: one fair, one loaded toward 6; you see three 6s — odds it's the loaded one? Key move: multiply likelihood ratios; prior × LR = posterior odds.</li>
 <li><b>Fair toss from a biased coin</b> (von Neumann): key move: HT and TH have equal probability; discard HH/TT. Bridge to row 6.</li>
 </ol>
+</details>
+
+<details>
+<summary>Part 5 · 练习题阶梯（题型取自 Stefanica《150 Questions》、Zhou《Practical Guide》、Crack《Heard on the Street》，用自己的话重写；每题一个似然或测度的动作） <span class="tag">2026-10-11</span></summary>
+<p>用法：先自己答，再开答案。每题的"考点"是面试官真正想听的那一句。</p>
+<h4>题 1 · 正态的 MLE 和 n − 1 <span class="tag">为什么除以 n − 1</span></h4>
+<p>正态样本的 μ、σ² 的 MLE 是什么？σ² 的 MLE 为什么有偏？无偏的除以 n − 1 怎么解释？</p>
+<p><b>和上一题的因果：</b>起点：最常被问的统计题，也是那个论坛帖子里面试官"很在意分母"的那道。</p>
+<details><summary>答案</summary>
+<p>μ̂ = 样本均值，σ̂² = Σ(xᵢ − x̄)²/n。有偏是因为 x̄ 比真 μ 更贴近样本，偏差平方和被低估：E[Σ(xᵢ − x̄)²] = (n − 1)σ²，所以除以 n − 1 才无偏。自由度的说法：n 个偏差加起来恒为 0，只有 n − 1 个自由的。考点：说出"用样本均值代替真均值少了一个自由度"这一句。</p>
+</details>
+<h4>题 2 · Poisson 和指数的 MLE <span class="tag">写出似然再求导</span></h4>
+<p>观察到 n 个 Poisson 计数，λ 的 MLE？n 个指数等待时间，λ 的 MLE？</p>
+<p><b>和上一题的因果：</b>第 1 题是正态；这题换两个分布，看 MLE 的套路是不是一样。</p>
+<details><summary>答案</summary>
+<p>Poisson：对数似然 Σ(xᵢ ln λ − λ) + 常数，求导得 λ̂ = x̄。指数：Σ(ln λ − λxᵢ)，λ̂ = 1/x̄。考点：写出对数似然、求导、置零，三步，答案都是样本均值的函数。</p>
+</details>
+<h4>题 3 · 最小二乘是正态误差的 MLE <span class="tag">β = Cov/Var</span></h4>
+<p>为什么最小二乘等于 MLE？一元回归的 β 是什么？R² 和相关系数什么关系？</p>
+<p><b>和上一题的因果：</b>第 2 题的三步套路用到回归上，顺便把 §2 第 2 题的几何和这里的概率接起来。</p>
+<details><summary>答案</summary>
+<p>误差正态时，似然 ∝ exp(−Σ残差²/2σ²)，最大化似然 = 最小化残差平方和。β = Cov(x, y)/Var(x)，截距 = ȳ − βx̄。一元时 R² = ρ²。考点：最小二乘的"最小平方"来自正态的"平方指数"，换误差分布就换损失。</p>
+</details>
+<h4>题 4 · KL 散度的三件事 <span class="tag">≥ 0、不对称、正态之间</span></h4>
+<p>KL(P‖Q) 为什么 ≥ 0？为什么不对称？两个同方差正态之间的 KL 是多少？</p>
+<p><b>和上一题的因果：</b>第 3 题是一个分布的似然；这题是两个分布的距离，是交叉熵和变分方法的根。</p>
+<details><summary>答案</summary>
+<p>≥ 0：−KL = E_P[ln(Q/P)] ≤ ln E_P[Q/P] = ln 1 = 0（Jensen，§3 第 10 题）。不对称：P 有而 Q 没有的地方罚无穷，反过来不罚。同方差正态：(μ₁ − μ₂)²/(2σ²)。考点：KL 是"用 Q 编码 P 多花的比特"，所以方向有意义。</p>
+</details>
+<h4>题 5 · 交叉熵损失就是负对数似然 <span class="tag">分类的 MLE</span></h4>
+<p>分类网络用交叉熵损失，为什么等于 MLE？和 KL 什么关系？</p>
+<p><b>和上一题的因果：</b>第 4 题定义了 KL；这题说深度学习的损失函数就是它的一半。</p>
+<details><summary>答案</summary>
+<p>交叉熵 H(P, Q) = H(P) + KL(P‖Q)，P 是真实标签分布（one-hot 时 H(P) = 0），最小化交叉熵 = 最小化 KL = 最大化对数似然 Σ ln Q(正确类)。考点：所有"预测分布"的训练目标都是 MLE 换了个名字。</p>
+</details>
+<h4>题 6 · Beta 先验更新硬币 <span class="tag">Bayes 的共轭</span></h4>
+<p>硬币正面概率 p，先验 Beta(a, b)，看到 h 正 t 反，后验是什么？后验均值？</p>
+<p><b>和上一题的因果：</b>第 1 到 5 题是频率派；这题是 Bayes，§1 第 10 题的连续版。</p>
+<details><summary>答案</summary>
+<p>Beta(a + h, b + t)，均值 (a + h)/(a + b + h + t)。先验像"预先看过 a + b 次"，数据多了先验被淹没。考点：共轭先验让更新只是加计数。</p>
+</details>
+<h4>题 7 · 换测度就是重新加权 <span class="tag">Radon–Nikodym 和重要性抽样</span></h4>
+<p>在测度 Q 下算期望，但只能从 P 抽样，怎么办？这和"风险中性测度"是一回事吗？</p>
+<p><b>和上一题的因果：</b>第 6 题换的是先验；这题换的是整个概率测度，是 §B 第 24 题和 §6 的桥。</p>
+<details><summary>答案</summary>
+<p>E_Q[f] = E_P[f × dQ/dP]，权重 dQ/dP 是似然比，这就是重要性抽样。风险中性测度就是用一个特定的权重把真实分布改成"折现价格是鞅"的分布，Girsanov 说对布朗运动这个权重只是改漂移。考点：换测度 = 换权重，期望的"平均"没变，只是每条路径的重要性变了。</p>
+</details>
+<h4>题 8 · Sharpe 的 t 统计量 <span class="tag">要多少年才显著</span></h4>
+<p>一个策略年化 Sharpe 1。跑了一年，它显著吗？要跑几年 t 值才到 2？</p>
+<p><b>和上一题的因果：</b>第 1 题的 n − 1 是估方差；这题用方差做检验，是 backtest 里最该问的问题。</p>
+<details><summary>答案</summary>
+<p>t ≈ Sharpe × √年数。一年 t = 1，不显著；四年 t = 2。考点：Sharpe 1 的策略要四年才能和"运气"区分开，所以回测里的 Sharpe 3 要么是真的要么是过拟合。</p>
+</details>
+<h4>题 9 · 似然比和模型选择 <span class="tag">多一个参数要值多少</span></h4>
+<p>两个嵌套模型，怎么判断复杂的那个值不值得？AIC 的那个 2k 在罚什么？</p>
+<p><b>和上一题的因果：</b>第 8 题检验一个数；这题检验两个模型，是 validation 的日常。</p>
+<details><summary>答案</summary>
+<p>似然比 2(ln L₁ − ln L₀) 近似 χ²，自由度 = 多出的参数数。AIC = −2 ln L + 2k，每多一个参数要用对数似然涨 1 以上来换。考点：参数越多似然永远不降，所以要为参数付费。</p>
+</details>
+<h4>题 10 · 过拟合的三个集合 <span class="tag">train / validation / test</span></h4>
+<p>训练集和测试集都好、验证集不好，是过拟合吗？三个集合各管什么？</p>
+<p><b>和上一题的因果：</b>第 9 题是统计里的过拟合；这题是机器学习里的，也是 DRW OA 里那道变形题。</p>
+<details><summary>答案</summary>
+<p>训练集定参数，验证集选模型（超参数、早停），测试集只看一次。"训练和测试都好但验证不好"通常不是过拟合，是验证集和另两个分布不同、或验证集太小。过拟合的标志是训练好、验证和测试都差。考点：先问三个集合是怎么分的，再谈过拟合。</p>
+</details>
+<h4>题 11 · Rolling std 一遍过 <span class="tag">方差恒等式和数值稳定</span></h4>
+<p>一个长数组，窗口 w 的 rolling 标准差，怎么 O(n) 算？分母用 n 还是 n − 1？什么时候会算出负方差？</p>
+<p><b>和上一题的因果：</b>§5 收尾，论坛里那道面试原题，把第 1 题的分母和一个工程细节放一起。</p>
+<details><summary>答案</summary>
+<p>维护窗口内的 Σx 和 Σx²，Var = (Σx² − (Σx)²/w)/(w − 1)（样本方差用 w − 1，面试官通常要这个）。进一个出一个各更新一次，O(n)。坏处：数据均值很大时 Σx² 和 (Σx)²/w 两个大数相减，浮点误差能把方差算成负，解法是先减去一个基准值再算，或用 Welford 递推。考点：说出 n − 1，再主动说数值稳定，这题就拿满。</p>
+</details>
 </details>
 
 <h3 class="sub">§6 · Sampling / Monte Carlo</h3>
@@ -881,6 +1242,83 @@ total spread = average within-grade spread + spread of the grade averages</code>
 </ol>
 </details>
 
+<details>
+<summary>Part 5 · 练习题阶梯（题型取自 Stefanica《150 Questions》、Zhou《Practical Guide》、Crack《Heard on the Street》，用自己的话重写；每题一个抽样或方差缩减的动作） <span class="tag">2026-10-11</span></summary>
+<p>用法：先自己答，再开答案。每题的"考点"是面试官真正想听的那一句。</p>
+<h4>题 1 · 从均匀造指数 <span class="tag">逆变换</span></h4>
+<p>U 均匀 (0,1)，怎么造出参数 λ 的指数随机数？一般原则是什么？</p>
+<p><b>和上一题的因果：</b>起点：所有抽样的第一招，把均匀数塞进分布函数的反函数。</p>
+<details><summary>答案</summary>
+<p>X = −ln(U)/λ（或 −ln(1 − U)/λ，一样）。原则：X = F⁻¹(U)，因为 P(F⁻¹(U) ≤ x) = P(U ≤ F(x)) = F(x)。考点：反函数能写出来的分布都这么造。</p>
+</details>
+<h4>题 2 · Box–Muller <span class="tag">两个均匀造两个正态</span></h4>
+<p>正态的分布函数没有反函数，怎么从均匀造正态？</p>
+<p><b>和上一题的因果：</b>第 1 题的逆变换对正态不行；这题是绕过去的经典办法。</p>
+<details><summary>答案</summary>
+<p>R = √(−2 ln U₁)，θ = 2πU₂，Z₁ = R cos θ，Z₂ = R sin θ。原理：二维正态的半径平方服从指数（可逆变换），角度均匀。考点：一维不好造就升到二维，二维的正态在极坐标下很简单。</p>
+</details>
+<h4>题 3 · 接受拒绝 <span class="tag">用好抽的分布包住难抽的</span></h4>
+<p>想从密度 f 抽样，只会从 g 抽，f ≤ M g。怎么做？效率是多少？</p>
+<p><b>和上一题的因果：</b>第 2 题是正态的专用办法；这题是通用办法，代价是浪费一部分样本。</p>
+<details><summary>答案</summary>
+<p>从 g 抽 X，从均匀抽 U，若 U ≤ f(X)/(M g(X)) 接受。接受率 1/M，M 越接近 1 越省。考点：包络越贴合浪费越少，高维时 M 往往巨大，这就是 MCMC 存在的原因。</p>
+</details>
+<h4>题 4 · 扔飞镖估 π <span class="tag">误差 1/√N</span></h4>
+<p>在单位正方形里均匀扔点，落在四分之一圆内的比例估 π。要把误差缩小十倍要多扔多少倍？</p>
+<p><b>和上一题的因果：</b>第 3 题的接受率就是一个 Monte Carlo 估计；这题说估计的误差怎么随 N 缩。</p>
+<details><summary>答案</summary>
+<p>π̂ = 4 × 比例，标准误 ∝ 1/√N，缩十倍要一百倍的点。考点：Monte Carlo 收敛慢但和维数无关，这是它在高维胜出的唯一理由。</p>
+</details>
+<h4>题 5 · Antithetic <span class="tag">Z 和 −Z 配对</span></h4>
+<p>用 Z 和 −Z 各算一次取平均，为什么方差变小？什么时候没用甚至有害？</p>
+<p><b>和上一题的因果：</b>第 4 题说误差缩得慢；第 5 到 6 题是让每个样本更值钱的办法。</p>
+<details><summary>答案</summary>
+<p>两次估计负相关，平均后方差 = (1 + ρ)/2 倍。收益对 Z 单调时 ρ < 0 有效；收益对称（比如 straddle）时 ρ ≈ +1，没用。考点：方差缩减都是在制造负相关或消掉已知的部分。</p>
+</details>
+<h4>题 6 · 控制变量 <span class="tag">用能精确算的东西校正</span></h4>
+<p>用 Monte Carlo 定价算术平均的 Asian 期权，怎么用几何平均的 Asian 当控制变量？</p>
+<p><b>和上一题的因果：</b>第 5 题制造负相关；这题消掉已知部分，是实务里最常用的一招。</p>
+<details><summary>答案</summary>
+<p>几何 Asian 有闭式解 C_g。估计 Ĉ = Ĉ_a − β(Ĉ_g − C_g)，β 取两者协方差 ÷ 方差，两者相关性很高，方差缩几十倍。考点：找一个和目标高度相关、又能精确算的量，用它的误差去修正目标的误差。</p>
+</details>
+<h4>题 7 · 偏硬币造公平硬币 <span class="tag">von Neumann</span></h4>
+<p>一枚正面概率 p 的硬币，怎么产生公平的比特？期望要抛几次？</p>
+<p><b>和上一题的因果：</b>前面是从均匀造分布；这题是反过来，从不均匀造均匀，面试常客。</p>
+<details><summary>答案</summary>
+<p>连抛两次：HT 记 0，TH 记 1，HH 和 TT 扔掉重来。两种有效结果概率都是 p(1 − p)。期望次数 2/(2p(1 − p))，p = 0.5 时 4 次。考点：利用对称性把未知的 p 消掉。</p>
+</details>
+<h4>题 8 · 骰子造 1 到 7 <span class="tag">扔掉多余的</span></h4>
+<p>一个六面骰子，怎么均匀产生 1 到 7？</p>
+<p><b>和上一题的因果：</b>第 7 题扔掉一半结果；这题扔掉 1/36，同一个思路。</p>
+<details><summary>答案</summary>
+<p>掷两次得到 36 个等可能结果，编号 1 到 36，保留 1 到 35，除以 5 取整加 1 得到 1 到 7 各五个；得到 36 重掷。期望掷 2 × 36/35 ≈ 2.06 次。考点：先造一个足够大的均匀空间，再按倍数切，剩下的扔。</p>
+</details>
+<h4>题 9 · 随机排列和流式抽样 <span class="tag">Fisher–Yates 和 reservoir</span></h4>
+<p>怎么均匀打乱一个数组？一个长度未知的数据流，怎么只留一个元素且每个被留的概率相等？</p>
+<p><b>和上一题的因果：</b>第 8 题是有限的均匀；这题是"一次只能看一个"的均匀，是在线算法。</p>
+<details><summary>答案</summary>
+<p>打乱：从后往前，第 i 个和 0 到 i 里随机一个交换。流：第 i 个元素以 1/i 的概率替换当前保留的，第 n 个结束时每个被留的概率都是 1/n（归纳：第 i 个留下 1/i，之后每步不被替换 (j−1)/j，连乘到 n 得 1/n）。考点：两个都是"每一步给新来的一个正确的概率"。</p>
+</details>
+<h4>题 10 · 模拟 GBM <span class="tag">为什么用 exp</span></h4>
+<p>模拟 S_T，用 S(1 + μΔt + σ√Δt Z) 还是 S exp((μ − σ²/2)Δt + σ√Δt Z)？大步长时差在哪？</p>
+<p><b>和上一题的因果：</b>第 2 题造了正态；这题把正态变成价格路径，是定价 Monte Carlo 的主体，也用到 §3 第 5 题的 −σ²/2。</p>
+<details><summary>答案</summary>
+<p>用 exp 的那个：它是 GBM 的精确解，任何步长都对，而且永远为正。线性的那个是 Euler 近似，步长大时有偏、而且可能变负。考点：有精确解就用精确解，Euler 只在没有闭式解的过程里用。</p>
+</details>
+<h4>题 11 · 造相关的路径 <span class="tag">Cholesky 再一次</span></h4>
+<p>要模拟三个相关的资产，每步怎么做？相关矩阵不正定时会发生什么？</p>
+<p><b>和上一题的因果：</b>第 10 题是一条路径；这题是多条相关路径，接 §2 第 5 题。</p>
+<details><summary>答案</summary>
+<p>每步抽三个独立正态 Z，乘 L（相关矩阵的 Cholesky），得到相关的增量。不正定时 Cholesky 失败，说明相关矩阵里有矛盾（比如 A 和 B、B 和 C 都 0.9，A 和 C 是 −0.9），要先修正到最近的正定矩阵。考点：相关矩阵也要满足三角不等式一类的约束，不是随便填的。</p>
+</details>
+<h4>题 12 · 什么时候不用 Monte Carlo <span class="tag">维数和提前行权</span></h4>
+<p>Monte Carlo 和树、PDE 各适合什么？美式期权为什么对 Monte Carlo 难？</p>
+<p><b>和上一题的因果：</b>§6 收尾：知道工具的边界。</p>
+<details><summary>答案</summary>
+<p>MC：高维、路径依赖、不规则收益。树和 PDE：低维、要算 greek 和提前行权。美式难是因为每个时点要知道"继续持有的价值"，这是一个条件期望，MC 一条路径给不出；Longstaff–Schwartz 用回归估这个条件期望（§1 的条件期望又出现了）。考点：MC 的弱点是条件期望，强项是维数。</p>
+</details>
+</details>
+
 <h3 class="sub">§7 · Counting / Discrete Probability (Combinatorics) <span class="coresub">proposed row — LLM 列最薄，如实标注</span></h3>
 
 <p>Load-bearing in stochastic (the L0 layer: random walks, reflection principle, binomial trees) and ESL (bootstrap 1−1/e, permutation tests, VC counting); thinnest in LLM (dedup via MinHash/LSH = birthday-collision math; perplexity as effective branching factor). Structural note: the best teasers live on bridges between rows — coupon collector = counting × linearity of expectation (§1); reflection principle = counting × random walk (continuum limit: barrier options); bootstrap 1−1/e = counting × sampling (§6).</p>
@@ -915,6 +1353,83 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <li><b>Socks / pigeonhole</b>: minimum draws to guarantee a pair among k colors = k+1. Key move: worst case first, then one more.</li>
 </ol>
 </details>
+<details>
+<summary>Part 5 · 练习题阶梯（题型取自 Stefanica《150 Questions》、Zhou《Practical Guide》、Crack《Heard on the Street》，用自己的话重写；每题一个数数或线性期望的动作） <span class="tag">2026-10-11</span></summary>
+<p>用法：先自己答，再开答案。每题的"考点"是面试官真正想听的那一句。</p>
+<h4>题 1 · 握手 <span class="tag">n(n − 1)/2</span></h4>
+<p>n 个人两两握手，几次？从 10 个里选 3 个有几种？</p>
+<p><b>和上一题的因果：</b>起点：组合数最小的用法。</p>
+<details><summary>答案</summary>
+<p>n(n − 1)/2；C(10,3) = 120。考点：C(n,2) 是"选一对"，几乎所有两两比较的计数都是它。</p>
+</details>
+<h4>题 2 · 格子路径 <span class="tag">C(m + n, m)</span></h4>
+<p>从左下走到右上，只能向右或向上，格子 m × n，有几条路？</p>
+<p><b>和上一题的因果：</b>第 1 题选人；这题选"哪几步向右"，同一个组合数换了个穿法。</p>
+<details><summary>答案</summary>
+<p>C(m + n, m)：总共 m + n 步，挑 m 步向右。考点：看到"顺序里挑位置"就是组合数。</p>
+</details>
+<h4>题 3 · 生日 <span class="tag">23 个人过半</span></h4>
+<p>多少人在一个房间里，有两人同生日的概率超过一半？怎么快速估？</p>
+<p><b>和上一题的因果：</b>第 2 题是精确计数；这题是用"不发生"的乘积再取补，是概率计数的常规。</p>
+<details><summary>答案</summary>
+<p>P(全不同) = Π(1 − k/365) ≈ exp(−n²/730)，等于 ½ 时 n ≈ 23。考点：两两配对有 n²/2 对，每对撞上的概率 1/365，所以 n ~ √365 的量级就撞。</p>
+</details>
+<h4>题 4 · 集齐六面 <span class="tag">coupon collector</span></h4>
+<p>掷骰子直到六个面都出现过，期望掷几次？</p>
+<p><b>和上一题的因果：</b>第 3 题算的是"撞上"；这题算"集齐"，用 §1 第 1 题的几何等待一段一段加。</p>
+<details><summary>答案</summary>
+<p>已有 k 面时等下一个新面是几何分布，期望 6/(6 − k)。加起来 6 × (1 + ½ + ⅓ + ¼ + ⅕ + ⅙) = 14.7。考点：拆成阶段，每段一个几何等待，线性相加。</p>
+</details>
+<h4>题 5 · 线性期望 <span class="tag">不用独立</span></h4>
+<p>随机排列里固定点（排到自己位置）的期望个数？n 个人里同生日的对数的期望？</p>
+<p><b>和上一题的因果：</b>第 4 题是期望相加；这题强调期望相加不需要独立，这是面试里最省力的工具。</p>
+<details><summary>答案</summary>
+<p>固定点：每个位置是固定点的概率 1/n，n 个相加得 1，和 n 无关。同生日对数：C(n,2)/365。考点：指示变量相加，相关与否不影响期望。</p>
+</details>
+<h4>题 6 · 错排 <span class="tag">1/e</span></h4>
+<p>n 封信随机装进 n 个信封，没有一封装对的概率趋于多少？</p>
+<p><b>和上一题的因果：</b>第 5 题说固定点期望是 1；这题问"一个都没有"的概率，要用容斥。</p>
+<details><summary>答案</summary>
+<p>容斥：1 − 1 + 1/2! − 1/3! + … → 1/e ≈ 0.368。考点：期望是 1 但分布接近 Poisson(1)，P(0) = e⁻¹。</p>
+</details>
+<h4>题 7 · 球和盒子 <span class="tag">空盒的期望</span></h4>
+<p>n 个球随机扔进 n 个盒子，空盒的期望个数？</p>
+<p><b>和上一题的因果：</b>第 5 题的线性期望再用一次，答案也是 1/e。</p>
+<details><summary>答案</summary>
+<p>每个盒子空的概率 (1 − 1/n)ⁿ → 1/e，期望 n/e。考点：又一个指示变量相加，和第 6 题的 1/e 是同一个极限。</p>
+</details>
+<h4>题 8 · 五张牌至少一张 A <span class="tag">补集</span></h4>
+<p>52 张牌发 5 张，至少一张 A 的概率？</p>
+<p><b>和上一题的因果：</b>第 3 题的"算补集"再用一次，这次是不放回。</p>
+<details><summary>答案</summary>
+<p>1 − C(48,5)/C(52,5) ≈ 1 − 0.659 = 0.341。考点："至少一个"永远算补集。</p>
+</details>
+<h4>题 9 · de Méré 的两道 <span class="tag">四次掷出 6 对二十四次掷出双 6</span></h4>
+<p>掷一个骰子四次至少一个 6，和掷两个骰子 24 次至少一次双 6，哪个概率大？</p>
+<p><b>和上一题的因果：</b>第 8 题的补集用在重复试验上，是概率论历史上的第一道题。</p>
+<details><summary>答案</summary>
+<p>1 − (5/6)⁴ ≈ 0.518；1 − (35/36)²⁴ ≈ 0.491。前者大。考点：直觉"24/36 = 4/6"是错的，因为概率不按比例加，要用乘积。</p>
+</details>
+<h4>题 10 · 整数解的个数 <span class="tag">stars and bars</span></h4>
+<p>x₁ + x₂ + x₃ = 10 的非负整数解有几个？每个至少 1 呢？</p>
+<p><b>和上一题的因果：</b>第 2 题的"挑位置"换一个场景：在 10 个星星之间放隔板。</p>
+<details><summary>答案</summary>
+<p>C(12, 2) = 66；每个至少 1：先各给 1，剩 7，C(9, 2) = 36。考点：n 个相同的东西分进 k 个组 = 在 n 个星星间插 k − 1 个隔板。</p>
+</details>
+<h4>题 11 · 随机游走回到原点 <span class="tag">1/√(πn)</span></h4>
+<p>公平随机游走 2n 步后回到原点的概率？它随 n 怎么衰减？</p>
+<p><b>和上一题的因果：</b>第 2 题的格子路径换成一维，再用 Stirling 近似，连到 §4 的 √T。</p>
+<details><summary>答案</summary>
+<p>C(2n, n)/4ⁿ ≈ 1/√(πn)。考点：回到原点的概率按 1/√n 衰减，所以一维随机游走常返（Σ1/√n 发散）但回得越来越慢。</p>
+</details>
+<h4>题 12 · 大数里的小概率 <span class="tag">Poisson 近似</span></h4>
+<p>一百万张彩票各中奖概率百万分之一，至少一个人中的概率？恰好两个人？</p>
+<p><b>和上一题的因果：</b>§7 收尾：二项分布在 n 大 p 小时变成 Poisson，和第 6、7 题的 1/e 对上。</p>
+<details><summary>答案</summary>
+<p>中奖人数 ≈ Poisson(1)。至少一个：1 − e⁻¹ ≈ 0.632。恰好两个：e⁻¹/2 ≈ 0.184。考点：np 固定、n 大时用 Poisson(np)，这就是错排、空盒、彩票都出现 1/e 的原因。</p>
+</details>
+</details>
+
 </section>
 <section class="core">
 <h2>Financial Engineering <span class="coresub">和 Shared Core 并列的第二块地基，暂未进上面的图。规矩：每个概念先问这张桌子靠什么挣钱、在哪亏钱、坐在上面的人早上第一件事看什么，公式放最后；每个概念配一件市场里真发生过的事。现在两个节点，§A Fixed Income Mathematics、§B Basic Options；swaption/vol model 和 credit e-trading 攒够了再开节点。2026-10-08 起记。</span></h2>

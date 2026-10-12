@@ -1096,6 +1096,127 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <details><summary>答案</summary>
 <p>Callable = 直债 − 发行人手里的 call option。利率跌，直债涨，但发行人赎回的可能性涨，call option 也涨，两者相减价格被压住，到某个点以后几乎不动，这就是负 convexity。所以利率跌时它的 duration 变短（钱可能提前回来），利率涨时变长，和普通债正好相反。房贷一样：利率跌借款人提前还款，MBS 的 duration 缩短，这是美国 rates 市场最大的负 convexity 来源，对冲它的人在利率跌时要追着买 duration，会把跌势放大。考点：负 convexity = "利率对你有利时你的敞口反而缩水"，说出谁持有那个期权。</p>
 </details>
+<p><b>第二阶（11–30）：</b>前十题是骨架，下面把每根骨头各拧一圈。</p>
+<h4>题 11 · 收益率为 0 和趋于无穷时的价格 <span class="tag">极限检查</span></h4>
+<p>一张十年 5% 年付债。收益率 0 时价格多少？收益率趋于无穷呢？这两个极限告诉你价格-收益率曲线长什么样？</p>
+<p><b>和上一题的因果：</b>第 10 题讲完 callable 回到最基本的价格函数，用两个极限把曲线的形状钉住。</p>
+<details><summary>答案</summary>
+<p>收益率 0：所有 DF = 1，价格 = 10 × 5 + 100 = 150。无穷：所有 DF → 0，价格 → 0。曲线从 150 单调下降到 0，而且是凸的（第 4 题），永远不会碰到 0。考点：任何公式先代两个极限，错的公式在极限处先露馅。</p>
+</details>
+<h4>题 12 · 半年复利和年复利的收益率换算 <span class="tag">BEY</span></h4>
+<p>一张债年复利收益率 5.0625%。换成美国国债口径的半年复利收益率是多少？哪个数看起来小？为什么两种口径下价格一样？</p>
+<p><b>和上一题的因果：</b>第 11 题固定了口径，这题换口径：Part 5 第 1 节"同一个 DF 三种读法"的实战。</p>
+<details><summary>答案</summary>
+<p>(1 + y/2)² = 1.050625 → y/2 = 2.5% → y = 5.00%。半年复利的数看起来小，因为复利更频繁。价格一样是因为两种口径描述的是同一串 DF，只是报数的方法不同。考点：报收益率先说 convention；美国国债和公司债说的"5%"都是半年复利。</p>
+</details>
+<h4>题 13 · Clean price 和 dirty price <span class="tag">应计利息</span></h4>
+<p>一张 6% 半年付的债，上次付息是两个月前。你今天买它付多少？报纸上登的价格是哪一个？付息日那天 dirty price 为什么跳一下？</p>
+<p><b>和上一题的因果：</b>第 12 题的价格是付息日当天的；这题把日子移到两个付息日之间，是交易员实际付款的数。</p>
+<details><summary>答案</summary>
+<p>你付 dirty = clean + 应计利息。应计 = 3 × (2/6) = 1，所以付 clean + 1。报纸登 clean，因为 clean 不随日历锯齿形跳动，只随收益率变。付息日前一刻 dirty 含整笔 3 的应计，付完息 dirty 掉 3，clean 不动。考点：价格里有两种变化，一种是市场的（clean），一种是日历的（应计），分开记才能看出 P&L 里哪块是 carry。</p>
+</details>
+<h4>题 14 · 组合的 duration 和加杠杆 <span class="tag">现值加权再一次</span></h4>
+<p>你有 1 亿债券 duration 8，再借 1 亿现金（repo）买同样的债。组合（按自有资金 1 亿算）duration 多少？如果只是把 1 亿里的一半换成现金呢？</p>
+<p><b>和上一题的因果：</b>第 3 题的拆块加权用在组合上，并引入杠杆：这是 RV fund 用 20 倍杠杆时 duration 的算法。</p>
+<details><summary>答案</summary>
+<p>杠杆后：资产 2 亿 duration 8，负债 1 亿现金 duration 0，自有资金 1 亿 → duration = (2 × 8 − 1 × 0) ÷ 1 = 16。换一半现金：(0.5 × 8 + 0.5 × 0) ÷ 1 = 4。考点：现金 duration 为 0，借现金是负的现金，所以杠杆把 duration 按倍数放大，这就是 basis trade 几 bp 的价差也能致命的原因。</p>
+</details>
+<h4>题 15 · 永续债的 duration <span class="tag">annuity 的极限</span></h4>
+<p>每年付 c、永远付下去、收益率 y 的永续债，价格多少？Macaulay duration 多少？y = 5% 时是几年？</p>
+<p><b>和上一题的因果：</b>第 3 题说十年 annuity 的 duration 约 5.1；这题把年限推到无穷，得到一个必背的数。</p>
+<details><summary>答案</summary>
+<p>价格 = c ÷ y。Duration = (1 + y) ÷ y，5% 时是 21 年。推导：Σ t/(1+y)^t ÷ Σ 1/(1+y)^t，分母是 1/y，分子是 (1+y)/y²。考点：永续债 duration 不是无穷，因为远处现金流的权重按几何级数衰减；它是所有 annuity duration 的上限。</p>
+</details>
+<h4>题 16 · Macaulay、modified、连续复利 <span class="tag">三个 duration 的关系</span></h4>
+<p>Macaulay 8.26、年复利收益率 4.5%，modified 是多少？如果收益率改成连续复利报，modified 和 Macaulay 什么关系？为什么？</p>
+<p><b>和上一题的因果：</b>第 15 题算了 Macaulay；这题把它换成能乘收益率变动用的 modified，是 Part 5 第 5 节课本跳步那一处。</p>
+<details><summary>答案</summary>
+<p>Modified = 8.26 ÷ 1.045 = 7.90。连续复利下两者相等。原因：P = Σ CF × e^(−yt)，对 y 求导每项多出 −t，没有多余的 1/(1+y)；年复利下 P = Σ CF (1+y)^(−t)，求导每项多出 −t/(1+y)。考点：modified 回答"价格变百分之几"，Macaulay 回答"钱平均多久回来"，差一个 1/(1+y) 是复利口径带来的。</p>
+</details>
+<h4>题 17 · Convexity 随期限怎么长 <span class="tag">T² 的直觉</span></h4>
+<p>零息债的 convexity 大约是什么？十年零息和三十年零息的 convexity 比是多少？为什么 convexity 比 duration 长得快？</p>
+<p><b>和上一题的因果：</b>第 4 题说 convexity 存在，第 5 题说它值钱；这题说它的大小，才能比较 barbell 和 bullet 差多少。</p>
+<details><summary>答案</summary>
+<p>零息债 convexity ≈ T(T+1)/(1+y)² ≈ T²。十年对三十年约 1 比 9。Duration 是价格对收益率的一阶导除以价格，每项带一个 t；convexity 是二阶导，每项带 t²，所以远处的现金流对 convexity 的贡献按平方放大。考点：barbell 比 bullet 多的 convexity 来自长端那一半的 T²。</p>
+</details>
+<h4>题 18 · 附息债的收益率在零利率之间 <span class="tag">收益率是加权平均</span></h4>
+<p>Curve 向上倾斜：1 年零利率 3%、10 年零利率 5%。一张十年 2% 票息的债，收益率更接近 3% 还是 5%？10% 票息的呢？</p>
+<p><b>和上一题的因果：</b>第 12 题说收益率是价格的另一种写法；这题说它是零利率的某种平均，平均的权重由票息定。</p>
+<details><summary>答案</summary>
+<p>收益率是让所有现金流用同一个利率贴现能复现价格的那个数，等于各期零利率按现金流现值加权的平均。2% 票息的债现值几乎全在第十年的本金上，收益率接近 5%；10% 票息的债前几年的票息占比大，被低的短端利率拉下来，收益率明显低于 5%。考点：同期限不同票息的债收益率不同不是套利，是权重不同；这就是为什么 curve 要用零利率或 DF 建，不能直接拿附息债收益率连线。</p>
+</details>
+<h4>题 19 · 从两张债 bootstrap 出两年零利率 <span class="tag">curve 怎么拼</span></h4>
+<p>1 年零息债收益率 4%。2 年平价债票息 5%（年付，价格 100）。两年零利率是多少？</p>
+<p><b>和上一题的因果：</b>第 18 题说附息债收益率不能直接用；这题做一次从附息债剥出零利率的动作，是 curve builder 做的事的最小版。</p>
+<details><summary>答案</summary>
+<p>100 = 5/1.04 + 105/(1+z₂)² → 105/(1+z₂)² = 100 − 4.808 = 95.192 → (1+z₂)² = 1.1030 → z₂ = 5.03%。两年零利率比 5% 的平价 rate 略高，因为平价债的第一笔票息被较低的 4% 贴现，剩下的本金必须被更高的利率贴现才凑够 100。考点：bootstrap 是从短到长一步一步解，每一步用前面已解出的 DF。</p>
+</details>
+<h4>题 20 · 远期 > 零利率 > 平价 rate <span class="tag">向上倾斜时的排序</span></h4>
+<p>Curve 向上倾斜时，同一期限的远期利率（最后一年的）、零利率、平价 swap rate，大小怎么排？倒挂时呢？</p>
+<p><b>和上一题的因果：</b>第 19 题分开了零利率和平价 rate；加上第 7 题的远期，三个数排一次序，面试里常让你"不算，直接排"。</p>
+<details><summary>答案</summary>
+<p>向上倾斜：远期 > 零利率 > 平价 rate。零利率是到 T 为止各年远期的平均，向上倾斜时最后一年的远期高于平均；平价 rate 是零利率按现值加权的平均，前面低的零利率权重大，所以又低一点。倒挂时全反过来。考点：三个数是同一条 curve 的三种平均方式，坡度决定排序。</p>
+</details>
+<h4>题 21 · Swap 当成两张债 <span class="tag">receiver 的 duration</span></h4>
+<p>一笔 receive fixed 的十年 swap，拆成哪两张债？它的 duration 大约是固定债的多少？为什么 swap 的 notional 不换手也能这么拆？</p>
+<p><b>和上一题的因果：</b>第 6 题用"固定债 ± 浮动腿"拆了 inverse floater；这题反过来，把 swap 拆成债，验证 Part 2 的"receive fixed = long bond"。</p>
+<details><summary>答案</summary>
+<p>Receiver = long 一张 K 票息的固定债 + short 一张 floater。两张债的本金到期时正好抵消，所以加不加本金不影响现金流，这就是 notional 不换手也能拆的原因。Floater duration ≈ 0，所以 receiver swap 的 DV01 ≈ 固定债的 DV01（每亿约 8 万）；但 swap 的价值在起点是 0，所以"duration = DV01 ÷ 价格"没意义，desk 只说 DV01。考点：swap 没有价格只有 DV01，这是 swap desk 不说 duration 只说 DV01 的原因。</p>
+</details>
+<h4>题 22 · FRA 怎么结算 <span class="tag">远期的现金版</span></h4>
+<p>你买了一个 3×6 的 FRA（3 个月后起算、为期 3 个月）锁定 5%。三个月后市场 3 个月利率是 6%，你收多少？什么时候收？为什么要贴现？</p>
+<p><b>和上一题的因果：</b>第 7 题说远期可以锁住；这题看锁住的合同怎么兑现，顺便区分 FRA 和期货。</p>
+<details><summary>答案</summary>
+<p>收 (6% − 5%) × 0.25 × notional，但在期初（第 3 个月）就结算，所以要用 6% 贴现一个季度：差额 ÷ (1 + 6% × 0.25)。贴现是因为利息本该期末付，提前付就要打折。期货不同：每天盯市结算，利率涨时你的保证金账户立刻收到钱而且能按更高的利率生息，这个好处让期货隐含的利率比 FRA 的远期略高，差的那点叫 convexity adjustment。考点：FRA 是一次性结算的远期，期货是每天结算的远期，每天结算在利率和盈亏正相关时值钱。</p>
+</details>
+<h4>题 23 · Key rate duration <span class="tag">bucket 的做题版</span></h4>
+<p>十年 bullet 债，和 2 年加 20 年各一半的 barbell，总 duration 都是 8。它们的 key rate duration（2 年、10 年、20 年三个点）各长什么样？2s10s 变陡时谁亏？</p>
+<p><b>和上一题的因果：</b>第 9 题配总 duration，第 23 题把它拆到 bucket，是 Part 4 那课的练习。</p>
+<details><summary>答案</summary>
+<p>Bullet：几乎全在 10 年格（本金在那），2 年和 20 年格接近 0。Barbell：2 年格和 20 年格各一半，10 年格 0。2s10s 变陡（2 年利率相对下降、10 年相对上升）：bullet 的 10 年格亏，barbell 的 2 年格赚、20 年格看 10s20s。考点：总 duration 相同的两个组合在 curve 形状变化时盈亏完全不同，这是 risk 报表按 bucket 看的全部理由。</p>
+</details>
+<h4>题 24 · 负利率下的债 <span class="tag">公式照样成立</span></h4>
+<p>收益率 −0.5% 的两年零息债，价格多少？大于 100 为什么还有人买？它的 duration 还是正的吗？</p>
+<p><b>和上一题的因果：</b>第 11 题取了收益率的两个极限；这题取一个曾经真实存在的奇怪区间（2015–2021 欧日），检查公式有没有悄悄假设利率为正。</p>
+<details><summary>答案</summary>
+<p>价格 = 100 ÷ 0.995² = 101.0。买它的人要么被迫（保险公司和银行的监管要求、央行），要么赌收益率更负、价格更高（资本利得）。Duration 还是 2，因为公式里没有任何地方要求 y > 0。考点：负利率只改变直觉不改变数学；"DF ≤ 1"才是被打破的那条。</p>
+</details>
+<h4>题 25 · 为什么 curve 会倒挂 <span class="tag">预期和期限溢价</span></h4>
+<p>十年收益率低于两年收益率，市场在说什么？给两种解释。倒挂为什么被当成衰退信号？</p>
+<p><b>和上一题的因果：</b>第 20 题的排序在倒挂时反过来；这题问倒挂的来源，是 SVB 那周和 2022–24 的背景。</p>
+<details><summary>答案</summary>
+<p>解释一：预期。长端是未来短端的平均，长端低说明市场预期以后要降息，而降息通常是因为经济变差。解释二：期限溢价。长债要补偿持有人的利率风险，这个溢价平时为正，量化宽松和避险需求能把它压成负的，倒挂就不一定是预期降息。被当成衰退信号是因为历史上每次衰退前都倒挂过，但倒挂到衰退的间隔从几个月到两年不等，所以它是"方向对、时间不准"的信号。考点：先拆成预期和溢价两块，再谈信号。</p>
+</details>
+<h4>题 26 · TIPS 和 breakeven <span class="tag">实际利率对名义利率</span></h4>
+<p>十年国债 4.5%，十年 TIPS 2.0%。Breakeven 通胀是多少，它在说什么？TIPS 的 duration 对哪个利率？</p>
+<p><b>和上一题的因果：</b>第 25 题拆名义利率为预期和溢价；这题再拆一层：名义 = 实际 + 通胀，是 macro desk 每天看的第三个数。</p>
+<details><summary>答案</summary>
+<p>Breakeven ≈ 4.5 − 2.0 = 2.5%，意思是未来十年平均通胀超过 2.5% 时 TIPS 跑赢国债。TIPS 的本金随 CPI 调整，所以它的 duration 是对实际利率的，对通胀预期的变化几乎免疫；国债的 duration 是对名义利率的。考点：一个 rates book 的风险有两条 curve，名义和实际，中间的差是通胀预期加一点流动性溢价。</p>
+</details>
+<h4>题 27 · Carry trade 和它怎么死 <span class="tag">借短买长</span></h4>
+<p>借隔夜 repo 买十年债，curve 向上倾斜时每天赚 carry。什么会让这个 trade 亏钱？哪一种最致命？</p>
+<p><b>和上一题的因果：</b>第 7 题说 carry 是远期和预期的差；这题问它的风险，接 Part 4 的 2019 年 repo 和 2020 年 3 月。</p>
+<details><summary>答案</summary>
+<p>三种：长端收益率上升（价格跌，一天抵掉几个月 carry）；curve 变平（carry 本身消失）；融资端出事（repo 飙升或借不到，2019 年 9 月那种，被迫在最差的时候卖）。最致命的是第三种，因为它不是市场看法错了，是仓位本身被拔掉，而且通常和第一种同时发生。考点：carry trade 的风险在融资端，不在资产端。</p>
+</details>
+<h4>题 28 · 用期货对冲一笔 swap <span class="tag">DV01 比</span></h4>
+<p>你 pay fixed 五亿十年 swap。十年期货 TY 每张 DV01 约 75 美元。大概要买多少张？买还是卖？对冲完还剩什么风险？</p>
+<p><b>和上一题的因果：</b>第 21 题给了 swap 的 DV01；这题用它配期货，是 Part 2 "先对冲再找客户"那步的算术。</p>
+<details><summary>答案</summary>
+<p>Swap DV01 = 7.9 万 × 5 = 39.5 万。张数 = 395,000 ÷ 75 ≈ 5,300 张。Pay fixed 是 short duration，要买期货补 long duration。剩下的：swap spread 风险（swap 对国债）、CTD 对十年 swap 的期限错配（CTD 是 6–7 年的债）、期货每天盯市的现金流。考点：期货对冲便宜快，但它对冲的是国债，不是 swap。</p>
+</details>
+<h4>题 29 · 付息日之间的 duration 和结算 <span class="tag">T+1 的细节</span></h4>
+<p>一张债今天交易、明天结算。价格按哪一天贴现？两个付息日之间 Macaulay duration 怎么随日历走？付息那天它跳一下吗？</p>
+<p><b>和上一题的因果：</b>第 13 题引入了付息日之间的 dirty price；这题问 duration 在同一段时间里的样子，是 risk 报表每天早上数字变动的一个来源。</p>
+<details><summary>答案</summary>
+<p>按结算日贴现（钱是那天付的）。两次付息之间 duration 每天线性减少（所有现金流都近了一天），付息那天最近的那笔现金流消失，duration 跳上去一点（剩下的现金流平均更远）。考点：风险报表里 duration 的锯齿不是市场动了，是日历；P&L explain 里的 carry 项就是这些日历效应的集合。</p>
+</details>
+<h4>题 30 · 一道综合题：三个月后的 P&L <span class="tag">把 carry、roll、curve 动拼起来</span></h4>
+<p>你 long 一亿十年债，收益率 4.0%，repo 5.3%，curve 10 年到 5 年每年坡度 2 bp。三个月后十年收益率变成 3.8%。你的 P&L 大约多少，拆成三块。</p>
+<p><b>和上一题的因果：</b>前面 29 题各算一块；这题是 P&L explain 的小型版，trader 早上第二个数。</p>
+<details><summary>答案</summary>
+<p>Carry：−1.3% × 0.25 × 1 亿 = −32.5 万。Roll：0.5 bp × 8 万 = +4 万。Curve 动：20 bp × 8 万 = +160 万（convexity 再加一点点，约 +1.6 万）。合计约 +133 万。考点：三块分开报，因为它们的来源不同，一块是日历、一块是形状、一块是市场，下个季度能重复的只有前两块。</p>
+</details>
 </details>
 
 <h3 class="sub">§B · Basic Options</h3>
@@ -1205,6 +1326,163 @@ total spread = average within-grade spread + spread of the grade averages</code>
 <p><b>和上一题的因果：</b>前 13 题全是普通期权；这题是把前面的直觉用到变形上，也是银行 structured desk 那一课的产品。</p>
 <details><summary>答案</summary>
 <p>Knock-out 便宜（多了一种作废的方式），barrier 附近 delta 跳变最难管；Asian 便宜（平均价的 vol 比单点低，约 σ/√3），greek 平滑；Lookback 贵（最好的价归你）；Forward-start 的价格今天只取决于 σ，不取决于 S，所以是纯 vega 的工具。考点：先问"它比普通期权多了什么权利或少了什么权利"，贵贱和 greek 就都出来了。</p>
+</details>
+<p><b>第二阶（15–40）：</b>前十四题是骨架，下面每题多拧一圈，后半段进 vol 产品和 rates option。</p>
+<h4>题 15 · Call 和 put 的上下界 <span class="tag">无套利的边界</span></h4>
+<p>不分红股票的欧式 call 最低值多少、最高值多少？Put 呢？如果一个 call 的价格低于 S − K × DF，你怎么套利？</p>
+<p><b>和上一题的因果：</b>第 14 题结束了普通期权的性质；第二阶从最硬的约束重新开始：任何模型给的价都必须在这些界里。</p>
+<details><summary>答案</summary>
+<p>Call：max(S − K × DF, 0) ≤ C ≤ S。Put：max(K × DF − S, 0) ≤ P ≤ K × DF。若 C < S − K × DF：买 call、卖空股票、存 K × DF，今天净收钱，到期无论如何不亏。考点：下界来自 parity 加 P ≥ 0，上界来自"期权不可能比标的本身值钱"。</p>
+</details>
+<h4>题 16 · 用远期价写 parity <span class="tag">C − P = DF × (F − K)</span></h4>
+<p>远期价 F 是什么？用 F 重写 put-call parity。为什么 vol trader 都用 F 而不是 S 当参照？</p>
+<p><b>和上一题的因果：</b>第 15 题的界里到处是 K × DF；这题把 S 也换成"折现后的远期"，之后所有 ATM 都指 ATM-forward。</p>
+<details><summary>答案</summary>
+<p>F = S ÷ DF（减去分红的现值后），是今天能锁住的到期买价。Parity 变成 C − P = DF × (F − K)。用 F 是因为利率和分红都被收进 F 里，期权的价值只剩 F、K、σ、T 四个东西，Black 公式就是这么写的。考点：K = F 时 C = P，这才是"平价"的真正定义。</p>
+</details>
+<h4>题 17 · ATM-spot 对 ATM-forward <span class="tag">straddle 的 delta</span></h4>
+<p>利率 5%、一年期、不分红、S = 100。K = 100 的 straddle 的 delta 大约多少？K = F 的 straddle 呢？做市商报"ATM straddle"是指哪个？</p>
+<p><b>和上一题的因果：</b>第 16 题定义了 F；这题看它对 delta 的影响，是 straddle 作为 vol 工具的前提。</p>
+<details><summary>答案</summary>
+<p>F = 105。K = 100 的 straddle：call 明显 ITM-forward，delta 约 0.6 − 0.4 = +0.2，不是 vol 工具，带方向。K = F 的 straddle delta 接近 0（略正，约 0.04），这才是纯 vol 的仓位。做市商报的 ATM 默认是 ATM-forward 或 delta-neutral straddle。考点：想只赌 vol 不赌方向，strike 要放在 F 不是 S。</p>
+</details>
+<h4>题 18 · Straddle 的 P&L 曲线 <span class="tag">gamma 和 theta 的图像</span></h4>
+<p>画出 long ATM straddle 在到期时和到期前一个月的价值对 S 的曲线。两条曲线的差是什么？一天过去曲线怎么动？</p>
+<p><b>和上一题的因果：</b>第 17 题配好了 delta-neutral 的 straddle；这题看它的二阶和时间，是第 7 题那条式子的图像。</p>
+<details><summary>答案</summary>
+<p>到期：V 形，底在 K。到期前：U 形，比 V 高出一截（时间价值），最高在 K 附近。两条的差是剩余的时间价值，它每天缩小，缩得最快的是 K 附近，这就是 theta 最大在 ATM。U 的弯曲度是 gamma，S 大动时 U 上升超过 V 被压低的量就是 gamma 赚的钱。考点：一张图里同时看见 gamma（弯）、theta（往下落）、vega（U 整体抬高）。</p>
+</details>
+<h4>题 19 · Risk reversal 和 butterfly 的报价 <span class="tag">skew 和 kurtosis 怎么交易</span></h4>
+<p>FX 和股指期权市场报三个数：ATM vol、25-delta risk reversal、25-delta butterfly。各是什么，各在交易分布的哪个特征？</p>
+<p><b>和上一题的因果：</b>第 12 题解释了 smile；这题说市场怎么把 smile 拆成三个可交易的数。</p>
+<details><summary>答案</summary>
+<p>ATM vol：分布的宽度。Risk reversal = 25-delta call vol − 25-delta put vol：分布的偏度，股指通常为负（put 贵）。Butterfly = (25-delta call vol + 25-delta put vol) ÷ 2 − ATM vol：分布的尾巴厚度，几乎总为正。三个数定一条 smile 的形状。考点：做市商不是一个 strike 一个 strike 报价，是报形状的三个参数，再插出每个 strike。</p>
+</details>
+<h4>题 20 · 从价格反推 implied vol <span class="tag">vega 是斜率</span></h4>
+<p>一张一年期 ATM call 报价 8，S = 100。implied vol 大约多少？精确解怎么求？什么情况下会解不出来？</p>
+<p><b>和上一题的因果：</b>第 5 题从 σ 算价格；这题反过来，是交易员看到报价后脑子里做的第一个换算。</p>
+<details><summary>答案</summary>
+<p>ATM：C ≈ 0.4 σ √T S → σ ≈ 8 ÷ 40 = 20%。精确解用 Newton 迭代，导数就是 vega。解不出来的情况：报价落在第 15 题的界外（低于内在价值或高于 S），说明报价本身是错的。考点：implied vol 是价格的另一种报法，就像收益率是债券价格的另一种报法。</p>
+</details>
+<h4>题 21 · 一张期权一天的 P&L 怎么拆 <span class="tag">greek 归因</span></h4>
+<p>你 long 一张 call，昨天到今天 S 涨 2%，implied vol 跌 1 个点，过了一天。写出 P&L 的四项，并说哪项通常最大。</p>
+<p><b>和上一题的因果：</b>第 18 题是图像；这题是 P&L explain 的期权版，和 §A 第 30 题对应。</p>
+<details><summary>答案</summary>
+<p>ΔV ≈ delta × ΔS + ½ gamma × ΔS² + vega × Δσ + theta × Δt。四项：方向、弯曲、vol、时间。没有对冲时 delta 项最大；delta 对冲掉之后，gamma 和 theta 互相抵一部分，vega 项常常成为最大的。考点：报 P&L 要按这四项分开报，交易员看一眼就知道今天赚的是方向还是 vol。</p>
+</details>
+<h4>题 22 · Gamma scalping <span class="tag">long gamma 怎么变现</span></h4>
+<p>你 long straddle 并保持 delta 中性。股价先涨 3% 再跌回原地。你做了什么交易，赚了还是亏了？这个钱和 implied vol 有什么关系？</p>
+<p><b>和上一题的因果：</b>第 10 题说对冲掉的期权交易 realized 对 implied；这题把那个过程拆成具体的买卖动作。</p>
+<details><summary>答案</summary>
+<p>涨 3% 后 straddle 的 delta 变正，你卖股票回到中性；跌回原地 delta 变负，你买回股票。一卖一买，卖得高买得低，赚了 ½ gamma × (3%)² 的量级。付出去的是这段时间的 theta。实际波动越大，这种"高卖低买"越频繁，赚得越多；implied 定了 theta 的价，所以赚亏看 realized 是否大于 implied。考点：long gamma 的人天然逆势交易，short gamma 的人天然追涨杀跌，这就是 squeeze 的机制。</p>
+</details>
+<h4>题 23 · 一步二叉树和风险中性概率 <span class="tag">真实概率为什么不进价格</span></h4>
+<p>股票 100，一期后变 120 或 80，无风险利率 0。K = 100 的 call 值多少？推导里用到"涨的概率"了吗？如果你知道涨的真实概率是 90%，价格变吗？</p>
+<p><b>和上一题的因果：</b>前 22 题默认 Black-Scholes；这题退回最简单的模型，看定价的根在哪。</p>
+<details><summary>答案</summary>
+<p>复制：买 Δ 股、借 B 使两种结果都等于期权收益：120Δ + B = 20，80Δ + B = 0 → Δ = 0.5，B = −40，成本 50 − 40 = 10。没用到真实概率。真实概率 90% 也不变，因为复制组合在两种结果下都精确对上，和哪种更可能无关。风险中性概率 q = (1 − 0.8) ÷ (1.2 − 0.8) = 0.5 只是把"复制成本"改写成"期望"的记账方式。考点：期权价格是复制的成本，不是收益的期望。</p>
+</details>
+<h4>题 24 · 为什么 Black-Scholes 里没有 μ <span class="tag">对冲消掉漂移</span></h4>
+<p>股票预期收益率 μ 不出现在期权价格里，一句话解释。那什么决定了价格？μ 很高的股票 call 更贵吗？</p>
+<p><b>和上一题的因果：</b>第 23 题在两步树里看到了真实概率不进价格；这题把它说成连续时间的那句话。</p>
+<details><summary>答案</summary>
+<p>持有期权并 delta 对冲后，组合对 S 的一阶敞口是零，μ 只通过一阶进来，所以被对冲掉了；剩下的是二阶（σ²）和时间。决定价格的是 σ、T、K 对 F 的位置、利率。μ 高的股票 call 不更贵，因为它的 F 由利率定不由 μ 定；但 μ 高往往伴随 σ 高，那是另一回事。考点：期权是对 σ 的赌注，不是对方向的赌注，方向可以被对冲掉。</p>
+</details>
+<h4>题 25 · σ 和 T 的四个极限 <span class="tag">用极限查公式</span></h4>
+<p>Call 价格在 σ → 0、σ → ∞、T → ∞、K → 0 时各趋于什么？</p>
+<p><b>和上一题的因果：</b>§A 第 11 题用极限钉住债的价格函数；这里对期权做同样的事。</p>
+<details><summary>答案</summary>
+<p>σ → 0：max(S − K × DF, 0)，变成远期。σ → ∞：S，几乎肯定会被行权到极端。T → ∞（不分红）：S，K 的现值趋于 0。K → 0：S，等于直接拿股票。考点：call 的上界 S 在三个极限里都被碰到，说明"call 是带保护的股票"。</p>
+</details>
+<h4>题 26 · Theta 为正的期权 <span class="tag">什么时候时间站在买方</span></h4>
+<p>欧式期权的 theta 一定为负吗？举一个 theta 为正的例子并解释。</p>
+<p><b>和上一题的因果：</b>第 7 题说 long 期权付 theta；这题找反例，面试官爱用它看你是不是背的。</p>
+<details><summary>答案</summary>
+<p>深度 ITM 的欧式 put：价值 ≈ K × DF − S，时间过去 DF 上升，价值上升，theta 为正；因为你在等着收 K，等得越短 K 的现值越高。有高分红时深度 ITM 的欧式 call 也可能 theta 为正（等着分红落地）。考点：theta 为负的来源是"时间价值衰减"，但折现效应方向相反，深度 ITM 时折现效应赢。</p>
+</details>
+<h4>题 27 · 美式 put 什么时候行权 <span class="tag">行权边界</span></h4>
+<p>一张美式 put 深度 ITM，你为什么要立刻行权而不是卖掉？行权边界随到期日怎么动？美式 call 有分红时什么时候行权？</p>
+<p><b>和上一题的因果：</b>第 2 题说美式 put 可能提前行权；这题问具体在哪个点，是 structured desk 处理 Bermudan 的最简版。</p>
+<details><summary>答案</summary>
+<p>Put：立刻行权拿 K − S，拿到 K 可以生息；等下去只在股价继续跌时多赚，但已经深度 ITM 时继续跌的空间不值那点利息。边界是一条随到期日上升的曲线：离到期越近，行权的 S 阈值越高（时间价值越少）。Call 有分红：只在最后一次除息日前一刻可能行权，因为除息后股价掉、call 跟着掉，行权能把分红拿到手。考点：提前行权是"现在拿到的现金的利息"对"剩余时间价值"的比较。</p>
+</details>
+<h4>题 28 · Chooser option <span class="tag">用 parity 拆</span></h4>
+<p>一个期权允许你在 T₁ 时选择它变成 call 还是 put（同 K，到期 T₂）。它等于哪两个普通期权的组合？</p>
+<p><b>和上一题的因果：</b>第 1 题的 parity 看起来只是个恒等式；这题用它把一个看起来复杂的产品拆成两张普通期权。</p>
+<details><summary>答案</summary>
+<p>在 T₁ 时你会选 max(C, P) = C + max(0, P − C) = C + max(0, K × DF(T₁,T₂) − S)。后一项是一张 T₁ 到期、行权价 K × DF 的 put。所以 chooser = T₂ 的 call + T₁ 的 put（行权价折现过的 K）。考点：看到 max 就想 parity，parity 把两个不同的期权之差写成了"远期"，远期的 max 就是另一张期权。</p>
+</details>
+<h4>题 29 · Exchange option <span class="tag">两个资产的 vol</span></h4>
+<p>一个期权让你用一股 A 换一股 B。它的价格像哪个普通期权？里面的 σ 是什么？</p>
+<p><b>和上一题的因果：</b>第 28 题拆了一个两期产品；这题是两个标的，关键是找对"那个 σ"。</p>
+<details><summary>答案</summary>
+<p>把 A 当成货币，B 以 A 计价，这是一张 K = 1 的 call，用 Black 公式，σ 是比值 B/A 的 vol：σ² = σ_A² + σ_B² − 2ρσ_Aσ_B。不需要利率，因为两边都是资产。考点：换一个计价单位，复杂的期权变简单；两个资产相关性高时比值的 vol 很小，期权便宜。</p>
+</details>
+<h4>题 30 · Variance swap <span class="tag">用一串期权拼出方差</span></h4>
+<p>Variance swap 到期付 realized variance − K。它怎么用普通期权静态复制？为什么权重是 1/K²？公平的 K 和 implied vol 什么关系？</p>
+<p><b>和上一题的因果：</b>第 11 题说任何到期收益都能用一串期权拼；这题拼的不是到期收益而是路径的方差，是 vol 产品的核心。</p>
+<details><summary>答案</summary>
+<p>持有一个 log contract（收益 −ln S_T）并每天 delta 对冲，对冲的 P&L 正好累积出 realized variance（因为 ln 的二阶导是 −1/S²，gamma P&L 每天是 ½ × (ΔS/S)²）。Log contract 用 OTM put 和 call 拼，权重 1/K²，因为 ln 的二阶导随 K 按 1/K² 衰减。公平 K ≈ 用这些权重平均出的 implied variance，smile 存在时略高于 ATM implied vol 的平方。考点：variance swap 是"所有 strike 的期权加权在一起"，它交易的是整条 smile 的 vol 不是一个点。</p>
+</details>
+<h4>题 31 · VIX 是什么 <span class="tag">variance swap 的 strike</span></h4>
+<p>VIX 怎么算？它为什么通常高于之后的 realized vol？VIX 期限结构通常什么形状，什么时候倒挂？</p>
+<p><b>和上一题的因果：</b>第 30 题的公平 K 就是 VIX 的定义，这题把它放回市场。</p>
+<details><summary>答案</summary>
+<p>VIX = 30 天标普期权按 1/K² 加权算出的 implied variance 的平方根，就是 30 天 variance swap 的公平 strike。它通常高于之后的 realized，差的那块叫 variance risk premium，是卖保险的人收的钱。期限结构通常向上（远期的不确定更多，且 vol 会回到平均），危机时倒挂（眼前的恐慌大于长期）。考点：VIX 不是预测，是保险价格。</p>
+</details>
+<h4>题 32 · Black 对 Black-Scholes <span class="tag">期货期权</span></h4>
+<p>期货期权用 Black 公式：C = DF × [F N(d₁) − K N(d₂)]。它和 Black-Scholes 差在哪？期货期权的 delta 为什么不是 N(d₁)？</p>
+<p><b>和上一题的因果：</b>第 16 题引入了 F；这题是 F 版本的公式，也是 rates 期权（第 33 题）的入口。</p>
+<details><summary>答案</summary>
+<p>差别只在把 S 换成 F 并整体折现，因为期货不占资金、远期价已经含了利率和分红。Delta 对期货价格是 DF × N(d₁)，少了个 DF，因为期货头寸的盈亏每天结算、而期权的到期收益要折现。考点：Black 公式是所有"标的是一个远期"的期权的通用形式，rates 期权全用它。</p>
+</details>
+<h4>题 33 · Swaption <span class="tag">rates 期权的入口</span></h4>
+<p>Payer swaption 是什么期权？标的是什么，σ 是什么的 vol？"normal vol"和"lognormal vol"什么区别，利率接近零时为什么用 normal？</p>
+<p><b>和上一题的因果：</b>第 32 题的 Black 公式换上 swap rate 当 F，就是 §A 那张桌子上 vol trader 的产品。</p>
+<details><summary>答案</summary>
+<p>Payer swaption = 到期时按 K 进入 pay fixed swap 的权利 = 对 swap rate 的 call，收益是 max(S_T − K, 0) × annuity。用 Black 公式，F 是远期 swap rate，再乘 annuity。Lognormal vol 是"利率变动的百分比"的标准差，normal vol 是"利率变动的 bp 数"的标准差；利率接近零时百分比没意义（1% 到 2% 是 100%），所以市场改报 normal vol（例如年化 80 bp）。考点：swaption 是 Black 公式加一个 annuity；rates 的 smile（第 34 题）形状和股票不同，因为利率的分布更接近正态。</p>
+</details>
+<h4>题 34 · SABR 是干什么用的 <span class="tag">smile 的参数化</span></h4>
+<p>不推公式：SABR 的四个参数各管 smile 的哪个特征？做市商为什么需要它而不是直接存一张 vol 表？</p>
+<p><b>和上一题的因果：</b>第 33 题说 rates 的 smile 形状特殊；这题说 desk 怎么描述它，是 HM 的 LinkedIn 上那个词。</p>
+<details><summary>答案</summary>
+<p>α 管 ATM vol 的高低；β 管利率分布在正态和对数正态之间的位置（也决定 ATM vol 怎么随利率水平变）；ρ 管 skew（倾斜方向）；ν 管 smile 的弯曲（两头翘多少）。需要它是因为 vol 表只有几个报价点，中间的 strike 要插值，而且利率动了整张表要跟着动，SABR 给出一个"动得合理"的插值。考点：SABR 不是定价模型，是报价之间的插值规则加一套 greek 的计算方式。</p>
+</details>
+<h4>题 35 · Sticky strike 对 sticky delta <span class="tag">S 动了 vol 怎么动</span></h4>
+<p>股价跌 5%，原来 ATM 的那张期权的 implied vol 怎么变？两种假设各给一个答案。做市商 book 的 delta 在两种假设下不一样，为什么？</p>
+<p><b>和上一题的因果：</b>第 12 题解释了 smile 的来源；这题问 smile 随 S 怎么移动，直接影响 delta 怎么算。</p>
+<details><summary>答案</summary>
+<p>Sticky strike：每个 K 的 vol 不动，原来 ATM 的 K 现在是 OTM call，vol 还是老数。Sticky delta：smile 跟着 S 平移，原来 ATM 的 K 现在在 smile 更高的 put 侧，vol 上升。两种假设下 dV/dS 多了一项 vega × (dσ/dS)，sticky delta 下这项不为零，所以 delta 更小（股指的负 skew 下）。考点：delta 不只是 N(d₁)，还要加 smile 跟着动的那块，做市商每天争的就是这块。</p>
+</details>
+<h4>题 36 · Barrier 的 delta 跳变 <span class="tag">不连续的收益</span></h4>
+<p>一张 knock-out call，障碍在 S 的上方 110。S 接近 110 时它的 delta 是正是负？做市商怎么处理？</p>
+<p><b>和上一题的因果：</b>第 14 题说 barrier 附近 delta 跳变最难管；这题看跳变的方向和处理办法。</p>
+<details><summary>答案</summary>
+<p>接近障碍时价格趋于 0 而且越接近掉得越快，所以 delta 为负、gamma 为负、而且无穷大。做市商的办法：把障碍"挪远"一点定价（barrier shift），相当于多收保护费；或在障碍附近用 digital 的方式近似对冲。考点：收益不连续的地方 greek 会爆，处理办法永远是"把不连续抹平一点、多收钱"。</p>
+</details>
+<h4>题 37 · Asian 期权为什么便宜 <span class="tag">平均的 vol</span></h4>
+<p>一张按最后三个月平均价结算的 call，比同条件的普通 call 便宜多少量级？为什么？</p>
+<p><b>和上一题的因果：</b>第 14 题的一句话展开成一道算术。</p>
+<details><summary>答案</summary>
+<p>平均价的 vol 约是单点的 1/√3（连续平均时），所以 ATM 价格按 0.4σ√T 大约是普通的 58%。原因：平均把路径上的噪音抵掉一部分，终点的不确定性小。考点：所有"平均"类期权便宜，便宜的比例从 vol 的缩减来。</p>
+</details>
+<h4>题 38 · Forward-start 和 cliquet <span class="tag">纯 vega</span></h4>
+<p>一个期权在三个月后才定 strike（定为那时的 ATM），六个月后到期。今天它的价格取决于什么？它的 delta 是多少？</p>
+<p><b>和上一题的因果：</b>第 14 题的最后一句展开，也是 structured desk 常见产品的零件。</p>
+<details><summary>答案</summary>
+<p>价格 = 今天的 S × (三个月后起的三个月 ATM 期权占 S 的比例) ≈ S × 0.4 × σ_forward × √0.25，只取决于远期 vol，和今天 S 离 K 多远无关。Delta ≈ 价格 ÷ S，像持有一小块股票。串起来一串就是 cliquet。考点：forward-start 是交易"远期 vol"的工具，它的风险在 vol 的期限结构。</p>
+</details>
+<h4>题 39 · 一张做市商的期权 book <span class="tag">把 greek 加总</span></h4>
+<p>你的 book：short 1000 张一个月 ATM call，long 500 张一年 ATM call，delta 已对冲。整本 book 是 long 还是 short gamma？Vega 呢？Theta 呢？什么样的市场对你最好？</p>
+<p><b>和上一题的因果：</b>前面都是单张期权；这题把它们加到一本 book 上，是 §B Part 1 做市商座位的做题版。</p>
+<details><summary>答案</summary>
+<p>Gamma ∝ 1/√T：一个月的 gamma 是一年的 √12 ≈ 3.5 倍，1000 张 short 对 500 张 long，净 short gamma。Vega ∝ √T：一年的 vega 是一个月的 3.5 倍，500 张 long 对 1000 张 short，净 long vega。Theta 和 gamma 反号，净收 theta。最好的市场：现货不动（收 theta、不赔 gamma）但 implied vol 上升（long vega 赚），这就是"vol 涨但没真动"，事件前的典型行情。考点：短期期权管 gamma 和 theta，长期期权管 vega，一本 book 可以同时 short gamma 和 long vega。</p>
+</details>
+<h4>题 40 · E[max(S − K, 0)] 的推导骨架 <span class="tag">能从头推一次</span></h4>
+<p>S_T 对数正态，均值 F。不查表，说出 E[max(S_T − K, 0)] = F N(d₁) − K N(d₂) 的推导分几步，每步做什么。</p>
+<p><b>和上一题的因果：</b>第 4 题要求读懂公式；第二阶最后一题要求能从头推，面试里"推一下 BS"就是这道。</p>
+<details><summary>答案</summary>
+<p>四步：一、把 S_T 写成 F × exp(σ√T Z − σ²T/2)，Z 标准正态。二、行权条件 S_T > K 翻译成 Z > −d₂，d₂ = [ln(F/K) − σ²T/2] ÷ (σ√T)。三、拆成两项：E[S_T; Z > −d₂] − K × P(Z > −d₂)，第二项就是 K N(d₂)。四、第一项里 exp(σ√T Z) 乘正态密度配方，等于把 Z 的均值平移 σ√T，积分变成 F × P(Z > −d₂ − σ√T) = F N(d₁)。考点：N(d₁) 比 N(d₂) 多的那个 σ√T 就是第四步的平移，这是第 4 题"两个期望用的概率不一样"的数学版。</p>
 </details>
 </details>
 </section>

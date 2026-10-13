@@ -1734,6 +1734,96 @@ total spread = average within-grade spread + spread of the grade averages</code>
 </details>
 </details>
 
+<details open>
+<summary>Part 7 · 30 题的图：核心公式和挂在它上面的题 <span class="tag">2026-10-12</span></summary>
+<p>12 个节点，每个是一条核心公式或一个核心问法，蓝底粗框的是六块地基。箭头是推导方向：上一行的东西是下一行的输入。每个节点下面的"题 x y z"是 Part 6 里挂在它上面的题号。一道题挂两个节点时写在两处。</p>
+<svg viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1000px;display:block;margin:10px auto;font-family:inherit">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<line x1="115" y1="75" x2="345" y2="75" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="345" y1="75" x2="580" y2="75" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="580" y1="75" x2="810" y2="75" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="345" y1="75" x2="230" y2="215" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="580" y1="75" x2="515" y2="215" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="230" y1="215" x2="785" y2="215" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="515" y1="215" x2="785" y2="215" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="785" y1="215" x2="405" y2="365" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="230" y1="215" x2="135" y2="365" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="135" y1="365" x2="405" y2="365" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="405" y1="365" x2="655" y2="365" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="655" y1="365" x2="885" y2="365" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="405" y1="365" x2="440" y2="495" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="810" y1="75" x2="440" y2="495" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="345" y1="75" x2="810" y2="75" stroke="var(--edge)" stroke-width="1.5" marker-end="url(#arr)"/>
+<g><rect x="20" y="40" width="190" height="70" rx="10" fill="var(--node-fill)" stroke="var(--node-stroke)" stroke-width="1.2"/>
+<text x="115.0" y="62" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">口径</text>
+<text x="115.0" y="80" text-anchor="middle" font-size="10.5" fill="var(--muted)">复利 · day count · clean/dirty · 结算日</text>
+<text x="115.0" y="98" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 12 13 29</text></g>
+<g><rect x="250" y="40" width="190" height="70" rx="10" fill="var(--anc-bg)" stroke="var(--fg)" stroke-width="2"/>
+<text x="345.0" y="62" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">DF(t)</text>
+<text x="345.0" y="80" text-anchor="middle" font-size="10.5" fill="var(--muted)">钱贬多少；曲线的本体</text>
+<text x="345.0" y="98" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 1 11 24</text></g>
+<g><rect x="480" y="40" width="200" height="70" rx="10" fill="var(--anc-bg)" stroke="var(--fg)" stroke-width="2"/>
+<text x="580.0" y="62" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">远期 = DF 段首/段尾 − 1</text>
+<text x="580.0" y="80" text-anchor="middle" font-size="10.5" fill="var(--muted)">锁住的利率，不是预测</text>
+<text x="580.0" y="98" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 7 19 20 22</text></g>
+<g><rect x="710" y="40" width="200" height="70" rx="10" fill="var(--node-fill)" stroke="var(--node-stroke)" stroke-width="1.2"/>
+<text x="810.0" y="62" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">Curve 形状</text>
+<text x="810.0" y="80" text-anchor="middle" font-size="10.5" fill="var(--muted)">零/远期/平价排序 · bootstrap · 倒挂 · TIPS</text>
+<text x="810.0" y="98" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 18 19 20 25 26</text></g>
+<g><rect x="130" y="180" width="200" height="70" rx="10" fill="var(--anc-bg)" stroke="var(--fg)" stroke-width="2"/>
+<text x="230.0" y="202" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">Annuity A = Σ τ·DF</text>
+<text x="230.0" y="220" text-anchor="middle" font-size="10.5" fill="var(--muted)">"每年 1 块"的价钱</text>
+<text x="230.0" y="238" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 2 15</text></g>
+<g><rect x="400" y="180" width="230" height="70" rx="10" fill="var(--anc-bg)" stroke="var(--fg)" stroke-width="2"/>
+<text x="515.0" y="202" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">浮动腿 = 1 − DF(T)</text>
+<text x="515.0" y="220" text-anchor="middle" font-size="10.5" fill="var(--muted)">票息率 = 贴现率 ⇒ 面值</text>
+<text x="515.0" y="238" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 2 6 21</text></g>
+<g><rect x="660" y="180" width="250" height="70" rx="10" fill="var(--anc-bg)" stroke="var(--fg)" stroke-width="2"/>
+<text x="785.0" y="202" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">PV = (S − K)·A ； P − 100 = (c − S)·A</text>
+<text x="785.0" y="220" text-anchor="middle" font-size="10.5" fill="var(--muted)">K、c 是合同的；S、A 是市场的</text>
+<text x="785.0" y="238" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 2 8 18 21</text></g>
+<g><rect x="20" y="330" width="230" height="70" rx="10" fill="var(--anc-bg)" stroke="var(--fg)" stroke-width="2"/>
+<text x="135.0" y="352" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">Duration = Σ t·PV / P</text>
+<text x="135.0" y="370" text-anchor="middle" font-size="10.5" fill="var(--muted)">拆块加权：annuity + 零息</text>
+<text x="135.0" y="388" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 3 6 9 14 15 16 23 29</text></g>
+<g><rect x="290" y="330" width="230" height="70" rx="10" fill="var(--anc-bg)" stroke="var(--fg)" stroke-width="2"/>
+<text x="405.0" y="352" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">DV01 = A·1bp·N = P·D_mod·1bp</text>
+<text x="405.0" y="370" text-anchor="middle" font-size="10.5" fill="var(--muted)">一个 bp 值多少钱</text>
+<text x="405.0" y="388" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 8 9 28</text></g>
+<g><rect x="560" y="330" width="190" height="70" rx="10" fill="var(--node-fill)" stroke="var(--node-stroke)" stroke-width="1.2"/>
+<text x="655.0" y="352" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">Convexity</text>
+<text x="655.0" y="370" text-anchor="middle" font-size="10.5" fill="var(--muted)">DV01 自己会变 ∝ T²</text>
+<text x="655.0" y="388" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 4 5 17</text></g>
+<g><rect x="790" y="330" width="190" height="70" rx="10" fill="var(--node-fill)" stroke="var(--node-stroke)" stroke-width="1.2"/>
+<text x="885.0" y="352" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">带期权的现金流</text>
+<text x="885.0" y="370" text-anchor="middle" font-size="10.5" fill="var(--muted)">callable / MBS 负 convexity</text>
+<text x="885.0" y="388" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 10</text></g>
+<g><rect x="290" y="460" width="300" height="70" rx="10" fill="var(--anc-bg)" stroke="var(--fg)" stroke-width="2"/>
+<text x="440.0" y="482" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--fg)">Carry + roll = 不动的 P&amp;L</text>
+<text x="440.0" y="500" text-anchor="middle" font-size="10.5" fill="var(--muted)">(y − repo)·t ；坡度·t ；break-even</text>
+<text x="440.0" y="518" text-anchor="middle" font-size="10.5" fill="var(--anc)">题 7 13 27 30</text></g>
+<text x="20" y="150" font-size="11" fill="var(--muted)">第一行：市场给的东西（DF 和它的读法）</text>
+<text x="20" y="290" font-size="11" fill="var(--muted)">第二行：合同遇见市场（两条腿、债 = 固定腿 + 本金）</text>
+<text x="20" y="440" font-size="11" fill="var(--muted)">第三行：风险数字（一阶、二阶）；第四行：时间的 P&amp;L</text>
+</svg>
+<table class="cmp">
+<tr><th>节点</th><th>核心一句话</th><th>挂的题</th><th>面试常见问法</th></tr>
+<tr><td>口径</td><td>利息 = 本金 × r × τ，τ 由 day count 定；dirty = clean + 应计</td><td>12 13 29</td><td>"这个 5% 是什么 5%"；"付息日之间价格为什么跳"</td></tr>
+<tr><td><b>DF(t)</b></td><td>t 那天 1 块钱今天的价；三种利率都是它的读法</td><td>1 11 24</td><td>"零息债价格"；"收益率为 0 / 负 / 无穷时"</td></tr>
+<tr><td><b>远期</b></td><td>两个 DF 的比；锁住不是预测</td><td>7 19 20 22</td><td>"1y1y 多少、怎么锁"；"FRA 怎么结算"</td></tr>
+<tr><td>Curve 形状</td><td>零、远期、平价是同一条曲线的三种平均</td><td>18 19 20 25 26</td><td>"向上倾斜时谁大"；"为什么倒挂"；"breakeven 通胀"</td></tr>
+<tr><td><b>Annuity</b></td><td>Σ τ·DF，"每年 1 块"的价钱，票息大小约掉</td><td>2 15</td><td>"annuity 的 duration"；"永续债"</td></tr>
+<tr><td><b>浮动腿</b></td><td>票息率 = 贴现率时两两抵消，剩 1 − DF(T)，加本金 = 面值</td><td>2 6 21</td><td>"floater 值多少 / duration 多少"；"inverse floater"</td></tr>
+<tr><td><b>PV 公式</b></td><td>(S − K)·A 是 swap 值多少，(c − S)·A 是债比 100 多多少</td><td>2 8 18 21</td><td>"老 swap 现在值多少"；"swap 拆成两张债"</td></tr>
+<tr><td><b>Duration</b></td><td>Σ t·PV / P；任何东西拆成 annuity 和零息再按现值加权</td><td>3 6 9 14 15 16 23 29</td><td>"三张债排序"；"组合 / 杠杆 / 负债对冲"；"key rate"</td></tr>
+<tr><td><b>DV01</b></td><td>A·1bp·N，也是 P·D_mod·1bp，两条路一个数</td><td>8 9 28</td><td>"一个 bp 亏多少"；"用期货对冲几张"</td></tr>
+<tr><td>Convexity</td><td>DV01 随利率变，∝ T²，动得越大越占便宜</td><td>4 5 17</td><td>"上下 1% 为什么不对称"；"barbell 对 bullet"</td></tr>
+<tr><td>带期权的现金流</td><td>callable = 直债 − call，负 convexity；MBS 同理</td><td>10</td><td>"利率跌 callable 为什么涨不动"</td></tr>
+<tr><td><b>Carry + roll</b></td><td>不动的 P&amp;L：(y − repo)·t 加坡度·t，除以 DV01 得 break-even</td><td>7 13 27 30</td><td>"倒挂时 long 债会怎样"；"P&amp;L 拆三块"</td></tr>
+</table>
+<p><b>怎么读这张图：</b>从左上到右下是一条推导链，口径定了 DF，DF 定了远期和 annuity，远期定了浮动腿，annuity 和浮动腿合成 PV 公式，PV 对利率的一阶是 DV01、二阶是 convexity，DV01 把 carry 和 roll 换算成 bp。30 道题没有一道在这条链之外；面试里的新题先问它挂在哪个节点。</p>
+</details>
+
 <h3 class="sub">§B · Basic Options</h3>
 
 <details open>

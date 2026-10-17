@@ -1545,6 +1545,49 @@ Q̂(k) = nₖ/n</code></pre>
 <section class="core">
 <h2>Financial Engineering <span class="coresub">和 Shared Core 并列的第二块地基，暂未进上面的图。规矩：每个概念先问这张桌子靠什么挣钱、在哪亏钱、坐在上面的人早上第一件事看什么，公式放最后；每个概念配一件市场里真发生过的事。现在两个节点，§A Fixed Income Mathematics、§B Basic Options；swaption/vol model 和 credit e-trading 攒够了再开节点。2026-10-08 起记。</span></h2>
 
+<details>
+<summary>Roadmap · 2026-10-17 定的三条线（DRW HM 面后；下周一、四有 coding 面，这周先出框架不动手） <span class="tag">plan</span></summary>
+
+<h4>线 1 · 期权定价模型与模拟（§B 之上开 §C）</h4>
+<p>原则：每层只加一个新东西，每层都接回 Shared Core 的一个节点，每层结束时能算一个具体的数。现有 §B（收益、parity、BS 的结构、greek、smile 直觉、做市商的 book）算第 0 层。</p>
+<ol class="qs">
+<li><b>离散时间的复制与风险中性。</b>一步二叉树（§B 题 23）→ 多步 → CRR 参数 u、d、q 怎么定 → 步数趋于无穷收敛到 BS → 美式用倒推。接 §1 塔性质（今天的价 = 明天价的 Q 期望）、§6（树 vs MC）。产出：50 行 Python，二叉树价和 BS 价对上三位小数。</li>
+<li><b>连续时间。</b>GBM 和 Ito（§3 Q5）→ 用 delta 对冲推 BS 偏微分方程（为什么 μ 消失，§B 题 24）→ Feynman–Kac：PDE 的解 = 期望（§1）→ 从期望直接推 BS 公式（§B 题 40）→ Girsanov 一句（§5 Q11：改漂移不改 σ）。产出：手推 BS 公式一页。</li>
+<li><b>实现。</b>MC 定价欧式和路径依赖（§6 题 10、11），antithetic 和控制变量（§6 题 5、6），MC 算 greek 的两种办法（pathwise：对收益求导；likelihood ratio：对密度求导），PDE 的有限差分（显式/隐式/Crank–Nicolson 各一句），美式用 Longstaff–Schwartz（§6 题 12，回归估条件期望）。产出：MC 价和 BS 价、MC delta 和解析 delta 对上。</li>
+<li><b>BS 之外：smile 怎么建模（sell side / buy side 真正讨论的细节）。</b>局部波动率（Dupire）：σ(S, t) 由整张 smile 唯一决定，能完全拟合今天的 smile，但远期 smile 会变平，所以 forward-start 定错；随机波动率（Heston）：五个参数各管什么（长期 vol、回归速度、vol of vol、相关系数管 skew、初始 vol），特征函数定价一句；SABR（§B 题 34）为什么成了 rates/FX 的报价标准；跳扩散（Merton）管短期的 skew。然后是 desk 上争论的点：sticky strike vs sticky delta（§B 题 35）、vanna 和 volga 是什么、校准用哪些工具、哪些是拟合哪些是外推、同一个 barrier 在 LV 和 SV 下价格为什么不同（模型风险）。产出：一张表，四个模型 × （能拟合什么 / 拟合不了什么 / desk 用在哪）。</li>
+<li><b>Desk 实务。</b>每天的校准流程、用错模型对冲会怎样（realized 对 implied 再一次）、期权 book 的 P&amp;L explain 四项（§B 题 21）、variance swap 和 VIX（§B 题 30、31）。</li>
+</ol>
+<p>书：第 1–3 层 Hull 的期权章节；第 4 层 Gatheral《The Volatility Surface》前五章；要严格就 Shreve 第二卷。Bergomi 太深，不进计划。</p>
+
+<h4>线 2 · 利率模拟：一个最基本的模型，接上 hazard rate</h4>
+<p>先改一个说法：hazard rate 模型复用的是<b>短期利率模型（affine 那一族，Vasicek / Hull–White / CIR）</b>的数学，不是 HJM 本身。HJM 是把整条远期曲线当状态变量的更一般框架，短期利率模型是它的特例；给信用做 HJM 的文献有，但 desk 上不是标准。所以这条线的顺序是：短期利率模型 → 它和 hazard rate 的一一对应 → HJM 和 LMM 各一句。</p>
+<ol class="qs">
+<li><b>利率模型和股票模型差在哪。</b>股票的标的是一个数 S；利率的标的是整条曲线，DF(t, T) 对每个 T 一个。无套利要求所有 T 的 DF 互相一致：DF(0, T) = E_Q[exp(−∫₀ᵀ r ds)]，短期利率 r 的路径决定所有期限的贴现。所以"模拟利率"= 模拟 r 的路径，再从路径算 DF。接 §1（DF 是条件期望）、§4（r 的过程）。</li>
+<li><b>Vasicek 到 Hull–White。</b>Vasicek：dr = a(b − r)dt + σ dW，是 §4 的 OU 过程（均值回归的布朗运动），三件事各管什么：b 长期水平、a 回归速度、σ 短期利率的 vol。它的债券价格有闭式 P(t, T) = A(t, T) exp(−B(t, T) r)（affine），B = (1 − e^(−a(T−t)))/a 是"r 动 1 bp 这张债动多少"，也就是模型里的 duration。缺点：拟合不了今天的 curve。Hull–White：把 b 换成随时间变的 θ(t)，θ(t) 由今天的 DF 曲线反解出来，于是模型精确复现今天的 curve，剩下 a 和 σ 对 swaption 的 normal vol 校准。a 的作用：长期利率的 vol 按 e^(−aT) 衰减，这是 curve 不平行动的来源之一。模拟：OU 有精确的高斯一步解，不用 Euler。它定价的东西：callable 债、Bermudan swaption，正是那张 structured desk 的产品。它的两个已知毛病：利率可以为负（2015 年后反而成了优点）；一因子意味着整条 curve 完全相关，所以 desk 用两因子（G2++，就是"2+ model"），两个 OU 相加加一个相关系数。</li>
+<li><b>CIR 和 hazard rate 的对应。</b>CIR：dr = κ(θ − r)dt + σ√r dW，√r 让 r 不为负，同样是 affine，P(t, T) 同样形状。把 r 换成违约强度 λ：生存概率 Q(t, T) = E[exp(−∫ λ ds)]，公式和债券价格一模一样；零回收的可违约零息债 = DF × 生存概率。这就是你在 GS 做 CVA/IMM 时模拟的那套东西的数学来源。一张对照表：短期利率 r ↔ 强度 λ；DF ↔ 生存概率；债券 ↔ 可违约债；swap rate ↔ CDS spread（≈ λ × (1 − 回收率)）。</li>
+<li><b>HJM 和 LMM 各一句。</b>HJM：直接写每个远期利率 f(t, T) 的 SDE，无套利逼出它的漂移完全由 vol 决定（漂移不是自由参数）；短期利率模型是 vol 取特定形状时的特例。LMM（Libor/SOFR 市场模型）：把 HJM 离散到市场真正报价的那些远期利率上，每个远期对数正态，是 desk 上定奇异利率产品的主力，校准到 cap 和 swaption。知道位置就够，不推。</li>
+<li><b>接 Shared Core：</b>§4 OU 过程和 BM（r 的动力学）、§3 Ito（推 affine 方程）、§1 塔性质（P(t, T) 是条件期望）、§6 精确步 vs Euler、§5 Q11 换测度（swaption 用 annuity 测度，caplet 用 T-forward 测度，各一句）。</li>
+</ol>
+<p>产出：一页 Hull–White 笔记 + 50 行 Python：从一条给定 curve 反解 θ(t)，模拟 1 万条 r 路径，MC 算的零息债价格和闭式对上，再把同一段代码的 r 换成 λ 算一个生存概率。书：Hull 的短期利率模型章；Brigo–Mercurio 第 3 章（只看 Vasicek/HW/CIR）；信用对应看 Lando 或 O'Kane 的前两章。</p>
+
+<h4>线 3 · Shared Core 里"理所当然"的概念：每个 section 要补的定义</h4>
+<p>n − 1 那件事暴露的模式：公式都会，但公式里每个词是什么没定义过，一追问就乱。下面每条按同一个办法处理：写定义、给一个两个数的例子、说清定义错了会出什么错。</p>
+<table class="cmp">
+<tr><th>Section</th><th>被当成理所当然、要补定义的</th></tr>
+<tr><td>§1 条件期望</td><td>E[X | Y = y] 是一个数、E[X | Y] 是一个随机变量，两者的关系；"独立"和"不相关"的定义及区别；全期望公式为什么成立；鞅需要什么（信息流、可积）；对"概率为零的事件"条件化为什么要小心；期望永远线性而方差不是，各自为什么。</td></tr>
+<tr><td>§2 线性代数</td><td>矩阵是"一个线性映射"还是"一张数表"，两种读法什么时候用哪种；内积和投影的定义（最小二乘是投影这句依赖它）；span、rank、线性无关的定义；对称矩阵特征向量为什么正交；行列式作为体积；正定的定义和四个等价说法。</td></tr>
+<tr><td>§3 链式法则与 Taylor</td><td>导数的定义（极限、线性化）；链式法则为什么成立；Taylor 余项是什么、为什么截断可以；(dW)² = dt 到底是什么意思（二次变差的定义）；dt × dW = 0 的含义；分部积分。</td></tr>
+<tr><td>§4 正态与 √T</td><td>正态分布由什么定义（密度、还是"线性组合封闭"）；边缘正态不等于联合正态；CLT 的条件（独立、方差有限）和反例（Cauchy）；布朗运动的四条定义和它作为随机游走极限的关系；"平稳增量""独立增量"各是什么；OU 过程的定义（线 2 要用）。</td></tr>
+<tr><td>§5 似然</td><td>已补：MLE 定义、估计量与估计值、有偏/一致/不变性、似然是 θ 的函数而不是 x 的、自由度。待补：p 值的定义（以及它不是什么）、置信区间的定义、"iid"各买到了什么（独立买到乘积，同分布买到同一个 θ）。</td></tr>
+<tr><td>§6 抽样与 MC</td><td>随机数发生器给的是什么（均匀数）、"从一个分布抽样"的定义（逆 CDF）；大数定律和 CLT 分别保证 MC 的什么（收敛、速度）；seed 是什么；样本独立为什么重要；MC 估计的置信区间怎么算；antithetic 为什么要求收益单调。</td></tr>
+<tr><td>§7 计数</td><td>计数和概率的关系依赖"等可能"假设，什么时候不等可能；有序与无序、有放回与无放回的定义；指示变量；线性期望不需要独立的证明；容斥原理的推导。</td></tr>
+</table>
+<p>做法：每个 section 开一个 "Part 0 · 定义" 的折叠块，每条定义三行（定义、两个数的例子、定义错了会怎样），和 Part 1 的 15 题对着写。先做 §1、§4、§6，因为线 1 和线 2 立刻要用。</p>
+
+<h4>顺序建议</h4>
+<p>下周两个 coding 面之后：先线 3 的 §4 和 §1（两晚，因为线 1、2 的第一层都站在它们上面）→ 线 1 第 1、2 层（两晚）→ 线 2 第 1、2 层（两晚）→ 线 1 第 3、4 层 → 线 2 第 3 层 → 剩下的。每层结束时写进这个 section，题目进对应的练习阶梯。</p>
+</details>
+
 <h3 class="sub">§A · Fixed Income Mathematics</h3>
 
 <details open>

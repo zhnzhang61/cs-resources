@@ -1553,11 +1553,12 @@ Q̂(k) = nₖ/n</code></pre>
 <ol class="qs">
 <li><b>离散时间的复制与风险中性。</b>一步二叉树（§B 题 23）→ 多步 → CRR 参数 u、d、q 怎么定 → 步数趋于无穷收敛到 BS → 美式用倒推。接 §1 塔性质（今天的价 = 明天价的 Q 期望）、§6（树 vs MC）。产出：50 行 Python，二叉树价和 BS 价对上三位小数。</li>
 <li><b>连续时间。</b>GBM 和 Ito（§3 Q5）→ 用 delta 对冲推 BS 偏微分方程（为什么 μ 消失，§B 题 24）→ Feynman–Kac：PDE 的解 = 期望（§1）→ 从期望直接推 BS 公式（§B 题 40）→ Girsanov 一句（§5 Q11：改漂移不改 σ）。产出：手推 BS 公式一页。</li>
+<li><b>利率期权 primer（DRW 是在 Eurodollar 期权池子里起家的，这层不能缺）。</b>先把"利率期权的标的是什么"说清：标的不是一个价格，是一个利率或一张远期合约，所以每个产品先问"行权时拿到什么"。四类产品：(a) <b>caplet / floorlet</b>：对一段未来 SOFR 的 call / put，收益 max(SOFR − K, 0) × τ × N，期末付；cap 是一串 caplet，借浮动利率的人买它封顶利息。(b) <b>swaption</b>（§B 题 33）：到期按 K 进入 swap 的权利，payer = 对 swap rate 的 call，收益 max(S − K, 0) × annuity × N；结算可以物理进 swap 也可以现金。(c) <b>国债期货期权和 SOFR 期货期权</b>：交易所产品，标的是期货，行权得到期货头寸，每天盯市；SOFR 期货按 100 − 利率报价，所以"价格的 put"= "利率的 call"，这是最容易说反的一句；还有 mid-curve option（短到期、长标的）。(d) <b>Bermudan swaption 和 callable 债</b>：多个行权日，structured desk 的产品，需要线 2 的模型。<br>定价用 Black 一族，但每个产品要换一个测度才能把标的变成鞅：caplet 在 T-forward 测度下（用 P(t, T) 做计价单位），远期 SOFR 是鞅，Black 公式直接用；swaption 在 annuity 测度下（用 annuity 做计价单位），远期 swap rate 是鞅，Black 公式乘 annuity。这是 §5 Q11 换测度在 rates 里的实际用处，也是"为什么同一个 Black 公式两边都能用"的答案。<br>报价用 <b>normal vol（bp vol）</b>而不是 lognormal：利率接近零时百分比没意义，normal vol 说"利率年化动多少 bp"，公式换成 Bachelier：价格 = N × annuity × [(F − K) Φ(d) + σ_N √T φ(d)]，d = (F − K)/(σ_N √T)；ATM 时简化成 N × annuity × σ_N √T × 0.4，和 §B 题 5 的 0.4σ√T 同形。一个数：10 年 swaption、normal vol 80 bp、一年到期、一亿 notional、annuity 7.9：ATM 价 ≈ 1 亿 × 7.9 × 0.0080 × 0.4 ≈ 253 万。<br>Vol surface 在 rates 里是三维的 <b>vol cube</b>：到期 × 标的期限 × strike；strike 方向的 smile 用 SABR 插（§B 题 34，线 1 第 4 层）；到期 × 期限那张面的形状（短到期短期限 vol 最高、往右下递减）由 FOMC 事件和均值回归决定。<br>Greek 用 bp 说：期权的 DV01 = delta × 标的 swap 的 DV01；vega 按"normal vol 动 1 bp 值多少钱"报；gamma 对应标的 DV01 随利率的变化。做市商的 book 管法和 §B Part 1 一样，只是 delta 对冲用 swap 和期货。<br>接 §A：标的就是 §A 的 swap 和 curve，caplet 的远期是 §A 第 2 节的远期。产出：Bachelier 公式一页 + 一个 swaption 价的心算 + 四类产品"行权时拿到什么"各一句。书：Hull 的利率衍生品章（Black 模型那章）；深一点看 Brigo–Mercurio 第 1 章和 Andersen–Piterbarg 第 1 卷的产品章。</li>
 <li><b>实现。</b>MC 定价欧式和路径依赖（§6 题 10、11），antithetic 和控制变量（§6 题 5、6），MC 算 greek 的两种办法（pathwise：对收益求导；likelihood ratio：对密度求导），PDE 的有限差分（显式/隐式/Crank–Nicolson 各一句），美式用 Longstaff–Schwartz（§6 题 12，回归估条件期望）。产出：MC 价和 BS 价、MC delta 和解析 delta 对上。</li>
 <li><b>BS 之外：smile 怎么建模（sell side / buy side 真正讨论的细节）。</b>局部波动率（Dupire）：σ(S, t) 由整张 smile 唯一决定，能完全拟合今天的 smile，但远期 smile 会变平，所以 forward-start 定错；随机波动率（Heston）：五个参数各管什么（长期 vol、回归速度、vol of vol、相关系数管 skew、初始 vol），特征函数定价一句；SABR（§B 题 34）为什么成了 rates/FX 的报价标准；跳扩散（Merton）管短期的 skew。然后是 desk 上争论的点：sticky strike vs sticky delta（§B 题 35）、vanna 和 volga 是什么、校准用哪些工具、哪些是拟合哪些是外推、同一个 barrier 在 LV 和 SV 下价格为什么不同（模型风险）。产出：一张表，四个模型 × （能拟合什么 / 拟合不了什么 / desk 用在哪）。</li>
 <li><b>Desk 实务。</b>每天的校准流程、用错模型对冲会怎样（realized 对 implied 再一次）、期权 book 的 P&amp;L explain 四项（§B 题 21）、variance swap 和 VIX（§B 题 30、31）。</li>
 </ol>
-<p>书：第 1–3 层 Hull 的期权章节；第 4 层 Gatheral《The Volatility Surface》前五章；要严格就 Shreve 第二卷。Bergomi 太深，不进计划。</p>
+<p>书：第 1–2 层和实现那层 Hull 的期权章节；利率期权 primer 看 Hull 的 Black 模型章；smile 那层 Gatheral《The Volatility Surface》前五章；要严格就 Shreve 第二卷。Bergomi 太深，不进计划。</p>
 
 <h4>线 2 · 利率模拟：一个最基本的模型，接上 hazard rate</h4>
 <p>先改一个说法：hazard rate 模型复用的是<b>短期利率模型（affine 那一族，Vasicek / Hull–White / CIR）</b>的数学，不是 HJM 本身。HJM 是把整条远期曲线当状态变量的更一般框架，短期利率模型是它的特例；给信用做 HJM 的文献有，但 desk 上不是标准。所以这条线的顺序是：短期利率模型 → 它和 hazard rate 的一一对应 → HJM 和 LMM 各一句。</p>
@@ -1585,7 +1586,7 @@ Q̂(k) = nₖ/n</code></pre>
 <p>做法：每个 section 开一个 "Part 0 · 定义" 的折叠块，每条定义三行（定义、两个数的例子、定义错了会怎样），和 Part 1 的 15 题对着写。先做 §1、§4、§6，因为线 1 和线 2 立刻要用。</p>
 
 <h4>顺序建议</h4>
-<p>下周两个 coding 面之后：先线 3 的 §4 和 §1（两晚，因为线 1、2 的第一层都站在它们上面）→ 线 1 第 1、2 层（两晚）→ 线 2 第 1、2 层（两晚）→ 线 1 第 3、4 层 → 线 2 第 3 层 → 剩下的。每层结束时写进这个 section，题目进对应的练习阶梯。</p>
+<p>下周两个 coding 面之后：先线 3 的 §4 和 §1（两晚，因为线 1、2 的第一层都站在它们上面）→ 线 1 第 1、2 层（两晚）→ 线 1 利率期权 primer（一晚，因为它只要 Black 公式和 §A）→ 线 2 第 1、2 层（两晚）→ 线 1 实现和 smile 两层 → 线 2 第 3 层 → 剩下的。每层结束时写进这个 section，题目进对应的练习阶梯。</p>
 </details>
 
 <h3 class="sub">§A · Fixed Income Mathematics</h3>

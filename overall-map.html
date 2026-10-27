@@ -2094,7 +2094,7 @@ Q̂(k) = nₖ/n</code></pre>
 </details>
 <details>
 <summary>列 4–5 · + credit spread、λ 变随机：corporate bond、CDS、hazard、CVA <span class="tag">待写</span></summary>
-<p><b>待写。</b>确定性 spread 那一列：corporate bond RFQ 定价的 Z-spread 和 OAS curve、信用 ETF 的 singleton / explode。λ 变随机那一列：defaultable bond = DF × survival probability；hazard λ 从 CDS 曲线 bootstrap；CDS 两条腿的定价；CVA = exposure × default probability × LGD。和列 3 的对照是这两列的主线：CIR 的 r 换成 λ，公式一字不改，这就是你 GS 的 CVA / IMM 和 systematic credit 两段经历共用的数学。写的时候从 credit-followup-questions.md 的已确认条目起。</p>
+<p><b>待写。</b>确定性 spread 那一列：corporate bond RFQ 定价的 Z-spread 和 OAS curve、信用 ETF 的 singleton / explode。λ 变随机那一列：defaultable bond = DF × survival probability；hazard λ 从 CDS 曲线 bootstrap；CDS 两条腿的定价；CVA = exposure × default probability × LGD。和列 3 的对照是这两列的主线：CIR 的 r 换成 λ，公式一字不改，这就是你 CVA / IMM 和 systematic credit 两段经历共用的数学。写的时候从 credit-followup-questions.md 的已确认条目起。</p>
 </details>
 
 <h3 class="sub">§B · Basic Options</h3>
@@ -2365,7 +2365,7 @@ Q̂(k) = nₖ/n</code></pre>
 </details>
 
 <details>
-<summary>Part 3 · FX vol 扩展：GK、delta quote 的 smile、risk reversal、VRP（Iqbal 第 4 章 + GS GCEM 岗要的东西）<span class="tag">2026-10-25</span></summary>
+<summary>Part 3 · FX vol 扩展：GK、delta quote 的 smile、risk reversal、VRP（Iqbal 第 4 章 + 一家投行 FX option strat 岗要的东西）<span class="tag">2026-10-25</span></summary>
 <p><b>为什么放在 §B 下面。</b>FX option 和你熟的权益 option 是同一套数学，换的只是三件事：underlying 多了一个 rate（外币 rate 当 dividend yield）、smile 按 delta 报不按 strike 报、以及 vol 的风险 premium 和 §A Part 3 的 carry 是同一个东西。</p>
 
 <h4>1. Garman–Kohlhagen：Black 加一个外币 rate</h4>
@@ -2426,7 +2426,7 @@ Q̂(k) = nₖ/n</code></pre>
 <li><b>2026-10-06 · 一家 multi-strat fund · Macro AI Engineer.</b> 10-year fixed-coupon bond, coupon → ∞: duration? Key move: all coupons scale together so their relative weights don't change; principal weight → 0; limit = duration of a 10-year level annuity (≈ 5.1 yr at 5%, 5.5 yr at 0%) — not 0.</li>
 <li><b>2026-10-06 · 一家 multi-strat fund · Macro AI Engineer.</b> 10-year SOFR floater discounted at SOFR: duration? Key move: value is par at every reset (backward induction), so rate duration = time to next reset (≈ 0 for daily SOFR); spread duration (sensitivity to the issuer's discount spread) ≈ that of a fixed 10y bond with the same cash flows, ≈ 8 yr, because a wider spread discounts every flow including principal — floater strips rate risk, keeps credit risk. (Corrected 2026-10-11: an earlier version said ≈ 5 yr, which is the annuity leg's rate duration from Q3, not the spread duration.)</li>
 <li><b>2026-10-06 · 一家 multi-strat fund · Macro AI Engineer.</b> Same floater with coupon spread 1 / 10 / 200 bp: duration? Key move: spread leg = 10-year annuity (duration ≈ 5.2 yr); total = PV-weight of that leg × 5.2. 1 bp ≈ 0, 10 bp ≈ 0.04 yr, 200 bp ≈ 0.7 yr; capped at the annuity duration as spread → ∞.</li>
-<li><b>2026-10-22 · 一家 multi-strat fund · Macro AI Engineer · 加面（ex-GS FI quant strat）.</b> Python threads vs processes? Key move: GIL → one thread runs bytecode at a time; threads for IO-bound (release GIL while waiting), processes for CPU-bound (one GIL each, but spawn cost + pickle). Answered.</li>
+<li><b>2026-10-22 · 一家 multi-strat fund · Macro AI Engineer · 加面（面试官是前投行 FI quant strat）.</b> Python threads vs processes? Key move: GIL → one thread runs bytecode at a time; threads for IO-bound (release GIL while waiting), processes for CPU-bound (one GIL each, but spawn cost + pickle). Answered.</li>
 <li><b>2026-10-22 · 同上.</b> Fixed vs floating leg; what is a yield curve; yield curve vs Fed Funds rate; duration; zero-coupon duration. All answered (zero-coupon duration = maturity).</li>
 <li><b>2026-10-22 · 同上.</b> What is OIS? Missed. Answer: overnight indexed swap, fixed vs daily-compounded overnight rate (SOFR); its fixed rate ≈ risk-free, so OIS curve replaced LIBOR as the discount curve for collateralized derivatives.</li>
 <li><b>2026-10-22 · 同上.</b> PCA on the yield curve, how is it used? Guessed "explains flatten / steepen / parallel shift" — that is the answer: PC1 level (~90%), PC2 slope, PC3 curvature; used to hedge a book against the first 2–3 factors and to spot rich/cheap points on the curve (residual after removing PCs).</li>

@@ -2375,7 +2375,7 @@ Q̂(k) = nₖ/n</code></pre>
 <p>FX desk 不说"strike 155 的 vol"，说三个数：ATM vol、25-delta risk reversal、25-delta butterfly。定义：RR₂₅ = σ(25Δ call) − σ(25Δ put)，衡量 skew 的方向和大小；BF₂₅ = [σ(25Δ call) + σ(25Δ put)] ÷ 2 − σ_ATM，衡量两翼比中间贵多少（smile 的弯度，对应分布的峰度）。反过来：σ(25Δ call) = ATM + BF + RR ÷ 2，σ(25Δ put) = ATM + BF − RR ÷ 2。RR 为负说明 put 更贵，市场在付钱买基础货币下跌的保护。为什么按 delta 报：delta 是"离 ATM 多远"的标准化尺子，不随 spot 和 tenor 变，而 strike 会。</p>
 
 <h4>3. Vol risk premium 和 carry 是同一个东西</h4>
-<p>长期看 FX implied vol 平均高于事后 realized vol 一到两个 vol 点（EURUSD 隐含 8%，实现 6.5% 这种）。卖 option 的人平均赚这个差，偶尔一次 Brexit 把一年的赚头亏掉。和 carry 完全同构：平时稳定赚小钱，危机时亏大钱，所以都叫风险 premium。GS GCEM 那个 JD 把"vol forecasting"和"carry"写在一起就是这个原因：系统化 optionmarket making 的核心判断是 implied vol 里的 premium 够不够付你承担的尾部风险。</p>
+<p>长期看 FX implied vol 平均高于事后 realized vol 一到两个 vol 点（EURUSD 隐含 8%，实现 6.5% 这种）。卖 option 的人平均赚这个差，偶尔一次 Brexit 把一年的赚头亏掉。和 carry 完全同构：平时稳定赚小钱，危机时亏大钱，所以都叫风险 premium。那个 FX option strat JD 把"vol forecasting"和"carry"写在一起就是这个原因：系统化 optionmarket making 的核心判断是 implied vol 里的 premium 够不够付你承担的尾部风险。</p>
 
 <h4>4. 从 option 价格反推分布：Breeden–Litzenberger</h4>
 <p>同一 maturity date 不同 strike 的 call 价格 C(K)，对 K 求二阶导再乘 exp(rT)，得到的就是市场隐含的 maturity date 概率密度。所以 smile 就是市场对分布的看法：RR 是偏度，BF 是峰度。2016 年 Brexit 公投前 GBPUSD 的 implied distribution 是双峰的，留欧 1.52 附近一个峰，脱欧 1.35 附近一个峰。</p>
@@ -2408,7 +2408,7 @@ Q̂(k) = nₖ/n</code></pre>
 <p>EURUSD 一年里 implied vol 平均 8%，实现 6.5%。你每月卖一个月 ATM straddle 并 delta hedge。（a）平均每月赚什么？（b）什么样的一个月会把一年的利润吃掉？（c）为什么这个策略和 §A Part 3 的 carry trade 是同一类东西？</p>
 <p><b>和上一题的因果：</b>第 43 题是一个事件；这题把它拉长成一个策略，看风险 premium 在平时和危机时各长什么样。</p>
 <details><summary>答案</summary>
-<p>(a) delta hedge 后的 P&amp;L ≈ ½ Γ S² (σ²_隐含 − σ²_实现) × 时间，隐含高于实现就赚，平均每月赚 1.5 个 vol 点对应的 gamma 收益。(b) 一个 realized vol 跳到 15% 以上的月份（央行意外、公投、2020 年 3 月），一次亏掉六到十个月的利润。(c) 都是"平时稳定赚小钱、危机时亏大钱"的风险 premium：carry 卖的是 FX rate 暴跌的保险，short vol 卖的是波动暴涨的保险，而这两件事往往同时发生。考点：GS GCEM JD 里"vol forecasting 要覆盖 carry"就是要你把这两个 premium 放在一个框架里估。</p>
+<p>(a) delta hedge 后的 P&amp;L ≈ ½ Γ S² (σ²_隐含 − σ²_实现) × 时间，隐含高于实现就赚，平均每月赚 1.5 个 vol 点对应的 gamma 收益。(b) 一个 realized vol 跳到 15% 以上的月份（央行意外、公投、2020 年 3 月），一次亏掉六到十个月的利润。(c) 都是"平时稳定赚小钱、危机时亏大钱"的风险 premium：carry 卖的是 FX rate 暴跌的保险，short vol 卖的是波动暴涨的保险，而这两件事往往同时发生。考点：那个 JD 里"vol forecasting 要覆盖 carry"就是要你把这两个 premium 放在一个框架里估。</p>
 </details>
 
 <h4>题 45 · Vol 三角形算 implied correlation <span class="tag">交叉盘的 vol</span></h4>

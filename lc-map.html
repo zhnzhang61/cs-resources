@@ -1098,6 +1098,134 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
 </section>
 
 <section class="logwrap dsbank">
+  <h2>AI Platform Interview Bank <span class="logsub">给 P72 / BlackRock / Schonfeld 这类"给非 AI 工程师搭 LLM 系统"的岗。写法按你的推导方式：要什么 → 手里有什么 → 中间唯一的运算 → 所以必须有什么 → 这东西的范围 → 压成一个名字。面试里先报名字，被追问再展开链。</span></h2>
+
+  <details open>
+    <summary>№0 · 用法说明：链、名字、范围、特例</summary>
+    <p><b>为什么不列事实。</b>按主题列 30 秒答案是模式召回的材料；你不信记住的模式，背了也不会在面试里说出来。你能说出来的是自己推出来的链，所以每个概念只写一条链，推一次，推完压成名字。</p>
+    <p><b>链的固定形状。</b>①用户要什么 ②手里有什么 ③两者之间唯一的运算是什么 ④所以必须有什么 ⑤这个东西的范围是什么。第 ⑤ 步是专门给你加的：你的 bug 几乎都出在搭档对象的范围上（560 的"某个元素在当前之前"、167 的 sorted、概率题的量词作用域），所以每条链强制写到范围才算完。</p>
+    <p><b>特例栏。</b>你抓特例准，但会把特例留成独立分支（<code>if cur_sum == k</code>）。每条链后面单独一行"特例折进哪里"，强迫回头收编。</p>
+    <p><b>面试顺序。</b>先说名字（"这是 RAG 的形状"），再写，被追问再展开链。深度留给准备，速度留给面试。coding 题开写前一句话："我要找的搭档在哪个范围里"。</p>
+  </details>
+
+  <h3 class="tier">Part 1 · 主线故事（三分钟，一条链）</h3>
+  <div class="prob">
+    <h3>GS 的 LLM agent 平台，按链讲<span class="chip">160 用户 · 50 并发 · ADK · Vespa · K8s</span></h3>
+    <p><b>①要什么。</b>Model validation 的人要在几百页模型文档和代码里回答"这个模型的 calibration 用了什么数据"，要答案带出处，要当天得到。</p>
+    <p><b>②手里有什么。</b>几千份文档、几个代码库、一个一次只认几万 token 的模型、一群不写代码的用户。</p>
+    <p><b>③唯一的运算。</b>模型读不完全部，所以只能先选后读；用户不写代码，所以选和读都得由系统替他做。</p>
+    <p><b>④所以必须有。</b>一个检索层（替他选）、一个 agent loop（替他决定读什么、调什么工具）、一组工具（文档检索、受控的代码和数据查询、计算）。数字一律从工具出，解释从模型出。</p>
+    <p><b>⑤范围。</b>检索的范围 = 这个用户有权限看的那部分文档，过滤必须在检索层做，不能靠模型"不说"。这是出过事故的地方。</p>
+    <p><b>压成名字。</b>"带权限过滤的 RAG + 工具型 agent，跑在 K8s 上"。</p>
+    <p class="trap">被追问时每条一句：ADK 而不是 LangGraph，因为公司栈是 Google Cloud，鉴权和日志现成，换框架的成本在工具和 eval 不在 loop；Vespa，因为同一个引擎做 BM25 + 向量 + 权限过滤；eval = 几百条真实问题的 golden set，分检索命中、答案正确（judge 加人工抽查）、该拒的拒了没三层；8 倍 caching = chunk embedding 和常见检索结果缓存加模型侧 prompt caching，之后瓶颈从模型变成检索。</p>
+    <p class="trap">特例折进哪里：用户问的是一个数字（duration、PnL） → 不是特例，是第 ④ 步"数字从工具出"的一般规则；模型把表格数字读错 → 同一条规则，表格走解析器不走模型。</p>
+  </div>
+
+  <h3 class="tier">Part 2 · 概念链（每条推一次，压成名字）</h3>
+
+  <details>
+    <summary>№1 · RAG：为什么必须有检索，检索的范围是什么</summary>
+    <p>①要带出处的答案。②几千页文档 + 一个只认几万 token 的模型。③唯一办法：先选后读。④所以必须有检索。⑤范围：这个用户有权限看的文档。<b>名字：RAG。</b></p>
+    <p><b>往下一层，每段同一个问法。</b>切块：模型要的是能独立读懂的一段，文档给的是连续文本，唯一的运算是切，所以按结构切（标题、段落、表格整块）不按字数切，范围是"一块里的句子不被切断"，所以块之间留重叠。Embedding：检索要的是"像不像"，文本给的是字，唯一的运算是映射到向量再比距离，范围是"问题和文档落在同一个分布里"，所以问题和文档要用同一个模型编码。混合检索：专有名词（模型名、ticker、REQ 号）在向量里会被抹平，唯一补法是再加一路按字面匹配（BM25），两路取并集。Rerank：粗检索便宜但不准，精打分准但贵，唯一的组合是粗选 top 50 再精排，范围是只对 top 50 做。</p>
+    <p class="trap">特例折进哪里：用户问的东西不在任何文档里 → 不是特例，折进 eval 的"该拒答"这一层；两个文档说法冲突 → 折进"答案带出处"，让用户看到两个出处。</p>
+  </details>
+
+  <details>
+    <summary>№2 · Agent 与 tool calling：为什么下一步由模型定，范围由代码定</summary>
+    <p>①要的是一个能回答"没预先写好流程"的问题的系统。②手里有模型、一组工具、用户的问题。③流程不能预写，所以下一步只能由模型按上一步的结果决定。④所以必须有一个循环：想 → 选工具 → 调 → 看结果 → 再想。⑤范围：模型只能选注册过的工具、只能传过校验的参数、只能走有限步数。<b>名字：ReAct 式 agent。</b>chain 和 agent 的差就在第 ③ 步：chain 的下一步是代码写死的。</p>
+    <p><b>MCP 是什么，同一个问法。</b>①多个 agent 要用同一批工具。②每个工具的接口各写各的。③唯一的解法是统一接口协议。④所以有 MCP：服务端暴露 tools/resources/prompts，客户端按协议调。⑤范围：协议管接口，不管工具里面怎么实现。</p>
+    <p><b>多 agent 什么时候值得。</b>只有当任务能按角色切开、每段有独立的工具集和 eval 时；否则一个 agent 加好工具更稳。这是"两个灵魂不硬合一"在系统上的版本。</p>
+    <p><b>HITL 放哪。</b>不可逆动作（发邮件、下单、改数据）前；低置信度答案；新 workflow 上线头几周全量。</p>
+    <p class="trap">特例折进哪里：工具调用失败 → 不是特例，折进第 ⑤ 步的范围：返回结构化错误让模型重试，重试次数有上限；模型死循环 → 同一条，步数上限。</p>
+  </details>
+
+  <details>
+    <summary>№3 · Eval：为什么要固定题集，hallucination 怎么量</summary>
+    <p>①要知道"改了 prompt 或换了模型之后，变好还是变坏"。②手里有模型输出，但没有标准答案。③没有标准答案就没法比，所以唯一的办法是先造标准答案。④所以必须有 golden set：真实日志里抽问题，人工标答案和出处。⑤范围：题集要覆盖三类——简单事实、跨文档、该拒答的；只覆盖第一类的题集会把"什么都敢答"的模型评成最好。<b>名字：固定题集回归。</b></p>
+    <p><b>hallucination 怎么量。</b>①要知道答案里有没有编的。②手里有答案和检索到的出处。③唯一的运算：答案里每个事实能不能在出处里找到。④所以用 LLM-as-judge 逐条核对，人工抽查校准 judge。⑤范围：judge 只核对"有没有出处"，不核对"出处本身对不对"，后者是检索层的事。<b>名字：faithfulness。</b></p>
+    <p><b>precision / recall 在 RAG 里各指什么。</b>检索层：取回的块里相关的占比 / 相关块里取回的占比。答案层：说的对的占比 / 该说的说了多少。两层各一对，别混。</p>
+    <p class="trap">特例折进哪里：judge 和人意见不一致 → 不是特例，折进"人工抽查校准 judge"，不一致率本身是一个指标。</p>
+  </details>
+
+  <details>
+    <summary>№4 · prompt / RAG / fine-tune 怎么选，成本和延迟从哪来</summary>
+    <p>①要模型按我的意思答。②手里有三个旋钮：改输入（prompt）、给资料（RAG）、改权重（fine-tune）。③每个旋钮只能改一类东西：prompt 改指令，RAG 改知识，fine-tune 改风格和格式。④所以按"要改的是什么"选：知识会变 → RAG；格式要稳 → fine-tune；都不是 → prompt。⑤范围：fine-tune 改不了知识（学完就过时），RAG 改不了风格。<b>名字：三个旋钮各管一类。</b></p>
+    <p><b>延迟链。</b>检索 50-200ms、rerank 100-300ms、首 token 500ms 起、之后按 token 计。流式输出改的是用户感受不是总时间。</p>
+    <p><b>prompt caching。</b>①要省钱。②每次请求的前缀（系统提示、长文档）都一样。③一样的前缀模型侧算一次就够。④所以缓存前缀的 KV，只付增量。⑤范围：前缀必须逐字节一样，顺序变了缓存就失效，所以不变的放前面。</p>
+  </details>
+
+  <details>
+    <summary>№5 · 系统基础：threads / processes / async，50 并发怎么扛（BAM 问过）</summary>
+    <p>①要同时服务 50 个人。②每个请求大部分时间在等模型 API 和检索返回。③等的时候 CPU 是闲的，所以唯一的浪费是"一个线程一个请求地干等"。④所以用 async：单线程里靠事件循环在等待时切换，一个 worker 挂几十个请求。⑤范围：只对 IO 等待有效；CPU 密集的段（embedding、解析大表格）要扔给进程池，因为 Python 的 GIL 让线程在 CPU 上不并行。<b>名字：async worker + 进程池。</b></p>
+    <p><b>threads vs processes，一句话。</b>进程各自内存，崩了不连累、切换贵；线程共享内存，切换便宜、要锁。Python 多一条：GIL，所以 CPU 密集用进程。</p>
+    <p><b>扩容链。</b>一个 worker 扛不住 → 多个 worker → K8s HPA 按队列长度扩 → 模型 API 有限流，所以 worker 再多也要在出口排队。幂等：模型调用可以重试，带副作用的工具调用要有 idempotency key。</p>
+    <p><b>可观测性。</b>每次 agent 运行一个 trace，每步工具调用一个 span，记 token、延迟、成本。没有这个，eval 掉了都不知道是哪一步掉的。</p>
+  </details>
+
+  <details>
+    <summary>№6 · AI-SDLC 和 governance（BlackRock 专项）</summary>
+    <p>①要几千个开发者的代码生成、review、测试、迁移都用上 AI。②手里有模型和一堆各写各的团队。③每个用法的共同问题只有一个："怎么知道它没搞砸"。④所以每个用法配一个判决机制：生成的代码过现有测试 + 人 review；review 建议按历史 bug 校准；迁移用等价测试。⑤范围：判决机制必须是模型之外的东西（测试、人、历史数据），不能让模型自己判自己。<b>名字：每个 AI 用法配一个外部判决。</b></p>
+    <p><b>怎么推到几千人。</b>先给一个团队做样板，量 PR 周期和缺陷率，再做成平台能力：统一模型网关、统一 eval、统一审计。顺序不能反，先平台后样板会做出没人用的平台。</p>
+    <p><b>governance 的四问。</b>模型看了什么数据、输出留痕了吗、谁能用什么工具、第三方模型的数据出域了吗。你 validation 的背景在这里是现成的答案。</p>
+    <p><b>buy vs build。</b>模型买（自己训不过）、网关和 eval 自建（这是你的护城河）、agent 框架看公司栈。给一个你真做过的决定。</p>
+  </details>
+
+  <h3 class="tier">Part 3 · System design 模板（三条链，先问三件事：用户是谁、数据从哪来、答错了后果多大）</h3>
+
+  <div class="prob">
+    <h3>A · 给 PM 做一个读 SEC filings 的问答系统<span class="chip">P72 / Schonfeld</span></h3>
+    <p>①PM 要"这家公司上季度 guidance 改了什么"，要出处，要当天。②EDGAR 上的 filings，表格多，同名公司多，财年口径乱。③模型读不完，先选后读 → RAG；数字在表格里，模型读表格会错 → 表格走解析器。④摄入（拉取 → 解析 → 按 item 切块 → embedding → 入库，增量更新）→ 检索（混合 + 按公司和日期过滤 + rerank）→ 生成（带出处）→ eval（题集 + 出处核对）。⑤范围：过滤的维度是公司 ID 不是公司名（同名），日期是 filing 日期不是财年。</p>
+    <p class="trap">只有两周先做哪两段：摄入和检索。生成可以先用最简单的 prompt，eval 先用 50 道题。</p>
+  </div>
+
+  <div class="prob">
+    <h3>B · 后台持续跑的 agent，盯新闻、filings、邮件，给 PM 推摘要<span class="chip">Schonfeld JD 原文</span></h3>
+    <p>①PM 要"和我持仓相关的新东西"，不要重复，不要旧闻。②新闻 API、邮件、filings，量大、重复多、九成无关。③贵的判断（模型）不能对全量做，所以唯一的结构是便宜的在前、贵的在后。④事件源 → 去重（hash）→ 规则过滤（ticker、关键词）→ 相关性判断（模型，带持仓和关注列表）→ 摘要（带原文链接）→ 推送 → 反馈回流（点了没有，调阈值）。⑤范围：相关性的范围是"这个 PM 的持仓和关注列表"，不是全市场；去重的范围是"同一事件的不同报道"，不只是同一篇文章。</p>
+    <p class="trap">特例折进哪里：模型把旧新闻当新的 → 折进去重层，按事件而不是按文章去重；延迟 vs 成本 → 折进"便宜的在前"，调的是规则层的宽严。</p>
+  </div>
+
+  <div class="prob">
+    <h3>C · 多团队共用的 LLM 网关和平台<span class="chip">BlackRock / P72</span></h3>
+    <p>①十几个团队都要用模型，各自要 RAG、要工具、要 eval。②每个团队自己接一遍，成本和风险都乘以团队数。③共同的部分只做一遍，唯一的办法是抽成平台。④统一入口（鉴权、配额、模型路由）→ 工具注册（MCP 风格）→ 检索服务（多租户，权限过滤）→ eval 服务（题集、judge、回归）→ 观测（trace、成本归属）→ 治理（审计、数据域）。⑤范围：平台管"共同的部分"，一个团队的 prompt 改动不能影响别人，所以 prompt 和工具按团队隔离，模型升级要灰度。</p>
+    <p class="trap">特例折进哪里：某个团队要用平台不支持的模型 → 折进"模型路由"，路由表加一行，不开后门。</p>
+  </div>
+
+  <h3 class="tier">Part 4 · Coding（每道开写前一句："搭档在哪个范围里"）</h3>
+  <div class="prob">
+    <h3>第一优先 12 道，周一到周三每天 4 道<span class="chip">Schonfeld 周五 HackerRank · P72 可能一道 medium</span></h3>
+    <table class="spec">
+      <tr><th>题</th><th>名字</th><th>搭档在哪个范围里（开写前说这一句）</th><th>特例折进哪里</th></tr>
+      <tr><td>347 Top K Frequent</td><td>计数 + 堆</td><td>堆里只留 k 个，范围是"当前见过的里最大的 k 个"</td><td>k = n → 不是特例，堆装满就是全部</td></tr>
+      <tr><td>49 Group Anagrams</td><td>规范化 key 分组</td><td>key 的范围是"排序后的字母串"，同组的词 key 相同</td><td>空串 → key 是空串，正常分组</td></tr>
+      <tr><td>560 Subarray Sum = K</td><td>前缀和 + 计数 dict</td><td>搭档是"在当前之前、和为 cur − k 的前缀"，先查后存</td><td>cur == k → 折进 {0: 1}，不单独 if</td></tr>
+      <tr><td>146 LRU Cache</td><td>dict + 双向链表</td><td>淘汰的范围是"链表尾那一个"，不是遍历找最旧</td><td>容量 1 → 不是特例，同一套 put 逻辑</td></tr>
+      <tr><td>362 Hit Counter</td><td>队列 + 弹过期</td><td>计数的范围是"时间戳 &gt; now − 300 的那些"，队列头弹到满足为止</td><td>同一秒多次 hit → 存 (时间, 次数) 对</td></tr>
+      <tr><td>981 Time Based KV</td><td>每个 key 一个有序列表 + 二分</td><td>搭档是"时间戳 ≤ t 的最后一个"，bisect_right 减一</td><td>没有 ≤ t 的 → 返回空串，折进"下标为 −1 就空"</td></tr>
+      <tr><td>3 Longest Substring w/o Repeat</td><td>滑窗 + 上次位置</td><td>左端的范围是"上次出现位置 + 1 和当前左端的较大者"</td><td>重复字符在窗外 → 折进 max，不单独判</td></tr>
+      <tr><td>20 Valid Parentheses</td><td>栈</td><td>搭档是"栈顶那一个"，不是任何更早的</td><td>栈空时遇到右括号 → 折进"栈顶不匹配"</td></tr>
+      <tr><td>271 Encode/Decode Strings</td><td>长度前缀</td><td>解码时读的范围是"前缀说的那么多字节"，不靠分隔符</td><td>空串 → 长度 0，正常</td></tr>
+      <tr><td>207 Course Schedule</td><td>DFS 三色 / 拓扑</td><td>环的范围是"回到正在访问中的节点"，不是"回到访问过的"（Harvey part 2 就是这道）</td><td>自环 → 同一规则</td></tr>
+      <tr><td>200 Number of Islands</td><td>网格 DFS/BFS</td><td>扩展的范围是"四邻里是 1 且没访问过的"</td><td>边界 → 折进范围检查</td></tr>
+      <tr><td>57 Insert Interval</td><td>三段扫描</td><td>要合并的范围是"和新区间重叠的那一段连续区间"，左右两边原样</td><td>新区间在最前或最后 → 不是特例，三段里有一段为空</td></tr>
+    </table>
+  </div>
+  <div class="prob">
+    <h3>第二优先 · 平台工程师会出的实用题 + Amazon 常考四道<span class="chip">P72 面试官是 AWS 出身</span></h3>
+    <p>实用题：解析 log 行按 key 聚合出 top-k（Counter + heapq）；带 TTL 的缓存（146 加时间戳）；令牌桶限流（359 的变体）；生产者消费者队列（queue.Queue、worker 数、关闭信号，20 行）；合并 k 个有序流（23，heapq.merge 也行）。</p>
+    <p>Amazon 四道：215 Kth Largest（堆或 quickselect，搭档范围是"前 k 大"）、973 K Closest Points（同 215，距离当 key）、128 Longest Consecutive（搭档范围是"num − 1 不在集合里的才是起点"）、139 Word Break（DP，搭档范围是"j &lt; i 且 s[j:i] 在字典里"）。</p>
+    <p class="trap">HackerRank 要自己读 stdin，格式和 LC 不一样，周四晚上在它网站上做两道热身。</p>
+  </div>
+
+  <h3 class="tier">Part 5 · 行为题和反问</h3>
+  <div class="prob">
+    <h3>四个故事，每个按"情境 → 我做了什么 → 结果带数字 → 学到什么"两分钟<span class="chip">P72 大概率 Amazon LP 式</span></h3>
+    <p>Ownership：平台从零到 160 用户，没人指派的那部分。Dive deep：权限过滤漏了一类文档 / 表格数字读错，一路查到根。Disagree and commit：和 model risk 或 IT 在某个设计上不一致。Deliver under constraint：Qwen 被禁、模型换了，期限内保住上线。</p>
+    <p><b>BlackRock 的"带人"问题。</b>JD 原文是 lead a team of engineers and senior ICs。不要说没带过：说"没有正式 report，但三个合作方工程师按我定的接口和 eval 规则干活，review 由我做"。然后主动问 IC 和管理的比例，这个答案决定要不要往下走。</p>
+    <p><b>反问。</b>P72：GenAI team 服务哪些业务线、agent 用什么框架、eval 怎么做。BlackRock：这个 VP 直接带几个人、Aladdin 的 AI 和企业 AI 平台是不是一个 team、绿卡流程。Schonfeld：投资线 FDE 坐哪个策略、AI Platforms 的 lead 定了没（10-16 刚挂 Head of AI Platform）、上线后 UAT 谁签字。</p>
+  </div>
+</section>
+
+<section class="logwrap dsbank">
   <h2>Interview Log · Coding <span class="logsub">真实面试里被问到的 coding 题。每条：日期 · 公司 · 题 · 当场表现。攒够几家后统计重复。</span></h2>
   <div class="prob">
     <h3>2026-10-05 · 一家 legal-AI startup (Staff SWE, Agents) · phone screen</h3>

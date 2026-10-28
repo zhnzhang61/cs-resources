@@ -1253,22 +1253,23 @@ queue&lt;int&gt; q;    q.push(1);   q.front();  q.pop();
 priority_queue&lt;int&gt; pq;                                        // 最大堆，pq.top() 最大
 priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; minpq;          // 最小堆
 
-// class：Python 的 class 加 __init__；成员变量放 private，方法放 public
-class OrderBook {
+// class：Python 的 class 加 __init__。成员变量放 private，方法放 public，结尾有分号
+// 10-28 原题：写一个 FIFO queue，允许包一层 std::queue
+class Fifo {
 public:
-    OrderBook(int maxLevels) : maxLevels_(maxLevels) {}   // 构造：冒号后面给成员赋初值
-    void add(int id, double price) {                      // 方法直接在 class 里写
-        prices_[id] = price;
+    Fifo() {}                                  // 构造函数，名字和 class 一样，没有返回类型
+    void push(int x) { q_.push(x); }           // 方法直接写在 class 里
+    int pop() {                                // 弹出并返回：std::queue 的 pop 不返回，所以先 front 再 pop
+        int x = q_.front();
+        q_.pop();
+        return x;
     }
-    bool contains(int id) const {                         // 不改成员的方法加 const
-        return prices_.count(id) &gt; 0;
-    }
-    size_t size() const { return prices_.size(); }
+    bool empty() const { return q_.empty(); }  // 不改成员的方法加 const
+    size_t size() const { return q_.size(); }
 private:
-    int maxLevels_;                                       // 成员变量，习惯加下划线
-    unordered_map&lt;int, double&gt; prices_;
+    queue&lt;int&gt; q_;                             // 成员变量，习惯加下划线
 };
-OrderBook book(10);  book.add(1, 9.5);  book.contains(1);   // 用的时候；别忘了 class 结尾的分号
+Fifo f;  f.push(1);  f.push(2);  f.pop();      // 用的时候和 Python 一样
 
 // 字符串、函数、输出
 s.size();  s[i];  s.substr(i, len);  s += 'c';
@@ -1298,7 +1299,7 @@ cout &lt;&lt; x &lt;&lt; &quot; &quot; &lt;&lt; s &lt;&lt; &quot;\n&quot;;</code
   </div>
   <div class="prob">
     <h3>2026-10-28 · 一家 HFT (Quantitative Developer) · technical after the C++ take-home</h3>
-    <p><b>Write a C++ class</b> live. Blanked on the syntax (constructor initializer list, public/private, const methods, the trailing semicolon). Template now sits in the cheatsheet above. Rest of the round: TBD.</p>
+    <p><b>Write a FIFO queue as a C++ class</b> live; wrapping <code>std::queue</code> was allowed. Blanked on the class syntax itself (public/private, methods inside the body, the trailing semicolon). Said plainly that C++ is not a daily language for me; the rest of the hour was an open chat about the resume. Interviewer: pure infra, ex-Jane Street. Lesson: a C++-first QD seat tests the language, not the design, and the take-home design did not carry over. Template now sits in the cheatsheet above.</p>
   </div>
 </section>
 <script>

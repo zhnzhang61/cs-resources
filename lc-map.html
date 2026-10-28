@@ -1187,9 +1187,18 @@ unordered_set&lt;int&gt; seen;  seen.insert(3);  seen.count(3);                 
 pair&lt;int,int&gt; p = {1,2};  p.first;  auto [a, b] = p;                             // tuple
 struct Order { int id; double price; };  Order o{1, 9.5};  o.price;
 
-for (int i = 0; i &lt; n; i++) ...
-for (int&amp; x : v) x *= 2;                      // for x in v；要改原值加 &amp;
-for (auto&amp; [k, val] : cnt) ...                // 遍历 dict
+// 遍历 list：查、改用 range-for，删要用下标或 iterator
+for (int&amp; x : v) { if (x &gt; 0) x *= 2; }                   // 查 + 改，& 才改到原值
+for (int i = 0; i &lt; (int)v.size(); i++) {                   // 要 i 的时候
+    if (v[i] == 0) { v.erase(v.begin() + i); i--; }         // 删第 i 个（O(n)），i-- 补回
+}
+v.insert(v.begin() + 2, 9);                                 // 在下标 2 插（O(n)）；append 用 push_back
+// 遍历 map：k 不能改，val 能改；删要 it = cnt.erase(it)
+for (auto&amp; [k, val] : cnt) { if (val &gt; 1) val = 1; }       // 查 + 改
+for (auto it = cnt.begin(); it != cnt.end(); ) {
+    if (it-&gt;second == 0) it = cnt.erase(it); else ++it;    // 删：erase 返回下一个，别再 ++
+}
+cnt[&quot;new&quot;] = 5;                                             // 增：在 loop 外加，loop 里加可能让 iterator 失效
 
 sort(v.begin(), v.end());                                                        // 升序
 sort(v.begin(), v.end(), [](int a, int b){ return a &gt; b; });                     // 降序；true = a 排前面

@@ -1175,92 +1175,37 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
 </section>
 
 <section class="logwrap dsbank">
-  <h2>C++ Syntax Cheatsheet <span class="logsub">Python 对照版，C++ 面试现场翻。只背五条：vector / unordered_map / unordered_set / for (auto&amp; [k,v] : m) / sort + lambda，其余查。</span></h2>
-  <details open>
-    <summary>速查表（2026-10-28，Vatic QD 面试前整理）</summary>
-    <pre><code>#include &lt;bits/stdc++.h&gt;   // 面试里一行包全部；正式代码分开 include
-using namespace std;       // 面试里可以，省得到处写 std::</code></pre>
-    <h3>变量、数组（Python 的 list）</h3>
-    <pre><code>int x = 5;  double p = 1.5;  bool ok = true;  string s = &quot;abc&quot;;
-long long big = 1e18;                // int 只到 2.1e9，数大了用 long long
+  <h2>C++ Syntax Cheatsheet <span class="logsub">Python 对照，一屏。只背五条：vector / unordered_map / unordered_set / for (auto&amp; [k,v] : m) / sort + lambda。</span></h2>
+  <div class="prob">
+    <pre><code>#include &lt;bits/stdc++.h&gt;  using namespace std;        // 面试里一行包全部
 
-vector&lt;int&gt; v;                       // 空 list
-vector&lt;int&gt; v2 = {3, 1, 2};          // 带初值
-vector&lt;int&gt; v3(10, 0);               // 10 个 0
-v.push_back(7);                      // append
-v.pop_back();                        // pop 最后一个
-v.size();  v.empty();  v[0];  v.back();
-vector&lt;vector&lt;int&gt;&gt; grid(rows, vector&lt;int&gt;(cols, 0));   // 二维，rows × cols 全 0</code></pre>
-    <h3>字典（dict）和集合（set）</h3>
-    <pre><code>unordered_map&lt;string, int&gt; cnt;      // 哈希表，无序，O(1)
-cnt[&quot;a&quot;] += 1;                       // 没有就建一个 0 再加（和 defaultdict(int) 一样）
-if (cnt.count(&quot;a&quot;)) ...              // in
-cnt.erase(&quot;a&quot;);                      // del
-auto it = cnt.find(&quot;b&quot;);  if (it != cnt.end()) it-&gt;second;   // 查找不新建
+vector&lt;int&gt; v = {3,1,2};  v.push_back(7);  v.back();  v.pop_back();  v.size();   // list
+vector&lt;vector&lt;int&gt;&gt; g(rows, vector&lt;int&gt;(cols, 0));                             // 二维全 0
+unordered_map&lt;string,int&gt; cnt;  cnt[&quot;a&quot;]++;  cnt.count(&quot;a&quot;);  cnt.erase(&quot;a&quot;);     // dict，[] 不存在就建 0
+map&lt;int,string&gt; m;  m.begin()-&gt;first;         // 按 key 排序的 dict，最小 key 在 begin；greater&lt;int&gt; 反过来
+unordered_set&lt;int&gt; seen;  seen.insert(3);  seen.count(3);                        // set
+pair&lt;int,int&gt; p = {1,2};  p.first;  auto [a, b] = p;                             // tuple
+struct Order { int id; double price; };  Order o{1, 9.5};  o.price;
 
-map&lt;int, string&gt; m;                  // 红黑树，按 key 排序，O(log n)
-m.begin()-&gt;first;                    // 最小 key；用 map&lt;int,string,greater&lt;int&gt;&gt; 就是最大在前
+for (int i = 0; i &lt; n; i++) ...
+for (int&amp; x : v) x *= 2;                      // for x in v；要改原值加 &amp;
+for (auto&amp; [k, val] : cnt) ...                // 遍历 dict
 
-unordered_set&lt;int&gt; seen;  seen.insert(3);  seen.count(3);  seen.erase(3);
-set&lt;int&gt; sorted_set;                 // 有序 set，*sorted_set.begin() 最小，*prev(end()) 最大</code></pre>
-    <h3>循环</h3>
-    <pre><code>for (int i = 0; i &lt; n; i++) ...
-for (int x : v) ...                  // for x in v（拷贝）
-for (int&amp; x : v) x *= 2;             // 要改原值加 &amp;
-for (const auto&amp; x : v) ...          // 大对象只读用这个
-for (auto&amp; kv : cnt) kv.first, kv.second;              // 遍历 dict，kv 是 pair
-for (auto&amp; [k, val] : cnt) ...       // C++17 结构化绑定，更像 Python
-while (cond) ...;  break;  continue;</code></pre>
-    <h3>排序</h3>
-    <pre><code>sort(v.begin(), v.end());                                   // 升序
-sort(v.begin(), v.end(), greater&lt;int&gt;());                   // 降序
-sort(v.begin(), v.end(), [](int a, int b){ return a &gt; b; });  // 自定义，返回 true 表示 a 排在 b 前
-vector&lt;pair&lt;string,int&gt;&gt; items(cnt.begin(), cnt.end());     // dict 转成 pair 的 list
-sort(items.begin(), items.end(), [](auto&amp; a, auto&amp; b){ return a.second &gt; b.second; });  // 按 value 降序
-reverse(v.begin(), v.end());
-*max_element(v.begin(), v.end());  *min_element(...);
-accumulate(v.begin(), v.end(), 0LL);                        // sum，0LL 让它用 long long 累加</code></pre>
-    <h3>pair、tuple、struct</h3>
-    <pre><code>pair&lt;int,int&gt; p = {1, 2};  p.first;  p.second;
-auto [a, b] = p;                                 // C++17 解包
-struct Order { int id; int qty; double price; };
-Order o{1, 5, 100.0};  o.qty;
-vector&lt;Order&gt; orders;  orders.push_back({2, 3, 99.5});</code></pre>
-    <h3>栈、队列、堆</h3>
-    <pre><code>stack&lt;int&gt; st;  st.push(1);  st.top();  st.pop();            // pop 不返回值！先 top 再 pop
+sort(v.begin(), v.end());                                                        // 升序
+sort(v.begin(), v.end(), [](int a, int b){ return a &gt; b; });                     // 降序；true = a 排前面
+vector&lt;pair&lt;string,int&gt;&gt; items(cnt.begin(), cnt.end());                          // dict → list of pair
+sort(items.begin(), items.end(), [](auto&amp; a, auto&amp; b){ return a.second &gt; b.second; });   // 按 value 降序
+
+stack&lt;int&gt; st;  st.push(1);  st.top();  st.pop();        // pop 不返回值，先 top 再 pop
 queue&lt;int&gt; q;   q.push(1);   q.front();  q.pop();
-deque&lt;int&gt; dq;  dq.push_front(1);  dq.push_back(2);  dq.pop_front();
-priority_queue&lt;int&gt; pq;                                      // 最大堆，pq.top() 最大
-priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; minpq;         // 最小堆
-priority_queue&lt;pair&lt;int,int&gt;&gt; pq2;                           // 按 first 再 second 比</code></pre>
-    <h3>字符串</h3>
-    <pre><code>s.size();  s[i];  s.substr(start, len);  s + &quot;x&quot;;  s += &#x27;c&#x27;;
-to_string(42);  stoi(&quot;42&quot;);  stod(&quot;1.5&quot;);  stoll(&quot;...&quot;);
-s.find(&quot;ab&quot;) != string::npos;                                // in
-// split by comma
-stringstream ss(line);  string field;
-while (getline(ss, field, &#x27;,&#x27;)) parts.push_back(field);</code></pre>
-    <h3>函数、引用、const</h3>
-    <pre><code>int f(const vector&lt;int&gt;&amp; v) { ... }     // 大对象传 const&amp; 不拷贝
-void g(vector&lt;int&gt;&amp; v) { v.push_back(1); }   // 要改就去掉 const
-auto sq = [](int x){ return x * x; };   // lambda
-auto add = [&amp;total](int x){ total += x; };   // [&amp;] 按引用捕获外面变量，[=] 拷贝</code></pre>
-    <h3>输入输出</h3>
-    <pre><code>int n;  cin &gt;&gt; n;
-string line;  getline(cin, line);       // 读一整行
-cout &lt;&lt; x &lt;&lt; &quot; &quot; &lt;&lt; s &lt;&lt; &quot;\n&quot;;
-cerr &lt;&lt; &quot;error\n&quot;;</code></pre>
-    <h3>常踩的坑</h3>
-    <ul>
-    <li><code>v[i]</code> 越界不报错，直接读到垃圾或崩；拿不准用 <code>v.at(i)</code>。</li>
-    <li><code>int</code> 相乘会溢出，两个 1e5 乘起来就超了，先转 <code>long long</code>。</li>
-    <li><code>stack.pop()</code> 和 <code>queue.pop()</code> 不返回元素。</li>
-    <li><code>map[key]</code> 会悄悄插入一个默认值，只查不插用 <code>find</code> 或 <code>count</code>。</li>
-    <li>整数除法 <code>7 / 2 == 3</code>，要小数先 <code>7 / 2.0</code>。</li>
-    <li>遍历容器的时候不要 erase 它，除非用 <code>it = v.erase(it)</code> 的写法。</li>
-    <li><code>size()</code> 返回无符号数，<code>v.size() - 1</code> 在空 vector 上会变成巨大正数，比较前先转 <code>(int)</code>。</li>
-    </ul>
-  </details>
+priority_queue&lt;int&gt; pq;                                 // 最大堆；最小堆：priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt;
+
+s.size();  s[i];  s.substr(i, len);  s += &#x27;c&#x27;;  to_string(42);  stoi(&quot;42&quot;);  stod(&quot;1.5&quot;);
+stringstream ss(line);  string f;  while (getline(ss, f, &#x27;,&#x27;)) parts.push_back(f);   // split(&#x27;,&#x27;)
+int f(const vector&lt;int&gt;&amp; v) {...}             // 大对象传 const&amp;；要改就去掉 const
+cin &gt;&gt; n;  getline(cin, line);  cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;</code></pre>
+    <p class="trap">坑三条：<code>int</code> 相乘先转 <code>long long</code>；<code>7 / 2 == 3</code>；<code>v.size() - 1</code> 在空 vector 上是巨大正数，比较前转 <code>(int)</code>。</p>
+  </div>
 </section>
 
 <section class="logwrap dsbank">

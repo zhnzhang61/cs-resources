@@ -1253,6 +1253,23 @@ queue&lt;int&gt; q;    q.push(1);   q.front();  q.pop();
 priority_queue&lt;int&gt; pq;                                        // 最大堆，pq.top() 最大
 priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; minpq;          // 最小堆
 
+// class：Python 的 class 加 __init__；成员变量放 private，方法放 public
+class OrderBook {
+public:
+    OrderBook(int maxLevels) : maxLevels_(maxLevels) {}   // 构造：冒号后面给成员赋初值
+    void add(int id, double price) {                      // 方法直接在 class 里写
+        prices_[id] = price;
+    }
+    bool contains(int id) const {                         // 不改成员的方法加 const
+        return prices_.count(id) &gt; 0;
+    }
+    size_t size() const { return prices_.size(); }
+private:
+    int maxLevels_;                                       // 成员变量，习惯加下划线
+    unordered_map&lt;int, double&gt; prices_;
+};
+OrderBook book(10);  book.add(1, 9.5);  book.contains(1);   // 用的时候；别忘了 class 结尾的分号
+
 // 字符串、函数、输出
 s.size();  s[i];  s.substr(i, len);  s += 'c';
 to_string(42);  stoi(&quot;42&quot;);  stod(&quot;1.5&quot;);
@@ -1278,6 +1295,10 @@ cout &lt;&lt; x &lt;&lt; &quot; &quot; &lt;&lt; s &lt;&lt; &quot;\n&quot;;</code
     <h3>2026-10-28 · 一家 multi-strat fund (GenAI ML Engineer) · technical, ex-big-tech interviewer</h3>
     <p><b>API aggregation</b>: pull authors, their articles and each article's comment count from a REST API; given an author, return the top-k articles by comment count, ties broken by article title.</p>
     <p class="parts">Core logic (two loops + one sort) came out fine. Stalled on two library details: calling <code>requests.get(url).json()</code> (never used it; interviewer supplied it) and the sort key for "count desc, then title asc": <code>sorted(rows, key=lambda a: (-a["comments"], a["title"]))[:k]</code>. Lesson: the key is a tuple; negate the numeric field for descending so the string field can stay ascending. System-design part: the three-layer Python isolation story landed, interviewer sceptical but had no follow-up.</p>
+  </div>
+  <div class="prob">
+    <h3>2026-10-28 · 一家 HFT (Quantitative Developer) · technical after the C++ take-home</h3>
+    <p><b>Write a C++ class</b> live. Blanked on the syntax (constructor initializer list, public/private, const methods, the trailing semicolon). Template now sits in the cheatsheet above. Rest of the round: TBD.</p>
   </div>
 </section>
 <script>

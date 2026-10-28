@@ -1212,7 +1212,11 @@ priority_queue&lt;int&gt; pq;                                 // 最大堆；最
 s.size();  s[i];  s.substr(i, len);  s += &#x27;c&#x27;;  to_string(42);  stoi(&quot;42&quot;);  stod(&quot;1.5&quot;);
 stringstream ss(line);  string f;  while (getline(ss, f, &#x27;,&#x27;)) parts.push_back(f);   // split(&#x27;,&#x27;)
 int f(const vector&lt;int&gt;&amp; v) {...}             // 大对象传 const&amp;；要改就去掉 const
-cin &gt;&gt; n;  getline(cin, line);  cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;</code></pre>
+cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;
+vector&lt;int&gt; nums;  int n;
+while (cin &gt;&gt; n) nums.push_back(n);                        // 读到 EOF 或非数字就停，空格换行都当分隔
+string line;
+while (getline(cin, line)) { if (line.empty()) continue; /* 按行读，再 stringstream 切 */ }</code></pre>
     <p class="trap">坑三条：<code>int</code> 相乘先转 <code>long long</code>；<code>7 / 2 == 3</code>；<code>v.size() - 1</code> 在空 vector 上是巨大正数，比较前转 <code>(int)</code>。</p>
   </div>
 </section>

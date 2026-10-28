@@ -1177,52 +1177,87 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
 <section class="logwrap dsbank">
   <h2>C++ Syntax Cheatsheet <span class="logsub">Python 对照，一屏。只背五条：vector / unordered_map / unordered_set / for (auto&amp; [k,v] : m) / sort + lambda。</span></h2>
   <div class="prob">
-    <pre><code>#include &lt;bits/stdc++.h&gt;  using namespace std;        // 面试里一行包全部
+    <pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;                       // 面试里这两行包全部
 
-vector&lt;int&gt; v;  vector&lt;vector&lt;int&gt;&gt; g(rows, vector&lt;int&gt;(cols, 0));           // 空 list；二维全 0
-map&lt;int,string&gt; m;  m.begin()-&gt;first;  m.count(3);   // 按 key 排序的 dict，最小 key 在 begin；greater&lt;int&gt; 反过来；count = in
-unordered_set&lt;int&gt; seen;  seen.insert(3);  seen.count(3);                        // set
-struct Order { int id; double price; };  Order o{1, 9.5};  o.price;
-
-// list of tuple → dict：Python 的 for k, v in pairs: d[k] = v
-vector&lt;pair&lt;string,int&gt;&gt; pairs = {{&quot;a&quot;, 1}, {&quot;b&quot;, 2}};  pairs.push_back({&quot;c&quot;, 3});
-unordered_map&lt;string,int&gt; cnt;
-for (auto&amp; [k, val] : pairs) cnt[k] = val;                 // 解包 tuple；不解包写 pr.first / pr.second
-for (auto&amp; pr : pairs) cnt[pr.first] += pr.second;         // 累加版，key 不存在时 [] 先建 0
-// 遍历 list：查、改用 range-for，删用下标
-for (int&amp; x : v) { if (x &gt; 0) x *= 2; }                   // 查 + 改，& 才改到原值
-for (int i = 0; i &lt; (int)v.size(); i++) {
-    if (v[i] == 0) { v.erase(v.begin() + i); i--; }         // 删第 i 个（O(n)），i-- 补回
-}
-// 遍历 map：k 不能改，val 能改；删要 it = cnt.erase(it)
-for (auto&amp; [k, val] : cnt) { if (val &gt; 1) val = 1; }       // 查 + 改
-for (auto it = cnt.begin(); it != cnt.end(); ) {
-    if (it-&gt;second == 0) it = cnt.erase(it); else ++it;    // 删：erase 返回下一个，别再 ++
-}
-
-sort(v.begin(), v.end());                                                        // 升序
-sort(v.begin(), v.end(), [](int a, int b){ return a &gt; b; });                     // 降序；true = a 排前面
-vector&lt;pair&lt;string,int&gt;&gt; items(cnt.begin(), cnt.end());                          // dict → list of pair
-sort(items.begin(), items.end(), [](auto&amp; a, auto&amp; b){ return a.second &gt; b.second; });   // 按 value 降序
-
-stack&lt;int&gt; st;  st.push(1);  st.top();  st.pop();        // pop 不返回值，先 top 再 pop
-queue&lt;int&gt; q;   q.push(1);   q.front();  q.pop();
-priority_queue&lt;int&gt; pq;                                 // 最大堆；最小堆：priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt;
-
-s.size();  s[i];  s.substr(i, len);  s += &#x27;c&#x27;;  to_string(42);  stoi(&quot;42&quot;);  stod(&quot;1.5&quot;);
-stringstream ss(line);  string f;  while (getline(ss, f, &#x27;,&#x27;)) parts.push_back(f);   // split(&#x27;,&#x27;)
-int f(const vector&lt;int&gt;&amp; v) {...}             // 大对象传 const&amp;；要改就去掉 const
-cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;
-vector&lt;int&gt; nums;  int n;
-while (cin &gt;&gt; n) nums.push_back(n);                        // 读到 EOF 或非数字就停，空格换行都当分隔
-// 一行一条 &quot;AAPL,150.5&quot;，按逗号切，存成 map：Python 的 d[k] = float(v)
-unordered_map&lt;string, double&gt; px;  string line;
-while (getline(cin, line)) {                               // 一行一个 string，读到 EOF 停
+// 1. 读 stdin：一行一个 string，存进 list。Python 的 lines = sys.stdin.readlines()
+vector&lt;string&gt; lines;
+string line;
+while (getline(cin, line)) {               // 读到 EOF 停
     if (line.empty()) continue;
-    stringstream ss(line);  string key, val;
-    getline(ss, key, &#x27;,&#x27;);  getline(ss, val, &#x27;,&#x27;);         // 第三个参数是分隔符；多列就多 getline 几次
-    px[key] = stod(val);                                   // val 是 string，要自己转数
-}</code></pre>
+    lines.push_back(line);
+}
+
+// 2. 每行 &quot;AAPL,150.5&quot; 按逗号切成 tuple，存进 list of tuple。Python 的 k, v = line.split(',')
+vector&lt;pair&lt;string, double&gt;&gt; pairs;
+for (const string&amp; ln : lines) {
+    stringstream ss(ln);                   // 把一行当成一个小流
+    string key, val;
+    getline(ss, key, ',');                 // 第三个参数是分隔符
+    getline(ss, val, ',');                 // 多列就多 getline 几次
+    pairs.push_back({key, stod(val)});     // val 是 string，要自己转数
+}
+
+// 3. list of tuple → dict。Python 的 for k, v in pairs: d[k] = v
+unordered_map&lt;string, double&gt; px;
+for (auto&amp; [k, val] : pairs) {             // 解包 tuple；不解包写 pr.first / pr.second
+    px[k] = val;                           // [] 对不存在的 key 先建 0，所以 += 也能直接写
+}
+
+// 声明
+vector&lt;int&gt; v;                                        // 空 list
+vector&lt;vector&lt;int&gt;&gt; g(rows, vector&lt;int&gt;(cols, 0));    // 二维全 0
+map&lt;int, string&gt; m;                                   // 按 key 排序的 dict；最小 key 在 m.begin()-&gt;first
+map&lt;int, string, greater&lt;int&gt;&gt; m2;                    // 反过来，最大 key 在 begin
+unordered_set&lt;int&gt; seen;                              // set：seen.insert(3);  seen.count(3)
+struct Order { int id; double price; };               // Order o{1, 9.5};  o.price
+
+// 遍历 list：查、改用 range-for，&amp; 才改到原值
+for (int&amp; x : v) {
+    if (x &gt; 0) x *= 2;
+}
+// 遍历 list 并删：用下标，删完 i-- 补回
+for (int i = 0; i &lt; (int)v.size(); i++) {
+    if (v[i] == 0) {
+        v.erase(v.begin() + i);            // O(n)
+        i--;
+    }
+}
+
+// 遍历 map：k 不能改，val 能改
+for (auto&amp; [k, val] : px) {
+    if (val &gt; 100) val = 100;
+}
+// 遍历 map 并删：erase 返回下一个位置，所以删了就别 ++
+for (auto it = px.begin(); it != px.end(); ) {
+    if (it-&gt;second == 0) {
+        it = px.erase(it);
+    } else {
+        ++it;
+    }
+}
+
+// 排序
+sort(v.begin(), v.end());                                      // 升序
+sort(v.begin(), v.end(), [](int a, int b) {                    // 自定义：返回 true 表示 a 排前面
+    return a &gt; b;                                              // 这里是降序
+});
+vector&lt;pair&lt;string, double&gt;&gt; items(px.begin(), px.end());      // dict → list of tuple
+sort(items.begin(), items.end(), [](auto&amp; a, auto&amp; b) {
+    return a.second &gt; b.second;                                // 按 value 降序
+});
+
+// 栈、队列、堆
+stack&lt;int&gt; st;   st.push(1);  st.top();  st.pop();             // pop 不返回值，先 top 再 pop
+queue&lt;int&gt; q;    q.push(1);   q.front();  q.pop();
+priority_queue&lt;int&gt; pq;                                        // 最大堆，pq.top() 最大
+priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; minpq;          // 最小堆
+
+// 字符串、函数、输出
+s.size();  s[i];  s.substr(i, len);  s += 'c';
+to_string(42);  stoi(&quot;42&quot;);  stod(&quot;1.5&quot;);
+int f(const vector&lt;int&gt;&amp; v) { ... }                            // 大对象传 const&amp;；要改就去掉 const
+cout &lt;&lt; x &lt;&lt; &quot; &quot; &lt;&lt; s &lt;&lt; &quot;\n&quot;;</code></pre>
     <p class="trap">坑三条：<code>int</code> 相乘先转 <code>long long</code>；<code>7 / 2 == 3</code>；<code>v.size() - 1</code> 在空 vector 上是巨大正数，比较前转 <code>(int)</code>。</p>
   </div>
 </section>

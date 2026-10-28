@@ -1251,6 +1251,11 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
     <p><b>Sorted array + target</b>: does any pair sum to target?</p>
     <p class="parts">Gave hashmap (O(n) time, O(n) space) — correct for a general array. Missed that "sorted" is the hint: two pointers from both ends, O(1) space. Lesson: when the statement hands you a property (sorted / distinct / bounded), spend ten seconds asking what it buys before coding.</p>
   </div>
+  <div class="prob">
+    <h3>2026-10-28 · 一家 multi-strat fund (GenAI ML Engineer) · technical, ex-big-tech interviewer</h3>
+    <p><b>API aggregation</b>: pull authors, their articles and each article's comment count from a REST API; given an author, return the top-k articles by comment count, ties broken by article title.</p>
+    <p class="parts">Core logic (two loops + one sort) came out fine. Stalled on two library details: calling <code>requests.get(url).json()</code> (never used it; interviewer supplied it) and the sort key for "count desc, then title asc": <code>sorted(rows, key=lambda a: (-a["comments"], a["title"]))[:k]</code>. Lesson: the key is a tuple; negate the numeric field for descending so the string field can stay ascending. System-design part: the three-layer Python isolation story landed, interviewer sceptical but had no follow-up.</p>
+  </div>
 </section>
 <script>
 const NS = "http://www.w3.org/2000/svg";

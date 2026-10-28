@@ -1187,18 +1187,21 @@ unordered_set&lt;int&gt; seen;  seen.insert(3);  seen.count(3);                 
 pair&lt;int,int&gt; p = {1,2};  p.first;  auto [a, b] = p;                             // tuple
 struct Order { int id; double price; };  Order o{1, 9.5};  o.price;
 
-// 遍历 list：查、改用 range-for，删要用下标或 iterator
+// list of tuple → dict：Python 的 for k, v in pairs: d[k] = v
+vector&lt;pair&lt;string,int&gt;&gt; pairs = {{&quot;a&quot;, 1}, {&quot;b&quot;, 2}};  pairs.push_back({&quot;c&quot;, 3});
+unordered_map&lt;string,int&gt; cnt;
+for (auto&amp; [k, val] : pairs) cnt[k] = val;                 // 解包 tuple；不解包写 pr.first / pr.second
+for (auto&amp; pr : pairs) cnt[pr.first] += pr.second;         // 累加版，key 不存在时 [] 先建 0
+// 遍历 list：查、改用 range-for，删用下标
 for (int&amp; x : v) { if (x &gt; 0) x *= 2; }                   // 查 + 改，& 才改到原值
-for (int i = 0; i &lt; (int)v.size(); i++) {                   // 要 i 的时候
+for (int i = 0; i &lt; (int)v.size(); i++) {
     if (v[i] == 0) { v.erase(v.begin() + i); i--; }         // 删第 i 个（O(n)），i-- 补回
 }
-v.insert(v.begin() + 2, 9);                                 // 在下标 2 插（O(n)）；append 用 push_back
 // 遍历 map：k 不能改，val 能改；删要 it = cnt.erase(it)
 for (auto&amp; [k, val] : cnt) { if (val &gt; 1) val = 1; }       // 查 + 改
 for (auto it = cnt.begin(); it != cnt.end(); ) {
     if (it-&gt;second == 0) it = cnt.erase(it); else ++it;    // 删：erase 返回下一个，别再 ++
 }
-cnt[&quot;new&quot;] = 5;                                             // 增：在 loop 外加，loop 里加可能让 iterator 失效
 
 sort(v.begin(), v.end());                                                        // 升序
 sort(v.begin(), v.end(), [](int a, int b){ return a &gt; b; });                     // 降序；true = a 排前面

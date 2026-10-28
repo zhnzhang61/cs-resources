@@ -92,7 +92,7 @@
   #bubble a:hover { text-decoration: underline; }
   #bubble .note { color: var(--muted); margin-top: 6px; font-size: 11.5px; line-height: 1.45; }
   .logwrap { max-width: 1450px; margin: 0 auto; padding: 0 8px 60px; }
-  .logwrap h2 { font-size: 15px; margin: 22px 0 10px; }
+  .logwrap h2 { font-size: 21px; margin: 44px 0 12px; padding-top: 20px; border-top: 2px solid var(--tbl); }
   .logsub { font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 8px; }
   .logscroll { overflow-x: scroll; border: 1.5px solid var(--tbl); border-radius: 10px; scrollbar-width: auto; scrollbar-color: var(--tbl) var(--d5-bg); }
   .logscroll::-webkit-scrollbar { height: 15px; }
@@ -146,7 +146,7 @@
     svg { min-width: 0; }                       /* the map shrinks to the screen width; pinch to read a node */
     .mobile-hint { display: block; color: var(--muted); font-size: 12.5px; margin: 10px 12px 0; }
     .logwrap { padding: 0 12px 40px; }
-    .logwrap h2 { font-size: 17px; }
+    .logwrap h2 { font-size: 22px; }
     table.log, table.log code { font-size: 11.5px; }
     .dsbank .prob { padding: 12px 12px 8px; margin: 12px 0; }
     .dsbank h3 { font-size: 16px; }
@@ -398,9 +398,7 @@ class MovingAverage:
 </section>
 
 <section class="logwrap dsbank">
-  <h2>Design Problem Bank <span class="logsub">The 4th category (design / welded structures) in practice: multi-part problems that build on each other. Method: write 2-3 asserts before implementing each part, rerun all earlier tests after every change, think out loud.</span></h2>
-
-  <h3 class="tier">Part 1 · Starter pool (do these three first)</h3>
+  <h2>Design Problem Bank <span class="logsub">The 4th category (design / welded structures) in practice: eight multi-part problems, same difficulty tier, any order. Method: write 2-3 asserts before implementing each part, rerun all earlier tests after every change, think out loud.</span></h2>
 
   <div class="prob">
     <h3>1 · Word-Level Highlight — whole-word match + interval merge<span class="chip">cursor matching × interval merge (56)</span></h3>
@@ -969,8 +967,6 @@ def list_files(root, fs):
     </details>
   </div>
 
-  <h3 class="tier">Part 2 · Advanced pool</h3>
-
   <div class="prob">
     <h3>4 · Highlight &amp; Rank Citations — problem 1, fully loaded<span class="chip">+ global-frequency ranking</span></h3>
     <p>On top of problem 1, one more spec: after each merged region, append one <code>[i]</code> for every distinct source occurring in that region, ordered by that source's <b>total occurrence count across the whole text</b>, descending; break ties by smaller index. Tag is <code>&lt;yellow&gt;</code>. Bounds: text ≤ 1e5 chars · sources ≤ 2000 · total occurrences ≤ 2e5.</p>
@@ -1084,11 +1080,13 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
 </section>
 
 <section class="logwrap dsbank">
-  <h2>Specialized Algorithms <span class="logsub">特化 DS 的算法侧镜像:工业级原语,考选型和解释,不考现场重写。一篇长文讲一个家族,默认折叠。</span></h2>
+  <h2>Specialized Algorithms <span class="logsub">特化 DS 的算法侧镜像:工业级原语,考选型和解释,不考现场重写。一篇长文讲一个家族。</span></h2>
 
-  <details>
-    <summary>№1 · Hashing Algorithms — 从 hashmap 的发动机到 SHA-256 的最后一行加法</summary>
+  <div class="prob">
+    <h3>1 · Hashing Algorithms — 从 hashmap 的发动机到 SHA-256 的最后一行加法<span class="chip">hmap / Set 的发动机 · 609 的指纹 · 密码的印章</span></h3>
     <p><b>它是什么。</b>hash 函数就是一个普通函数:输入随便多长,输出固定这么长(SHA-256 是 32 字节)。它的所有用途都从"输出固定且短"这一条长出来:短,才能当数组下标;短,才能当身份证;短,才能贴在文件旁边当印章。要是指纹和人一样大,按指纹就没有意义了——直接比人就行了。</p>
+    <details>
+      <summary>全文 · 三个用途、SHA-256 内部、家族全景、MD5 的判词</summary>
     <p><b>用途一:当地址——这是它和 hashmap 的关系。</b>数组是最快的容器,但数组只认下标:你给它 3,它一步到位;你给它 "apple",它不认识。key 不是下标,所以想让 key 享受数组的速度,就必须有人把 key 翻译成下标。hash 就是这个翻译员:下标 = hash(key) mod 桶数。翻译要满足两条,每条都是常识:第一,同一个 key 每次翻译结果必须一样——不然存的时候放进 3 号桶,取的时候被翻译成 7 号,东西就丢了;第二,不同 key 要尽量落进不同的桶——大家都挤 3 号桶的话,桶里就得排队挨个找,O(1) 退化成 O(n)。所以 hashmap = hash(负责翻译)+ 数组(负责兑现)。图上的 hmap 和 Set 两个节点,装的都是这台发动机。</p>
     <p><b>用途二:当指纹——这是它和 609、git 的关系。</b>两个 1GB 的文件想知道是否相同,逐字节比要读 2GB;先各算指纹,指纹只有 32 字节,比指纹是一瞬间的事。这里的逻辑必须拆成两个方向,因为两个方向的可靠程度不一样。内容相同 → 指纹一定相同:这是"函数"两个字自带的,同样的输入进同一个函数,出来必须一样。指纹相同 → 内容只是"几乎一定"相同:输入有无穷多种,输出只有 2²⁵⁶ 种,格子有限、鸽子无限,必有不同的输入共用同一个指纹——只是 2²⁵⁶ 个格子实在太多,随机撞上的概率小到天文数字分之一。前一个方向是铁的,后一个方向是概率的。去重漏斗的合法性就建立在铁的那个方向上:真重复的两个文件在每一层都必然同组,永远不会被中途放走;概率的那个方向决定的只是最后一层要不要再逐字节确认。</p>
     <p><b>用途三:当印章——这是它和密码、签名的关系。</b>前两个用途的敌人是运气(碰巧撞上),这个用途的敌人是人(有人故意想撞)。网站不存密码原文,存 hash(密码):数据库被偷,贼拿到的只是指纹,倒推不出密码。这就对 hash 提出了新要求:不能倒推、不能故意造碰撞。能同时满足的,才配叫加密 hash。</p>
@@ -1099,19 +1097,12 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
     <p><b>为什么轮里偏偏是那三种操作。</b>加法、旋转+XOR、Ch/Maj,各管一条路。加法有进位,低位的变化顺着进位往高位爬——纵向扩散。旋转把每一位搬到别的位置,XOR 把三个搬运结果叠在一起——横向扩散。Ch 和 Maj 的本质是 AND:如果整个函数只有加法和 XOR,它就是线性的,而线性方程组是可以解的;有 AND 在,方程组解不动——这是非线性的来源。三样凑齐,64 轮转完,输入动一位,输出大约翻一半,这就是雪崩。</p>
     <p><b>家族全景:按你怕什么分档。</b>什么都不怕、只要快:xxHash、Murmur——去重漏斗的过滤层、分片路由,能跑到内存带宽的速度(每秒几十 GB);过滤层允许误报,判决另有人做,所以这里用最快的。怕有人捣乱你的 hashmap:SipHash。这种攻击真实存在:有人算好一批全部落进同一个桶的 key 发给你的服务,你的 dict 每次操作都变成排长队,服务就瘫了,这叫 HashDoS。SipHash 带一把随机钥匙,攻击者不知道钥匙就算不出哪些 key 会撞。Python、Rust、Ruby 的内建 dict 都用它——顺便解释一个现象:Python 每次重启,hash("a") 的值都不一样,因为钥匙是进程启动时随机发的。怕有人故意造碰撞:必须加密档。MD5(1992)在 2004 年被攻破——注意"攻破"的意思不是"容易随机撞上"(随机撞的概率仍然小到天文数字分之一),而是"有人能故意造出两个内容不同、指纹相同的文件"。SHA-1 在 2017 年同样倒下,git 因此搬家。现役是 SHA-256(新 CPU 带硬件指令,常常反而比 MD5 快)和 BLAKE3(又快又防,还能切块并行)。怕别人猜你的密码:Argon2、bcrypt——这一档故意慢,和其他所有档方向相反。道理是常识级的:你自己登录,一秒算一次,无所谓;贼拿了库暴力试密码,恨不得一秒试十亿次——hash 越快,帮的越是贼。所以密码 hash 故意烧时间烧内存,把贼的成本抬上天;拿裸 SHA-256 存密码不是"不够安全",是方向本身就反了。最后是家族里的叛徒:MinHash 和 SimHash。正常 hash 的美德是"差一位,天翻地覆";这两个反着来,内容越像、指纹越像,专做"近似重复"的检测——LLM 训练语料的去重就是先精确 hash 去一遍,再 MinHash 去相似的。</p>
     <p><b>MD5 的判词。</b>防事故够用,防对手不行;而今天,论快有 xxHash,论安全有 SHA-256 和 BLAKE3——两头都被占了,MD5 没有剩下的位置。面试里被问到,答案就是这一句加上前面那对定义:事故 = 碰巧撞上,对手 = 故意造撞。</p>
-  </details>
+    </details>
+  </div>
 </section>
 
 <section class="logwrap dsbank">
-  <h2>AI Platform Interview Bank <span class="logsub">给"给非 AI 工程师搭 LLM 系统"这类岗（fund 的 GenAI 平台、资管的 AI 平台、forward deployed AI）。写法按你的推导方式：要什么 → 手里有什么 → 中间唯一的运算 → 所以必须有什么 → 这东西的范围 → 压成一个名字。面试里先报名字，被追问再展开链。</span></h2>
-
-  <details open>
-    <summary>№0 · 用法说明：链、名字、范围、特例</summary>
-    <p><b>为什么不列事实。</b>按主题列 30 秒答案是模式召回的材料；你不信记住的模式，背了也不会在面试里说出来。你能说出来的是自己推出来的链，所以每个概念只写一条链，推一次，推完压成名字。</p>
-    <p><b>链的固定形状。</b><br>①用户要什么 ②手里有什么 ③两者之间唯一的运算是什么 ④所以必须有什么 ⑤这个东西的范围是什么。第 ⑤ 步是专门给你加的：你的 bug 几乎都出在搭档对象的范围上（560 的"某个元素在当前之前"、167 的 sorted、概率题的量词作用域），所以每条链强制写到范围才算完。</p>
-    <p><b>特例栏。</b>你抓特例准，但会把特例留成独立分支（<code>if cur_sum == k</code>）。每条链后面单独一行"特例折进哪里"，强迫回头收编。</p>
-    <p><b>面试顺序。</b>先说名字（"这是 RAG 的形状"），再写，被追问再展开链。深度留给准备，速度留给面试。coding 题开写前一句话："我要找的搭档在哪个范围里"。</p>
-  </details>
+  <h2>AI Platform Interview Bank</h2>
 
   <h3 class="tier">Part 1 · 主线故事（三分钟，一条链）</h3>
   <div class="prob">
@@ -1181,62 +1172,95 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
     <p><b>governance 的四问。</b>模型看了什么数据、输出留痕了吗、谁能用什么工具、第三方模型的数据出域了吗。你 validation 的背景在这里是现成的答案。</p>
     <p><b>buy vs build。</b>模型买（自己训不过）、网关和 eval 自建（这是你的护城河）、agent 框架看公司栈。给一个你真做过的决定。</p>
   </details>
+</section>
 
-  <h3 class="tier">Part 3 · System design 模板（三条链，先问三件事：用户是谁、数据从哪来、答错了后果多大）</h3>
+<section class="logwrap dsbank">
+  <h2>C++ Syntax Cheatsheet <span class="logsub">Python 对照版，C++ 面试现场翻。只背五条：vector / unordered_map / unordered_set / for (auto&amp; [k,v] : m) / sort + lambda，其余查。</span></h2>
+  <details open>
+    <summary>速查表（2026-10-28，Vatic QD 面试前整理）</summary>
+    <pre><code>#include &lt;bits/stdc++.h&gt;   // 面试里一行包全部；正式代码分开 include
+using namespace std;       // 面试里可以，省得到处写 std::</code></pre>
+    <h3>变量、数组（Python 的 list）</h3>
+    <pre><code>int x = 5;  double p = 1.5;  bool ok = true;  string s = &quot;abc&quot;;
+long long big = 1e18;                // int 只到 2.1e9，数大了用 long long
 
-  <div class="prob">
-    <h3>A · 给 PM 做一个读 SEC filings 的问答系统<span class="chip">fund GenAI 平台岗</span></h3>
-    <p class="chain"><span class="st">①PM 要"这家公司上季度 guidance 改了什么"，要出处，要当天。</span><span class="st">②EDGAR 上的 filings，表格多，同名公司多，财年口径乱。</span><span class="st">③模型读不完，先选后读 → RAG；数字在表格里，模型读表格会错 → 表格走解析器。</span><span class="st">④摄入（拉取 → 解析 → 按 item 切块 → embedding → 入库，增量更新）→ 检索（混合 + 按公司和日期过滤 + rerank）→ 生成（带出处）→ eval（题集 + 出处核对）。</span><span class="st">⑤范围：过滤的维度是公司 ID 不是公司名（同名），日期是 filing 日期不是财年。</span></p>
-    <p class="trap">只有两周先做哪两段：摄入和检索。生成可以先用最简单的 prompt，eval 先用 50 道题。</p>
-  </div>
+vector&lt;int&gt; v;                       // 空 list
+vector&lt;int&gt; v2 = {3, 1, 2};          // 带初值
+vector&lt;int&gt; v3(10, 0);               // 10 个 0
+v.push_back(7);                      // append
+v.pop_back();                        // pop 最后一个
+v.size();  v.empty();  v[0];  v.back();
+vector&lt;vector&lt;int&gt;&gt; grid(rows, vector&lt;int&gt;(cols, 0));   // 二维，rows × cols 全 0</code></pre>
+    <h3>字典（dict）和集合（set）</h3>
+    <pre><code>unordered_map&lt;string, int&gt; cnt;      // 哈希表，无序，O(1)
+cnt[&quot;a&quot;] += 1;                       // 没有就建一个 0 再加（和 defaultdict(int) 一样）
+if (cnt.count(&quot;a&quot;)) ...              // in
+cnt.erase(&quot;a&quot;);                      // del
+auto it = cnt.find(&quot;b&quot;);  if (it != cnt.end()) it-&gt;second;   // 查找不新建
 
-  <div class="prob">
-    <h3>B · 后台持续跑的 agent，盯新闻、filings、邮件，给 PM 推摘要<span class="chip">forward deployed AI 岗的 JD 原文</span></h3>
-    <p class="chain"><span class="st">①PM 要"和我持仓相关的新东西"，不要重复，不要旧闻。</span><span class="st">②新闻 API、邮件、filings，量大、重复多、九成无关。</span><span class="st">③贵的判断（模型）不能对全量做，所以唯一的结构是便宜的在前、贵的在后。</span><span class="st">④事件源 → 去重（hash）→ 规则过滤（ticker、关键词）→ 相关性判断（模型，带持仓和关注列表）→ 摘要（带原文链接）→ 推送 → 反馈回流（点了没有，调阈值）。</span><span class="st">⑤范围：相关性的范围是"这个 PM 的持仓和关注列表"，不是全市场；去重的范围是"同一事件的不同报道"，不只是同一篇文章。</span></p>
-    <p class="trap">特例折进哪里：</p>
-    <ul class="trapl"><li>模型把旧新闻当新的 → 折进去重层，按事件而不是按文章去重。</li><li>延迟 vs 成本 → 折进"便宜的在前"，调的是规则层的宽严。</li></ul>
-  </div>
+map&lt;int, string&gt; m;                  // 红黑树，按 key 排序，O(log n)
+m.begin()-&gt;first;                    // 最小 key；用 map&lt;int,string,greater&lt;int&gt;&gt; 就是最大在前
 
-  <div class="prob">
-    <h3>C · 多团队共用的 LLM 网关和平台<span class="chip">平台岗</span></h3>
-    <p class="chain"><span class="st">①十几个团队都要用模型，各自要 RAG、要工具、要 eval。</span><span class="st">②每个团队自己接一遍，成本和风险都乘以团队数。</span><span class="st">③共同的部分只做一遍，唯一的办法是抽成平台。</span><span class="st">④统一入口（鉴权、配额、模型路由）→ 工具注册（MCP 风格）→ 检索服务（多租户，权限过滤）→ eval 服务（题集、judge、回归）→ 观测（trace、成本归属）→ 治理（审计、数据域）。</span><span class="st">⑤范围：平台管"共同的部分"，一个团队的 prompt 改动不能影响别人，所以 prompt 和工具按团队隔离，模型升级要灰度。</span></p>
-    <p class="trap">特例折进哪里：</p>
-    <ul class="trapl"><li>某个团队要用平台不支持的模型 → 折进"模型路由"，路由表加一行，不开后门。</li></ul>
-  </div>
-
-  <h3 class="tier">Part 4 · Coding（每道开写前一句："搭档在哪个范围里"）</h3>
-  <div class="prob">
-    <h3>第一优先 12 道，周一到周三每天 4 道<span class="chip">HackerRank 一轮 · 另一家可能一道 medium</span></h3>
-    <table class="spec">
-      <tr><th>题</th><th>名字</th><th>搭档在哪个范围里（开写前说这一句）</th><th>特例折进哪里</th></tr>
-      <tr><td>347 Top K Frequent</td><td>计数 + 堆</td><td>堆里只留 k 个，范围是"当前见过的里最大的 k 个"</td><td>k = n → 不是特例，堆装满就是全部</td></tr>
-      <tr><td>49 Group Anagrams</td><td>规范化 key 分组</td><td>key 的范围是"排序后的字母串"，同组的词 key 相同</td><td>空串 → key 是空串，正常分组</td></tr>
-      <tr><td>560 Subarray Sum = K</td><td>前缀和 + 计数 dict</td><td>搭档是"在当前之前、和为 cur − k 的前缀"，先查后存</td><td>cur == k → 折进 {0: 1}，不单独 if</td></tr>
-      <tr><td>146 LRU Cache</td><td>dict + 双向链表</td><td>淘汰的范围是"链表尾那一个"，不是遍历找最旧</td><td>容量 1 → 不是特例，同一套 put 逻辑</td></tr>
-      <tr><td>362 Hit Counter</td><td>队列 + 弹过期</td><td>计数的范围是"时间戳 &gt; now − 300 的那些"，队列头弹到满足为止</td><td>同一秒多次 hit → 存 (时间, 次数) 对</td></tr>
-      <tr><td>981 Time Based KV</td><td>每个 key 一个有序列表 + 二分</td><td>搭档是"时间戳 ≤ t 的最后一个"，bisect_right 减一</td><td>没有 ≤ t 的 → 返回空串，折进"下标为 −1 就空"</td></tr>
-      <tr><td>3 Longest Substring w/o Repeat</td><td>滑窗 + 上次位置</td><td>左端的范围是"上次出现位置 + 1 和当前左端的较大者"</td><td>重复字符在窗外 → 折进 max，不单独判</td></tr>
-      <tr><td>20 Valid Parentheses</td><td>栈</td><td>搭档是"栈顶那一个"，不是任何更早的</td><td>栈空时遇到右括号 → 折进"栈顶不匹配"</td></tr>
-      <tr><td>271 Encode/Decode Strings</td><td>长度前缀</td><td>解码时读的范围是"前缀说的那么多字节"，不靠分隔符</td><td>空串 → 长度 0，正常</td></tr>
-      <tr><td>207 Course Schedule</td><td>DFS 三色 / 拓扑</td><td>环的范围是"回到正在访问中的节点"，不是"回到访问过的"（legal-AI startup 那道 spreadsheet 的 part 2 就是这道）</td><td>自环 → 同一规则</td></tr>
-      <tr><td>200 Number of Islands</td><td>网格 DFS/BFS</td><td>扩展的范围是"四邻里是 1 且没访问过的"</td><td>边界 → 折进范围检查</td></tr>
-      <tr><td>57 Insert Interval</td><td>三段扫描</td><td>要合并的范围是"和新区间重叠的那一段连续区间"，左右两边原样</td><td>新区间在最前或最后 → 不是特例，三段里有一段为空</td></tr>
-    </table>
-  </div>
-  <div class="prob">
-    <h3>第二优先 · 平台工程师会出的实用题 + 大厂常考四道<span class="chip">面试官是大厂 SDE 出身时</span></h3>
-    <p>实用题：解析 log 行按 key 聚合出 top-k（Counter + heapq）；带 TTL 的缓存（146 加时间戳）；令牌桶限流（359 的变体）；生产者消费者队列（queue.Queue、worker 数、关闭信号，20 行）；合并 k 个有序流（23，heapq.merge 也行）。</p>
-    <p>大厂常考四道：215 Kth Largest（堆或 quickselect，搭档范围是"前 k 大"）、973 K Closest Points（同 215，距离当 key）、128 Longest Consecutive（搭档范围是"num − 1 不在集合里的才是起点"）、139 Word Break（DP，搭档范围是"j &lt; i 且 s[j:i] 在字典里"）。</p>
-    <p class="trap">HackerRank 要自己读 stdin，格式和 LC 不一样，周四晚上在它网站上做两道热身。</p>
-  </div>
-
-  <h3 class="tier">Part 5 · 行为题和反问</h3>
-  <div class="prob">
-    <h3>四个故事，每个按"情境 → 我做了什么 → 结果带数字 → 学到什么"两分钟<span class="chip">大厂出身的面试官大概率按 leadership principles 问</span></h3>
-    <p>Ownership：平台从零到全 team 可用（160 人的 team，活跃 10 到 20），没人指派的那部分。Dive deep：内部模型 API 时不时莫名不好用，靠 trace 里每次调用的 input/output 和起止时间定位到是哪一段；表 API 不支持 query，只能整表缓存再 pandas，绕过去。Disagree and commit：和 model risk 或 IT 在某个设计上不一致。Deliver under constraint：embedding 模型被禁、换模型重建索引，期限内保住上线。</p>
-    <p><b>JD 写"带团队"时的答法。</b>JD 原文是 lead a team of engineers and senior ICs。不要说没带过：说"没有正式 report，但三个合作方工程师按我定的接口和 eval 规则干活，review 由我做"。然后主动问 IC 和管理的比例，这个答案决定要不要往下走。</p>
-    <p><b>反问。</b>GenAI 平台岗：team 服务哪些业务线、agent 用什么框架、eval 怎么做。带团队的平台岗：直接带几个人、投资平台的 AI 和企业 AI 是不是一个 team、绿卡流程。forward deployed 岗：投资线坐哪个策略、平台组的 lead 定了没、上线后 UAT 谁签字。</p>
-  </div>
+unordered_set&lt;int&gt; seen;  seen.insert(3);  seen.count(3);  seen.erase(3);
+set&lt;int&gt; sorted_set;                 // 有序 set，*sorted_set.begin() 最小，*prev(end()) 最大</code></pre>
+    <h3>循环</h3>
+    <pre><code>for (int i = 0; i &lt; n; i++) ...
+for (int x : v) ...                  // for x in v（拷贝）
+for (int&amp; x : v) x *= 2;             // 要改原值加 &amp;
+for (const auto&amp; x : v) ...          // 大对象只读用这个
+for (auto&amp; kv : cnt) kv.first, kv.second;              // 遍历 dict，kv 是 pair
+for (auto&amp; [k, val] : cnt) ...       // C++17 结构化绑定，更像 Python
+while (cond) ...;  break;  continue;</code></pre>
+    <h3>排序</h3>
+    <pre><code>sort(v.begin(), v.end());                                   // 升序
+sort(v.begin(), v.end(), greater&lt;int&gt;());                   // 降序
+sort(v.begin(), v.end(), [](int a, int b){ return a &gt; b; });  // 自定义，返回 true 表示 a 排在 b 前
+vector&lt;pair&lt;string,int&gt;&gt; items(cnt.begin(), cnt.end());     // dict 转成 pair 的 list
+sort(items.begin(), items.end(), [](auto&amp; a, auto&amp; b){ return a.second &gt; b.second; });  // 按 value 降序
+reverse(v.begin(), v.end());
+*max_element(v.begin(), v.end());  *min_element(...);
+accumulate(v.begin(), v.end(), 0LL);                        // sum，0LL 让它用 long long 累加</code></pre>
+    <h3>pair、tuple、struct</h3>
+    <pre><code>pair&lt;int,int&gt; p = {1, 2};  p.first;  p.second;
+auto [a, b] = p;                                 // C++17 解包
+struct Order { int id; int qty; double price; };
+Order o{1, 5, 100.0};  o.qty;
+vector&lt;Order&gt; orders;  orders.push_back({2, 3, 99.5});</code></pre>
+    <h3>栈、队列、堆</h3>
+    <pre><code>stack&lt;int&gt; st;  st.push(1);  st.top();  st.pop();            // pop 不返回值！先 top 再 pop
+queue&lt;int&gt; q;   q.push(1);   q.front();  q.pop();
+deque&lt;int&gt; dq;  dq.push_front(1);  dq.push_back(2);  dq.pop_front();
+priority_queue&lt;int&gt; pq;                                      // 最大堆，pq.top() 最大
+priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; minpq;         // 最小堆
+priority_queue&lt;pair&lt;int,int&gt;&gt; pq2;                           // 按 first 再 second 比</code></pre>
+    <h3>字符串</h3>
+    <pre><code>s.size();  s[i];  s.substr(start, len);  s + &quot;x&quot;;  s += &#x27;c&#x27;;
+to_string(42);  stoi(&quot;42&quot;);  stod(&quot;1.5&quot;);  stoll(&quot;...&quot;);
+s.find(&quot;ab&quot;) != string::npos;                                // in
+// split by comma
+stringstream ss(line);  string field;
+while (getline(ss, field, &#x27;,&#x27;)) parts.push_back(field);</code></pre>
+    <h3>函数、引用、const</h3>
+    <pre><code>int f(const vector&lt;int&gt;&amp; v) { ... }     // 大对象传 const&amp; 不拷贝
+void g(vector&lt;int&gt;&amp; v) { v.push_back(1); }   // 要改就去掉 const
+auto sq = [](int x){ return x * x; };   // lambda
+auto add = [&amp;total](int x){ total += x; };   // [&amp;] 按引用捕获外面变量，[=] 拷贝</code></pre>
+    <h3>输入输出</h3>
+    <pre><code>int n;  cin &gt;&gt; n;
+string line;  getline(cin, line);       // 读一整行
+cout &lt;&lt; x &lt;&lt; &quot; &quot; &lt;&lt; s &lt;&lt; &quot;\n&quot;;
+cerr &lt;&lt; &quot;error\n&quot;;</code></pre>
+    <h3>常踩的坑</h3>
+    <ul>
+    <li><code>v[i]</code> 越界不报错，直接读到垃圾或崩；拿不准用 <code>v.at(i)</code>。</li>
+    <li><code>int</code> 相乘会溢出，两个 1e5 乘起来就超了，先转 <code>long long</code>。</li>
+    <li><code>stack.pop()</code> 和 <code>queue.pop()</code> 不返回元素。</li>
+    <li><code>map[key]</code> 会悄悄插入一个默认值，只查不插用 <code>find</code> 或 <code>count</code>。</li>
+    <li>整数除法 <code>7 / 2 == 3</code>，要小数先 <code>7 / 2.0</code>。</li>
+    <li>遍历容器的时候不要 erase 它，除非用 <code>it = v.erase(it)</code> 的写法。</li>
+    <li><code>size()</code> 返回无符号数，<code>v.size() - 1</code> 在空 vector 上会变成巨大正数，比较前先转 <code>(int)</code>。</li>
+    </ul>
+  </details>
 </section>
 
 <section class="logwrap dsbank">

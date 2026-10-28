@@ -1179,12 +1179,9 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
   <div class="prob">
     <pre><code>#include &lt;bits/stdc++.h&gt;  using namespace std;        // 面试里一行包全部
 
-vector&lt;int&gt; v;  v.push_back(7);  v.back();  v.pop_back();  v.size();             // 空 list
-vector&lt;vector&lt;int&gt;&gt; g(rows, vector&lt;int&gt;(cols, 0));                             // 二维全 0
-unordered_map&lt;string,int&gt; cnt;  cnt[&quot;a&quot;]++;  cnt.count(&quot;a&quot;);  cnt.erase(&quot;a&quot;);     // dict，[] 不存在就建 0
-map&lt;int,string&gt; m;  m.begin()-&gt;first;         // 按 key 排序的 dict，最小 key 在 begin；greater&lt;int&gt; 反过来
+vector&lt;int&gt; v;  vector&lt;vector&lt;int&gt;&gt; g(rows, vector&lt;int&gt;(cols, 0));           // 空 list；二维全 0
+map&lt;int,string&gt; m;  m.begin()-&gt;first;  m.count(3);   // 按 key 排序的 dict，最小 key 在 begin；greater&lt;int&gt; 反过来；count = in
 unordered_set&lt;int&gt; seen;  seen.insert(3);  seen.count(3);                        // set
-pair&lt;int,int&gt; p = {1,2};  p.first;  auto [a, b] = p;                             // tuple
 struct Order { int id; double price; };  Order o{1, 9.5};  o.price;
 
 // list of tuple → dict：Python 的 for k, v in pairs: d[k] = v

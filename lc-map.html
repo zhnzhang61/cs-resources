@@ -1215,8 +1215,14 @@ int f(const vector&lt;int&gt;&amp; v) {...}             // 大对象传 const&am
 cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;
 vector&lt;int&gt; nums;  int n;
 while (cin &gt;&gt; n) nums.push_back(n);                        // 读到 EOF 或非数字就停，空格换行都当分隔
-string line;
-while (getline(cin, line)) { if (line.empty()) continue; /* 按行读，再 stringstream 切 */ }</code></pre>
+// 一行一条 &quot;AAPL,150.5&quot;，按逗号切，存成 map：Python 的 d[k] = float(v)
+unordered_map&lt;string, double&gt; px;  string line;
+while (getline(cin, line)) {                               // 一行一个 string，读到 EOF 停
+    if (line.empty()) continue;
+    stringstream ss(line);  string key, val;
+    getline(ss, key, &#x27;,&#x27;);  getline(ss, val, &#x27;,&#x27;);         // 第三个参数是分隔符；多列就多 getline 几次
+    px[key] = stod(val);                                   // val 是 string，要自己转数
+}</code></pre>
     <p class="trap">坑三条：<code>int</code> 相乘先转 <code>long long</code>；<code>7 / 2 == 3</code>；<code>v.size() - 1</code> 在空 vector 上是巨大正数，比较前转 <code>(int)</code>。</p>
   </div>
 </section>

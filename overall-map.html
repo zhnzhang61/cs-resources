@@ -2432,6 +2432,9 @@ Q̂(k) = nₖ/n</code></pre>
 <li><b>2026-10-22 · 同上.</b> PCA on the yield curve, how is it used? Guessed "explains flatten / steepen / parallel shift" — that is the answer: PC1 level (~90%), PC2 slope, PC3 curvature; used to hedge a book against the first 2–3 factors and to spot rich/cheap points on the curve (residual after removing PCs).</li>
 <li><b>2026-10-22 · 同上.</b> Carry and roll? Said "carry = coupon − financing cost"; interviewer said no. Key move: in macro, carry = the P&amp;L if nothing in the market moves, measured in yield/forward terms: for a bond, yield − repo rate; for a swap, fixed received − floating paid; for FX, the rate differential (forward − spot). Roll(-down) = the extra P&amp;L from the position aging down an unchanged curve (its yield drops to the shorter tenor's yield). "Coupon − financing" is the bond special case in cash terms; the macro desk wants the general "forward minus spot" version and the carry/roll split.</li>
 <li><b>2026-10-22 · 同上.</b> Do you know FX? Said no. Team builds AI for global macro; expect rates + FX + carry/roll basics next time.</li>
+<li><b>2026-10-29 · 一家 asset manager · AI Platform &amp; Application Engineer VP · 一面（走简历）.</b> Agent 的权限怎么管？答：一个 service account 持有全部数据权限，我只管谁能拿到这个 service account（团队内 allowlist），不做 per-user 过滤。对方没追问。</li>
+<li><b>2026-10-29 · 同上.</b> 机密信息送到外部 AI 公司怎么防泄漏？答：关键字段（客户名等）发出前打码。反问对方，对方说也是打码，没有更高级的办法。可补一句：公司级的统一 LLM API 网关 + 不训练条款 + 日志审计。</li>
+<li><b>2026-10-29 · 同上.</b> RAG 怎么测 hallucination？答：LLM-as-judge 给回答和检索上下文打分，低分的 flag 出来给人 review，举了自己的例子。可补：判官只看"回答是否被上下文支持"（faithfulness），不看对错；加一组人工标注的 golden set 定期回归。</li>
 </ol>
 </section>
 </body>

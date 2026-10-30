@@ -2435,6 +2435,8 @@ Q̂(k) = nₖ/n</code></pre>
 <li><b>2026-10-29 · 一家 asset manager · AI Platform &amp; Application Engineer VP · 一面（走简历）.</b> Agent 的权限怎么管？答：一个 service account 持有全部数据权限，我只管谁能拿到这个 service account（团队内 allowlist），不做 per-user 过滤。对方没追问。</li>
 <li><b>2026-10-29 · 同上.</b> 机密信息送到外部 AI 公司怎么防泄漏？答：关键字段（客户名等）发出前打码。反问对方，对方说也是打码，没有更高级的办法。可补一句：公司级的统一 LLM API 网关 + 不训练条款 + 日志审计。</li>
 <li><b>2026-10-29 · 同上.</b> RAG 怎么测 hallucination？答：LLM-as-judge 给回答和检索上下文打分，低分的 flag 出来给人 review，举了自己的例子。可补：判官只看"回答是否被上下文支持"（faithfulness），不看对错；加一组人工标注的 golden set 定期回归。</li>
+<li><b>2026-10-30 · 一家 multi-strat fund · Forward Deployed Engineer, AI Solutions · 三面 HackerRank（非 leetcode）.</b> 读一个分页 API：while 还有下一页就继续读，把每页结果 append 到一起返回。核心就是 while 循环 + 翻页条件 + 拼接。做对了。</li>
+<li><b>2026-10-30 · 同上.</b> 场景题：有人留下一个写烂的 agent skill，功能是让 AI 展示任意 book 的 position，问怎么改。答：skill 写得太简单，要把用户会怎么问、输出什么格式、API 能返回什么字段全写清楚，再写 skill 背后真正调 API 的那个函数。追问 API 函数还能加什么：答 user name 和 authentication，API 本身能收一个 token，user 先拿 token 再认证，或者 user 直接认证；明说了"总不能所有人都能看到所有人的 book"。框架里那个没用到的 user 变量就是在等这个答案（对方说这段不用写代码）。答全了。</li>
 </ol>
 </section>
 </body>

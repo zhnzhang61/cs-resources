@@ -161,6 +161,9 @@
   .dsbank p.chain .lead { display: block; margin-bottom: 2px; }
   .dsbank ul.trapl { margin: 4px 0 2px 0; padding-left: 1.4em; font-size: 14px; line-height: 1.7; }
   .dsbank ul.trapl li { margin: 4px 0; }
+  .dsbank ol.tasks { margin: 4px 0 10px; padding-left: 1.6em; font-size: 13.5px; line-height: 1.7; }
+  .dsbank ol.tasks li { margin: 3px 0; }
+  .dsbank ol.tasks code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
 </style>
 </head>
 <body>
@@ -1172,6 +1175,110 @@ def evaluate_retrieval(query, docs, relevant, k) -&gt; tuple[float, float]:
     <p><b>governance 的四问。</b>模型看了什么数据、输出留痕了吗、谁能用什么工具、第三方模型的数据出域了吗。你 validation 的背景在这里是现成的答案。</p>
     <p><b>buy vs build。</b>模型买（自己训不过）、网关和 eval 自建（这是你的护城河）、agent 框架看公司栈。给一个你真做过的决定。</p>
   </details>
+</section>
+
+<section class="logwrap dsbank">
+  <h2>Python Syntax Cheatsheet <span class="logsub">一屏。先看题目，合上书从空白写，写完对下面的答案；第 1、2、4、8 天各写一遍。面试里卡过的三行标了日期。</span></h2>
+  <div class="prob">
+    <h3>题目（每题写明给了什么、求什么；编号和下面答案一一对应）</h3>
+    <ol class="tasks">
+      <li><b>读 stdin。</b>给：stdin 每行形如 <code>AAPL,150.5</code>，中间可能有空行。求：一个 dict，key 是 ticker（str），value 是价格（float）；同一 ticker 出现多次取最后一次。先得到 list of tuple，再转 dict。</li>
+      <li><b>HTTP + JSON。</b>给：<code>url</code> 和作者名 <code>a</code>。求：GET <code>url?author=a</code>，超时 10 秒，状态码非 2xx 直接抛异常，返回解析好的 JSON 对象（dict 或 list）。另外写两行：JSON 字符串 <code>text</code> 转对象；对象转成带两格缩进的字符串。</li>
+      <li><b>分页 API。</b>给：<code>url</code>，参数 <code>page</code> 从 1 开始，每页返回 <code>{"results": [...], "next": "..."或null}</code>。求：把所有页的 results 收进一个 list，<code>next</code> 为空就停。</li>
+      <li><b>排序。</b>给：<code>rows</code> 是 list of dict，每个 dict 有 <code>comments</code>（int）、<code>title</code>（str）、<code>ts</code>、<code>score</code>。求三件：(a) 按 comments 降序、相同按 title 升序，取前 k 个 dict，不改原 list；(b) 按 ts 降序原地排；(c) score 最大的那一个 dict，不排序。</li>
+      <li><b>计数、分组、默认值。</b>给：<code>words</code> 是 list of str；另有一串 <code>(key, x)</code>。求：(a) 出现次数最多的 3 个词和各自次数，形如 <code>[(word, n), ...]</code>；(b) 把 x 按 key 分组成 dict of list，写两种：defaultdict 和普通 dict 的 setdefault；(c) 普通 dict 取不存在的 key 时得到 0。</li>
+      <li><b>堆、双端队列、二分。</b>求四件：(a) 用 heapq 维护 <code>(score, title)</code>，每次弹出 score 最大的；(b) 一行取 rows 里 comments 最大的 k 个；(c) 长度固定为 w 的滑动窗口：新元素进、最老的自动出；(d) 升序 <code>arr</code> 里第一个 ≥ x 的下标。</li>
+      <li><b>遍历。</b>求四件：(a) 遍历 <code>arr</code> 同时拿到下标；(b) <code>xs</code>、<code>ys</code> 两列同时走；(c) dict 的 key 和 value 一起遍历；(d) 删掉 dict 里 value 为 0 的所有 key，要在遍历中删且不报错。</li>
+      <li><b>字符串。</b>给：<code>s</code>、<code>parts</code>（list of str）、<code>name</code>、<code>val</code>（float）。求八件：按逗号切；用逗号拼回；去首尾空白；转小写；是否以 <code>=</code> 开头；格式化成 <code>name: 1.23</code>（两位小数）；是否全是数字；把 a 换成 b。</li>
+      <li><b>class / dataclass。</b>求两件：(a) dataclass <code>Order</code>，字段 <code>id</code>（int）、<code>price</code>（float）、<code>tags</code>（list，默认空，不能写 <code>=[]</code>）；(b) 普通 class <code>Sheet</code>：成员 <code>cells</code> 是 dict，<code>set_cell(label, value)</code> 返回 bool，<code>get_cell(label)</code> 找不到返回 None。</li>
+      <li><b>generator、async。</b>求两件：(a) 一个 generator，每次 yield 文件 <code>f</code> 的 n 个字节，读完自动停（用海象运算符 <code>:=</code> 写成一个 while）；(b) 一个 async 函数，给 <code>urls</code>，并发调已有的 <code>fetch(u)</code>，按原顺序返回结果 list。</li>
+      <li><b>pandas 四句。</b>给：<code>rows</code>（list of dict）、<code>other</code>（DataFrame）。求：建 DataFrame；按 author 汇总 comments 求和、降序、取前 k；取 price &gt; 100 的行按 ts 升序；和 other 按 id 左连接。</li>
+      <li><b>先写测试。</b>求：一行 assert，断言 <code>top_k(rows, 2)</code> 等于 <code>["b", "a"]</code>，失败时错误信息里打印实际返回值。</li>
+    </ol>
+    <pre><code>import sys, json, requests
+from collections import Counter, defaultdict, deque
+from dataclasses import dataclass, field
+import heapq, bisect, itertools, asyncio
+import pandas as pd
+
+# 1. 读 stdin：每行 "AAPL,150.5" → list of tuple → dict
+lines = [ln.strip() for ln in sys.stdin if ln.strip()]            # 空行丢掉
+pairs = [(k, float(v)) for k, v in (ln.split(",") for ln in lines)]
+px = dict(pairs)                                                   # 后出现的 key 覆盖前面的
+
+# 2. HTTP + JSON（10-28 原题卡在这一行）
+r = requests.get(url, params={"author": a}, timeout=10)
+r.raise_for_status()                                               # 非 2xx 直接抛
+data = r.json()                                                    # 已经是 dict / list，不要再 json.loads
+obj = json.loads(text);  text = json.dumps(obj, indent=2)          # 字符串 ↔ 对象
+
+# 3. 分页 API（10-30 原题）：有下一页就继续
+out, page = [], 1
+while True:
+    d = requests.get(url, params={"page": page}).json()
+    out.extend(d["results"])
+    if not d.get("next"): break
+    page += 1
+
+# 4. 排序（10-28 原题卡在这一行）：key 返回 tuple，数值取负 = 降序，字符串保持升序
+top = sorted(rows, key=lambda a: (-a["comments"], a["title"]))[:k]
+rows.sort(key=lambda a: a["ts"], reverse=True)                     # 原地；reverse 对整个 tuple 生效
+best = max(rows, key=lambda a: a["score"])                         # 只要第一名就别排序
+
+# 5. 计数、分组、默认值
+cnt = Counter(words);  cnt.most_common(3)                          # [(word, n), ...]
+groups = defaultdict(list);  groups[key].append(x)                 # 不存在的 key 自动建 []
+d.get(k, 0);  d.setdefault(k, []).append(x)                        # 普通 dict 的两种写法
+
+# 6. 堆、双端队列、二分
+heapq.heappush(h, (-score, title));  heapq.heappop(h)              # 最小堆；要最大堆取负
+heapq.nlargest(k, rows, key=lambda a: a["comments"])               # top-k 一行
+dq = deque(maxlen=w);  dq.append(x);  dq.popleft()                 # 滑动窗口 / BFS
+i = bisect.bisect_left(arr, x)                                     # 第一个 &gt;= x 的下标
+
+# 7. 遍历时带下标、同时走两列、字典的 k 和 v
+for i, x in enumerate(arr): ...
+for a, b in zip(xs, ys): ...
+for k, v in d.items(): ...
+for k in list(d):                                                  # 遍历时要删 key，先复制 key 列表
+    if d[k] == 0: del d[k]
+
+# 8. 字符串
+s.split(",");  ",".join(parts);  s.strip();  s.lower();  s.startswith("=")
+f"{name}: {val:.2f}";  s.isdigit();  s.replace("a", "b")
+
+# 9. class / dataclass（Harvey spreadsheet 的壳）
+@dataclass
+class Order:
+    id: int
+    price: float
+    tags: list = field(default_factory=list)   # 可变默认值必须这样写，不能写 = []
+
+class Sheet:
+    def __init__(self):
+        self.cells = {}                        # 成员变量只在 __init__ 里出现一次
+    def set_cell(self, label, value) -&gt; bool: ...
+    def get_cell(self, label):
+        return self.cells.get(label)
+
+# 10. generator、async（面试里问概念时能写出最小例子）
+def read_chunks(f, n):
+    while chunk := f.read(n):
+        yield chunk
+async def fetch_all(urls):
+    return await asyncio.gather(*(fetch(u) for u in urls))         # IO 并发；CPU 密集用 multiprocessing
+
+# 11. pandas 最小四句
+df = pd.DataFrame(rows)
+df.groupby("author")["comments"].sum().sort_values(ascending=False).head(k)
+df[df["price"] &gt; 100].sort_values("ts")
+df.merge(other, on="id", how="left")                               # 重复 id 会把行数乘起来
+
+# 12. 测试：先写断言再写实现
+assert top_k(rows, 2) == ["b", "a"], top_k(rows, 2)
+</code></pre>
+    <p class="trap">坑四条：<code>r.json()</code> 已经是对象，再 <code>json.loads</code> 会报错；<code>sorted</code> 的 <code>key</code> 是函数不是字段名；<code>dict</code> 遍历中 <code>del</code> 要先 <code>list(d)</code>；函数默认参数 <code>=[]</code> 会被所有调用共用。</p>
+  </div>
 </section>
 
 <section class="logwrap dsbank">
